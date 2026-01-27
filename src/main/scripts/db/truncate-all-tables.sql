@@ -1,0 +1,32 @@
+-- для тестирования, чтоб таблицы почистить и последовательности (опасная штука)
+TRUNCATE TABLE favorite.client_favorite_club CASCADE;
+TRUNCATE TABLE bookings.booking CASCADE;
+TRUNCATE TABLE hr.employee_club CASCADE;
+TRUNCATE TABLE hr.employee_role CASCADE;
+TRUNCATE TABLE hr.employee CASCADE;
+TRUNCATE TABLE info.work_schedule_exception CASCADE;
+TRUNCATE TABLE info.work_schedule CASCADE;
+TRUNCATE TABLE info.price CASCADE;
+TRUNCATE TABLE info.game_club CASCADE;
+TRUNCATE TABLE info.photo CASCADE;
+TRUNCATE TABLE info.club CASCADE;
+TRUNCATE TABLE games.game CASCADE;
+TRUNCATE TABLE clients.client CASCADE;
+TRUNCATE TABLE location.city CASCADE;
+TRUNCATE TABLE location.region CASCADE;
+
+ALTER SEQUENCE location.region_id_seq RESTART WITH 1;
+ALTER SEQUENCE location.city_id_seq RESTART WITH 1;
+ALTER SEQUENCE games.game_id_seq RESTART WITH 1;
+ALTER SEQUENCE info.club_id_seq RESTART WITH 1;
+ALTER SEQUENCE info.photo_id_seq RESTART WITH 1;
+ALTER SEQUENCE info.game_club_id_seq RESTART WITH 1;
+ALTER SEQUENCE info.price_id_seq RESTART WITH 1;
+ALTER SEQUENCE info.work_schedule_id_seq RESTART WITH 1;
+ALTER SEQUENCE info.work_schedule_exception_id_seq RESTART WITH 1;
+ALTER SEQUENCE hr.employee_id_seq RESTART WITH 1;
+ALTER SEQUENCE hr.employee_role_id_seq RESTART WITH 1;
+ALTER SEQUENCE hr.employee_club_id_seq RESTART WITH 1;
+ALTER SEQUENCE clients.client_id_seq RESTART WITH 1;
+ALTER SEQUENCE bookings.booking_id_seq RESTART WITH 1;
+ALTER SEQUENCE favorite.client_favorite_club_id_seq RESTART WITH 1;
