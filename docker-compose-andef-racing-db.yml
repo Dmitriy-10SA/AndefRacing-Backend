@@ -10,8 +10,8 @@ services:
     ports:
       - ${POSTGRES_PORTS}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_andef_racing:/var/lib/postgresql/data
       - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
 
 volumes:
-  postgres_data:
+  postgres_data_andef_racing:
