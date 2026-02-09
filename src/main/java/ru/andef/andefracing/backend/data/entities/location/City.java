@@ -5,10 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
-import ru.andef.andefracing.backend.data.entities.info.Club;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -27,10 +24,6 @@ public class City {
 
     @Column(name = "name", nullable = false, length = 100)
     private String name;
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "city_id", nullable = false)
-    private List<Club> clubs = new ArrayList<>();
 
     @Override
     public final boolean equals(Object o) {

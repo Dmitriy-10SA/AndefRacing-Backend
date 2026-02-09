@@ -29,6 +29,7 @@ public class Region {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "region_id", nullable = false)
+    @OrderBy(value = "name ASC")
     private List<City> cities = new ArrayList<>();
 
     @Override
