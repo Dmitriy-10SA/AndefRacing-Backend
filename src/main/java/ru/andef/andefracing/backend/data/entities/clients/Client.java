@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
-import ru.andef.andefracing.backend.data.entities.bookings.Booking;
+import ru.andef.andefracing.backend.data.entities.booking.Booking;
 import ru.andef.andefracing.backend.data.entities.info.Club;
 
 import java.util.ArrayList;

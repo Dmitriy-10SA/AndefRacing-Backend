@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
-import ru.andef.andefracing.backend.data.entities.bookings.Booking;
+import ru.andef.andefracing.backend.data.entities.booking.Booking;
 
 import java.util.List;
 import java.util.Objects;
