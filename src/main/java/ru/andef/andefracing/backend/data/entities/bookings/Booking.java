@@ -58,6 +58,7 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_employee_id")
+    @Setter
     private Employee createdByEmployee;
 
     /**

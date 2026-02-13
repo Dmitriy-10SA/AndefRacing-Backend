@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
+import ru.andef.andefracing.backend.data.entities.bookings.Booking;
 
 import java.util.List;
 import java.util.Objects;
@@ -46,6 +47,9 @@ public class Employee {
     @JoinColumn(name = "employee_id", nullable = false)
     private List<EmployeeClub> clubAndRoles;
 
+    @OneToMany(mappedBy = "createdByEmployee", fetch = FetchType.LAZY)
+    private List<Booking> bookings;
+
     /**
      * Создание сотрудника с заданием пароля им самим в дальнейшем
      */
@@ -57,6 +61,14 @@ public class Employee {
         this.password = null;
         this.needPassword = true;
         this.isBlocked = false;
+    }
+
+    /**
+     * Добавление бронирования, которое было создано сотрудником (только после оплаты)
+     */
+    public void addBooking(Booking booking) {
+        bookings.add(booking);
+        booking.setCreatedByEmployee(this);
     }
 
     /**
