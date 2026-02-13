@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
-import ru.andef.andefracing.backend.data.entities.clients.Client;
+import ru.andef.andefracing.backend.data.entities.client.Client;
 import ru.andef.andefracing.backend.data.entities.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.info.Club;
 

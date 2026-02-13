@@ -2,7 +2,7 @@ package ru.andef.andefracing.backend.data.entities.booking;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.andef.andefracing.backend.data.entities.clients.Client;
+import ru.andef.andefracing.backend.data.entities.client.Client;
 import ru.andef.andefracing.backend.data.entities.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.info.Club;
 
@@ -37,7 +37,7 @@ class BookingTest {
     }
 
     @Test
-    @DisplayName("Бронирование клиентом")
+    @DisplayName("Бронирование клиентом содержит всю нужную информацию")
     void testCreateBookingByClient() {
         Client client = new Client();
         Booking booking = getBookingByClient(client);
@@ -54,7 +54,7 @@ class BookingTest {
     }
 
     @Test
-    @DisplayName("Бронирование сотрудником")
+    @DisplayName("Бронирование сотрудником содержит всю нужную информацию")
     void testCreateBookingByEmployee() {
         Employee employee = new Employee();
         Booking booking = new Booking(
@@ -78,7 +78,7 @@ class BookingTest {
     }
 
     @Test
-    @DisplayName("Оплата бронирования")
+    @DisplayName("Оплата бронирования переводит статус бронирования в PAID")
     void testPaid() {
         Booking booking = getBookingByClient(new Client());
         assertEquals(BookingStatus.PENDING, booking.getStatus());
@@ -87,7 +87,7 @@ class BookingTest {
     }
 
     @Test
-    @DisplayName("Отмена бронирования")
+    @DisplayName("Отмена бронирования переводит статус бронирования в CANCELLED")
     void testCancel() {
         Booking booking = getBookingByClient(new Client());
         assertEquals(BookingStatus.PENDING, booking.getStatus());

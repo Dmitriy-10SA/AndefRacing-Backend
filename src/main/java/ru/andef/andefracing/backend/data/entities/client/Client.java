@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.data.entities.clients;
+package ru.andef.andefracing.backend.data.entities.client;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -8,12 +8,17 @@ import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.booking.Booking;
 import ru.andef.andefracing.backend.data.entities.info.Club;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Клиент
+ *
+ * @see Club клуб
+ * @see Booking бронирование
  */
 @Entity
 @Table(name = "client", schema = "clients")
@@ -65,11 +70,19 @@ public class Client {
     }
 
     /**
-     * Сделать бронирование
+     * Сделать бронирование (с возвратом бронирования)
      */
-    public void addBooking(Booking booking) {
+    public Booking makeBooking(
+            Club club,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
+            short cntEquipment,
+            BigDecimal priceValue
+    ) {
+        Booking booking = new Booking(club, this, startDateTime, endDateTime, cntEquipment, priceValue);
         bookings.add(booking);
         booking.setClient(this);
+        return booking;
     }
 
     /**
