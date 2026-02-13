@@ -1,6 +1,7 @@
-package ru.andef.andefracing.backend.data.entities.info;
+package ru.andef.andefracing.backend.data.entities.club.price;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.math.BigDecimal;
 @Table(name = "price", schema = "info")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Price {
     @Id
     @Column(name = "id")

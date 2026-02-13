@@ -1,6 +1,7 @@
-package ru.andef.andefracing.backend.data.entities.info;
+package ru.andef.andefracing.backend.data.entities.club.photo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Table(name = "photo", schema = "info")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Photo {
     @Id
     @Column(name = "id")
