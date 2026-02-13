@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.games.Game;
 import ru.andef.andefracing.backend.data.entities.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.hr.EmployeeClub;
@@ -15,7 +14,6 @@ import ru.andef.andefracing.backend.data.entities.location.City;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -81,7 +79,6 @@ public class Club {
             joinColumns = @JoinColumn(name = "club_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "game_id", nullable = false)
     )
-    @OrderBy(value = "name ASC")
     private List<Game> games = new ArrayList<>();
 
     /**
@@ -208,25 +205,5 @@ public class Club {
      */
     public boolean deletePhoto(Photo photo) {
         return photos.remove(photo);
-    }
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
-                ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
-                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
-        Club club = (Club) o;
-        return Objects.equals(getId(), club.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ?
-                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
-                : getClass().hashCode();
     }
 }
