@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * Игра
+ * Игра (используется как справочник)
  */
 @Entity
 @Table(name = "game", schema = "games")

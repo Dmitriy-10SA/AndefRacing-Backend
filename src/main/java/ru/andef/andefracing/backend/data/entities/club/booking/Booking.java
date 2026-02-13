@@ -1,6 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.club.booking;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import java.time.OffsetDateTime;
 @Table(name = "booking", schema = "bookings")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Booking {
     @Id
     @Column(name = "id")

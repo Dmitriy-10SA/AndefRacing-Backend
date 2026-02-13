@@ -1,6 +1,7 @@
-package ru.andef.andefracing.backend.data.entities.info;
+package ru.andef.andefracing.backend.data.entities.club.work.schedule;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 @Table(name = "work_schedule_exception", schema = "info")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class WorkScheduleException {
     @Id
     @Column(name = "id")

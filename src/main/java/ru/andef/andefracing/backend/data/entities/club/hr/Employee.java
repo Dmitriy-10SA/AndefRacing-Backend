@@ -1,6 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.club.hr;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ru.andef.andefracing.backend.data.entities.club.Club;
@@ -21,6 +22,7 @@ import java.util.List;
 @Table(name = "employee", schema = "hr")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Employee {
     @Id
     @Column(name = "id")

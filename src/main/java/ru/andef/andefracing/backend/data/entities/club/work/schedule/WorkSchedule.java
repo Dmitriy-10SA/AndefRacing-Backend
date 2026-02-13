@@ -1,11 +1,11 @@
-package ru.andef.andefracing.backend.data.entities.info;
+package ru.andef.andefracing.backend.data.entities.club.work.schedule;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 /**
@@ -15,6 +15,7 @@ import java.time.LocalTime;
 @Table(name = "work_schedule", schema = "info")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class WorkSchedule {
     @Id
     @Column(name = "id")
@@ -35,24 +36,4 @@ public class WorkSchedule {
     @Column(name = "is_work_day", nullable = false)
     @Setter
     private boolean isWorkDay;
-
-    /**
-     * Нерабочий день в графике работы
-     */
-    public WorkSchedule(DayOfWeek dayOfWeek) {
-        this.dayOfWeek = (short) dayOfWeek.getValue();
-        this.openTime = null;
-        this.closeTime = null;
-        this.isWorkDay = false;
-    }
-
-    /**
-     * Рабочий день в графике работы
-     */
-    public WorkSchedule(DayOfWeek dayOfWeek, LocalTime openTime, LocalTime closeTime) {
-        this.dayOfWeek = (short) dayOfWeek.getValue();
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-        this.isWorkDay = true;
-    }
 }
