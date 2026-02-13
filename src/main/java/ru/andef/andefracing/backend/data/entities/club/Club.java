@@ -1,19 +1,28 @@
-package ru.andef.andefracing.backend.data.entities.info;
+package ru.andef.andefracing.backend.data.entities.club;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.andef.andefracing.backend.data.entities.games.Game;
-import ru.andef.andefracing.backend.data.entities.hr.Employee;
-import ru.andef.andefracing.backend.data.entities.hr.EmployeeClub;
-import ru.andef.andefracing.backend.data.entities.hr.EmployeeRole;
+import org.hibernate.proxy.HibernateProxy;
+import ru.andef.andefracing.backend.data.entities.club.game.Game;
+import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
+import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
+import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.data.entities.club.photo.Photo;
+import ru.andef.andefracing.backend.data.entities.club.price.Price;
+import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedule;
+import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkScheduleException;
 import ru.andef.andefracing.backend.data.entities.location.City;
 
+import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -126,18 +135,40 @@ public class Club {
     }
 
     /**
-     * Изменение дня в графике работы
+     * Изменить день из графика работы
      */
-    public boolean updateWorkSchedule(WorkSchedule workSchedule) {
-        for (WorkSchedule it : workSchedules) {
-            if (it.getDayOfWeek() == workSchedule.getDayOfWeek()) {
-                it.setWorkDay(workSchedule.isWorkDay());
-                it.setOpenTime(workSchedule.getOpenTime());
-                it.setCloseTime(workSchedule.getCloseTime());
-                return true;
+    private void updateDayFromWorkSchedule(
+            DayOfWeek dayOfWeek,
+            LocalTime openTime,
+            LocalTime closeTime,
+            boolean isWorkDay
+    ) {
+        for (WorkSchedule workSchedule : workSchedules) {
+            if (workSchedule.getDayOfWeek() == dayOfWeek.getValue()) {
+                workSchedule.setWorkDay(isWorkDay);
+                workSchedule.setOpenTime(openTime);
+                workSchedule.setCloseTime(closeTime);
+                return;
             }
         }
-        return false;
+    }
+
+    /**
+     * Изменить день из графика работы на рабочий
+     */
+    public void updateDayFromWorkScheduleToWorkingDay(
+            DayOfWeek dayOfWeek,
+            LocalTime openTime,
+            LocalTime closeTime
+    ) {
+        updateDayFromWorkSchedule(dayOfWeek, openTime, closeTime, true);
+    }
+
+    /**
+     * Изменить день из графика работы на нерабочий
+     */
+    public void updateDayFromWorkScheduleToNonWorkingDay(DayOfWeek dayOfWeek) {
+        updateDayFromWorkSchedule(dayOfWeek, null, null, false);
     }
 
     /**
@@ -164,10 +195,10 @@ public class Club {
     /**
      * Изменение цены за кол-во минут в клубе
      */
-    public boolean updatePrice(Price price) {
-        for (Price it : prices) {
-            if (it.equals(price)) {
-                it.setValue(price.getValue());
+    public boolean updatePrice(short durationMinutes, BigDecimal value) {
+        for (Price price : prices) {
+            if (price.getDurationMinutes() == durationMinutes) {
+                price.setValue(value);
                 return true;
             }
         }
@@ -205,5 +236,25 @@ public class Club {
      */
     public boolean deletePhoto(Photo photo) {
         return photos.remove(photo);
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ?
+                ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        Club club = (Club) o;
+        return Objects.equals(getId(), club.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
     }
 }
