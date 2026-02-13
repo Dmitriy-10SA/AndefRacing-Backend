@@ -39,11 +39,9 @@ public class Booking {
     private Client client;
 
     @Column(name = "start_datetime", nullable = false)
-    @Setter
     private OffsetDateTime startDateTime;
 
     @Column(name = "end_datetime", nullable = false)
-    @Setter
     private OffsetDateTime endDateTime;
 
     @Column(name = "cnt_equipment", nullable = false)

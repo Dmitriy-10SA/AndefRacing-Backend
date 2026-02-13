@@ -1,14 +1,21 @@
-package ru.andef.andefracing.backend.data.entities.hr;
+package ru.andef.andefracing.backend.data.entities.club.hr;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.andef.andefracing.backend.data.entities.booking.Booking;
+import ru.andef.andefracing.backend.data.entities.club.Club;
+import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 
+import java.math.BigDecimal;
+import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Сотрудник
+ *
+ * @see EmployeeClub клуб - сотрудник - роль
+ * @see Booking бронирования
  */
 @Entity
 @Table(name = "employee", schema = "hr")
@@ -43,10 +50,10 @@ public class Employee {
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
-    private List<EmployeeClub> clubAndRoles;
+    private List<EmployeeClub> clubAndRoles = new ArrayList<>();
 
     @OneToMany(mappedBy = "createdByEmployee", fetch = FetchType.LAZY)
-    private List<Booking> bookings;
+    private List<Booking> bookings = new ArrayList<>();
 
     /**
      * Создание сотрудника с заданием пароля им самим в дальнейшем
@@ -62,11 +69,26 @@ public class Employee {
     }
 
     /**
-     * Добавление бронирования, которое было создано сотрудником (только после оплаты)
+     * Добавление бронирования, которое было создано сотрудником, только после оплаты (с возвратом бронирования)
      */
-    public void addBooking(Booking booking) {
+    public Booking addBooking(
+            Club club,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
+            short cntEquipment,
+            BigDecimal priceValue
+    ) {
+        Booking booking = new Booking(club, startDateTime, endDateTime, cntEquipment, priceValue, this);
         bookings.add(booking);
         booking.setCreatedByEmployee(this);
+        return booking;
+    }
+
+    /**
+     * Отмена бронирования
+     */
+    public void cancelBooking(Booking booking) {
+        booking.cancel();
     }
 
     /**

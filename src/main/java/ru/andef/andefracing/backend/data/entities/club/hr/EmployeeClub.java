@@ -1,15 +1,19 @@
-package ru.andef.andefracing.backend.data.entities.hr;
+package ru.andef.andefracing.backend.data.entities.club.hr;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ru.andef.andefracing.backend.data.entities.info.Club;
+import ru.andef.andefracing.backend.data.entities.club.Club;
 
 import java.io.Serializable;
 
 /**
  * Клуб - сотрудник - роль
+ *
+ * @see Club клуб
+ * @see Employee сотрудник
+ * @see EmployeeRole роль
  */
 @Entity
 @Table(name = "employee_club", schema = "hr")
