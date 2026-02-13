@@ -8,6 +8,9 @@ import org.hibernate.proxy.HibernateProxy;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Сотрудник
+ */
 @Entity
 @Table(name = "employee", schema = "hr")
 @Getter
@@ -18,13 +21,13 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "surname", nullable = false, length = 90)
+    @Column(name = "surname", nullable = false, length = 100)
     private String surname;
 
-    @Column(name = "name", nullable = false, length = 75)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @Column(name = "patronymic", length = 90)
+    @Column(name = "patronymic", length = 100)
     private String patronymic;
 
     @Column(name = "phone", unique = true, nullable = false, length = 16)
@@ -39,8 +42,32 @@ public class Employee {
     @Column(name = "is_blocked", nullable = false)
     private boolean isBlocked;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<EmployeeClub> employeeClubs;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", nullable = false)
+    private List<EmployeeClub> clubAndRoles;
+
+    /**
+     * Создание сотрудника с заданием пароля им самим в дальнейшем
+     */
+    public Employee(String surname, String name, String patronymic, String phone) {
+        this.surname = surname;
+        this.name = name;
+        this.patronymic = patronymic;
+        this.phone = phone;
+        this.password = null;
+        this.needPassword = true;
+        this.isBlocked = false;
+    }
+
+    /**
+     * Установка пароля сотрудника
+     */
+    public void setPassword(String password) {
+        if (needPassword) {
+            this.needPassword = false;
+        }
+        this.password = password;
+    }
 
     @Override
     public final boolean equals(Object o) {

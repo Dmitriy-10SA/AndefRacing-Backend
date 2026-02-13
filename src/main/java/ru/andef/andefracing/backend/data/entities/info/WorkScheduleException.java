@@ -9,6 +9,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
+/**
+ * День-исключение в графике работы
+ */
 @Entity
 @Table(name = "work_schedule_exception", schema = "info")
 @Getter
@@ -28,11 +31,33 @@ public class WorkScheduleException {
     @Column(name = "close_time")
     private LocalTime closeTime;
 
-    @Column(name = "is_work_day")
+    @Column(name = "is_work_day", nullable = false)
     private boolean isWorkDay;
 
     @Column(name = "description")
     private String description;
+
+    /**
+     * Нерабочий день-исключение
+     */
+    public WorkScheduleException(LocalDate date, String description) {
+        this.date = date;
+        this.openTime = null;
+        this.closeTime = null;
+        this.isWorkDay = false;
+        this.description = description;
+    }
+
+    /**
+     * Рабочий день-исключение
+     */
+    public WorkScheduleException(LocalDate date, LocalTime openTime, LocalTime closeTime, String description) {
+        this.date = date;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.isWorkDay = true;
+        this.description = description;
+    }
 
     @Override
     public final boolean equals(Object o) {

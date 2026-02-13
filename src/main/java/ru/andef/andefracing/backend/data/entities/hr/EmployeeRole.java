@@ -1,16 +1,21 @@
 package ru.andef.andefracing.backend.data.entities.hr;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
+/**
+ * Роль сотрудника
+ */
 @Entity
 @Table(name = "employee_role", schema = "hr")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class EmployeeRole {
     @Id
     @Column(name = "id")

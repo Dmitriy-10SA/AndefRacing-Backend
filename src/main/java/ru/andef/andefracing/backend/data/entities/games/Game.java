@@ -1,22 +1,21 @@
 package ru.andef.andefracing.backend.data.entities.games;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.proxy.HibernateProxy;
-import ru.andef.andefracing.backend.data.entities.info.Club;
 
 import java.util.Objects;
 
 /**
- * Игра (справочник)
- *
- * @see Club
+ * Игра
  */
 @Entity
 @Table(name = "game", schema = "games")
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Game {
     @Id
     @Column(name = "id")

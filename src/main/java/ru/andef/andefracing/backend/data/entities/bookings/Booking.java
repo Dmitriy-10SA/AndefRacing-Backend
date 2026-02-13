@@ -3,6 +3,7 @@ package ru.andef.andefracing.backend.data.entities.bookings;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.clients.Client;
 import ru.andef.andefracing.backend.data.entities.hr.Employee;
@@ -12,6 +13,9 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+/**
+ * Бронирование
+ */
 @Entity
 @Table(name = "booking", schema = "bookings")
 @Getter
@@ -28,12 +32,15 @@ public class Booking {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
+    @Setter
     private Client client;
 
     @Column(name = "start_datetime", nullable = false)
+    @Setter
     private OffsetDateTime startDateTime;
 
     @Column(name = "end_datetime", nullable = false)
+    @Setter
     private OffsetDateTime endDateTime;
 
     @Column(name = "cnt_equipment", nullable = false)
@@ -52,6 +59,64 @@ public class Booking {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_employee_id")
     private Employee createdByEmployee;
+
+    /**
+     * Бронирование, созданное клиентом
+     */
+    public Booking(
+            Club club,
+            Client client,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
+            short cntEquipment,
+            BigDecimal priceValue
+    ) {
+        this.club = club;
+        this.client = client;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.cntEquipment = cntEquipment;
+        this.priceValue = priceValue;
+        this.status = BookingStatus.PENDING;
+        this.isWalkIn = false;
+        this.createdByEmployee = null;
+    }
+
+    /**
+     * Бронирование, созданное сотрудником (только после оплаты)
+     */
+    public Booking(
+            Club club,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
+            short cntEquipment,
+            BigDecimal priceValue,
+            Employee employee
+    ) {
+        this.club = club;
+        this.client = null;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.cntEquipment = cntEquipment;
+        this.priceValue = priceValue;
+        this.status = BookingStatus.PAID;
+        this.isWalkIn = true;
+        this.createdByEmployee = employee;
+    }
+
+    /**
+     * Оплата брони
+     */
+    public void paid() {
+        this.status = BookingStatus.PAID;
+    }
+
+    /**
+     * Отмена брони
+     */
+    public void cancel() {
+        this.status = BookingStatus.CANCELLED;
+    }
 
     @Override
     public final boolean equals(Object o) {

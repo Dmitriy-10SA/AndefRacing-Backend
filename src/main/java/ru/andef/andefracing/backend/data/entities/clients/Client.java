@@ -3,12 +3,18 @@ package ru.andef.andefracing.backend.data.entities.clients;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
+import ru.andef.andefracing.backend.data.entities.bookings.Booking;
 import ru.andef.andefracing.backend.data.entities.info.Club;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Клиент
+ */
 @Entity
 @Table(name = "client", schema = "clients")
 @Getter
@@ -19,13 +25,16 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "name", nullable = false, length = 75)
+    @Column(name = "name", nullable = false, length = 100)
+    @Setter
     private String name;
 
     @Column(name = "phone", unique = true, nullable = false, length = 16)
+    @Setter
     private String phone;
 
     @Column(name = "password", nullable = false)
+    @Setter
     private String password;
 
     @Column(name = "is_blocked", nullable = false)
@@ -38,7 +47,51 @@ public class Client {
             joinColumns = @JoinColumn(name = "client_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "club_id", nullable = false)
     )
-    private List<Club> favoriteClubs;
+    @OrderBy(value = "name ASC")
+    private List<Club> favoriteClubs = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    @OrderBy(value = "startDateTime ASC, endDateTime ASC")
+    private List<Booking> bookings = new ArrayList<>();
+
+    /**
+     * Регистрация клиента
+     */
+    public Client(String name, String phone, String password) {
+        this.name = name;
+        this.phone = phone;
+        this.password = password;
+        this.isBlocked = false;
+    }
+
+    /**
+     * Сделать бронирование
+     */
+    public void addBooking(Booking booking) {
+        bookings.add(booking);
+        booking.setClient(this);
+    }
+
+    /**
+     * Оплатить бронирование
+     */
+    public void paidBooking(Booking booking) {
+        booking.paid();
+    }
+
+    /**
+     * Добавление клуба в список избранных
+     */
+    public void addFavoriteClub(Club club) {
+        favoriteClubs.add(club);
+    }
+
+    /**
+     * Удаление клуба из списка избранных
+     */
+    public boolean deleteFavoriteClub(Club club) {
+        return favoriteClubs.remove(club);
+    }
 
     @Override
     public final boolean equals(Object o) {

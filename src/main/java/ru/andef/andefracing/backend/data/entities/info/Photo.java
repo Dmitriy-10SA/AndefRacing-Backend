@@ -4,18 +4,18 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
 /**
- * Фотография клуба
+ * Фотография в клубе
  */
 @Entity
 @Table(name = "photo", schema = "info")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Photo {
     @Id
     @Column(name = "id")
@@ -26,6 +26,7 @@ public class Photo {
     private String url;
 
     @Column(name = "sequence_number", nullable = false)
+    @Setter
     private short sequenceNumber;
 
     public Photo(String url, short sequenceNumber) {

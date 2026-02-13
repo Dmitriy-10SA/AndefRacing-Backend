@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
@@ -16,7 +17,6 @@ import java.util.Objects;
 @Table(name = "price", schema = "info")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Price {
     @Id
     @Column(name = "id")
@@ -27,6 +27,7 @@ public class Price {
     private short durationMinutes;
 
     @Column(name = "value", nullable = false, precision = 8, scale = 2)
+    @Setter
     private BigDecimal value;
 
     public Price(short durationMinutes, BigDecimal value) {
