@@ -22,6 +22,10 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private short id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false)
+    private Region region;
+
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 

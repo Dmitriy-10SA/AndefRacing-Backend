@@ -27,8 +27,7 @@ public class Region {
     @Column(name = "name", unique = true, nullable = false, length = 100)
     private String name;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "region_id", nullable = false)
+    @OneToMany(mappedBy = "region", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy(value = "name ASC")
     private List<City> cities = new ArrayList<>();
 
