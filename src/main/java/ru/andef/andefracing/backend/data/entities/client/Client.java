@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ru.andef.andefracing.backend.data.entities.booking.Booking;
-import ru.andef.andefracing.backend.data.entities.info.Club;
+import ru.andef.andefracing.backend.data.entities.club.Club;
+import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -50,11 +50,9 @@ public class Client {
             joinColumns = @JoinColumn(name = "client_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "club_id", nullable = false)
     )
-    @OrderBy(value = "name ASC")
     private List<Club> favoriteClubs = new ArrayList<>();
 
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
-    @OrderBy(value = "startDateTime ASC, endDateTime ASC")
     private List<Booking> bookings = new ArrayList<>();
 
     /**
