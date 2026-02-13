@@ -27,6 +27,14 @@ import java.util.stream.Collectors;
 
 /**
  * Клуб
+ *
+ * @see City город
+ * @see Photo фотография в клубе
+ * @see Price цена за кол-во минут в клубе
+ * @see EmployeeClub клуб - сотрудник - роль
+ * @see WorkSchedule день из графика работы клуба
+ * @see WorkScheduleException день-исключение в графике работы клуба
+ * @see Game игра
  */
 @Entity
 @Table(name = "club", schema = "info")
