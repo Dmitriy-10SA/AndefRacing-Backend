@@ -4,6 +4,8 @@ import lombok.Getter;
 
 /**
  * Статус бронирования
+ *
+ * @see Booking бронирование
  */
 public enum BookingStatus {
     PENDING("Ожидание оплаты"),
@@ -11,6 +13,9 @@ public enum BookingStatus {
     CANCELLED("Отменено"),
     EXPIRED("Истекло время для оплаты");
 
+    /**
+     * Представление в виде текста на русском языке
+     */
     @Getter
     private final String ru;
 

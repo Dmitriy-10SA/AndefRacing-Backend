@@ -14,7 +14,12 @@ import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
- * Бронирование
+ * Бронирование (может быть сделано клиентом онлайн или сотрудником непосредственно в клубе)
+ *
+ * @see Club клуб
+ * @see Client клиент
+ * @see BookingStatus статус бронирования
+ * @see Employee сотрудник
  */
 @Entity
 @Table(name = "booking", schema = "bookings")
@@ -62,7 +67,7 @@ public class Booking {
     private Employee createdByEmployee;
 
     /**
-     * Бронирование, созданное клиентом
+     * Бронирование, созданное клиентом (оплата в течение 10 минут)
      */
     public Booking(
             Club club,
@@ -84,7 +89,7 @@ public class Booking {
     }
 
     /**
-     * Бронирование, созданное сотрудником (только после оплаты)
+     * Бронирование, созданное сотрудником (оплата сразу)
      */
     public Booking(
             Club club,
@@ -106,14 +111,14 @@ public class Booking {
     }
 
     /**
-     * Оплата брони
+     * Оплата бронирования
      */
     public void paid() {
         this.status = BookingStatus.PAID;
     }
 
     /**
-     * Отмена брони
+     * Отмена бронирования
      */
     public void cancel() {
         this.status = BookingStatus.CANCELLED;
