@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.data.entities.booking;
+package ru.andef.andefracing.backend.data.entities.club.booking;
 
 import lombok.Getter;
 

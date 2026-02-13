@@ -1,12 +1,12 @@
-package ru.andef.andefracing.backend.data.entities.booking;
+package ru.andef.andefracing.backend.data.entities.club.booking;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.andef.andefracing.backend.data.entities.client.Client;
-import ru.andef.andefracing.backend.data.entities.hr.Employee;
-import ru.andef.andefracing.backend.data.entities.info.Club;
+import ru.andef.andefracing.backend.data.entities.club.Club;
+import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
