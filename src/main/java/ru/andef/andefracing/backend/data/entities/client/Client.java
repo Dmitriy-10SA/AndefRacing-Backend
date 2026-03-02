@@ -1,10 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.client;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
@@ -56,6 +53,7 @@ public class Client {
     )
     private List<Club> favoriteClubs = new ArrayList<>();
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Booking> bookings = new ArrayList<>();
 
