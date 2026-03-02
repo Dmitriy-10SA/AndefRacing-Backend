@@ -2,7 +2,6 @@ package ru.andef.andefracing.backend.data.entities.club;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.andef.andefracing.backend.data.entities.club.game.Game;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.entities.club.photo.Photo;
@@ -69,13 +68,6 @@ class ClubTest {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-    }
-
-    /**
-     * Возврат игры для тестов
-     */
-    private Game getGame(short id) {
-        return new Game(id, "name", "url", true);
     }
 
     /**
