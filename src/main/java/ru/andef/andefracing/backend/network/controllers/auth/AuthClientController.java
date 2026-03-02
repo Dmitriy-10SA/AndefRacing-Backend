@@ -9,7 +9,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 
 /**
- * Controller для всех Auth действий (вход, регистрация и смена пароля) клиента
+ * Controller для всех Auth действий клиента
  */
 @RestController
 @RequestMapping("/auth/client")
