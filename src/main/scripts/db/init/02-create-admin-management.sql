@@ -174,51 +174,6 @@ CREATE TRIGGER trg_check_game_deactivate
 EXECUTE FUNCTION admin_management.check_game_update();
 
 --------------------------------------------------------------------------------------------
--- Добавление роли
---------------------------------------------------------------------------------------------
-CREATE
-    OR REPLACE FUNCTION admin_management.add_role(p_name VARCHAR(30))
-    RETURNS SMALLINT AS
-$$
-DECLARE
-    v_id SMALLINT;
-BEGIN
-    INSERT INTO hr.employee_role(name)
-    VALUES (p_name)
-    RETURNING id
-        INTO v_id;
-    RETURN v_id;
-END;
-$$
-    LANGUAGE plpgsql;
-
--- Сразу добавим основные роли, которые точно будут изначально в системе:
--- 1) Сотрудник;
--- 2) Администратор;
--- 3) Управляющий.
-SELECT *
-FROM admin_management.add_role('Сотрудник');
-SELECT *
-FROM admin_management.add_role('Администратор');
-SELECT *
-FROM admin_management.add_role('Управляющий');
-
---------------------------------------------------------------------------------------------
--- Удаление роли
---------------------------------------------------------------------------------------------
-CREATE
-    OR REPLACE FUNCTION admin_management.delete_role(p_role_id SMALLINT)
-    RETURNS VOID AS
-$$
-BEGIN
-    DELETE
-    FROM hr.employee_role
-    WHERE id = p_role_id;
-END;
-$$
-    LANGUAGE plpgsql;
-
---------------------------------------------------------------------------------------------
 -- Добавление клуба
 --------------------------------------------------------------------------------------------
 CREATE
@@ -267,10 +222,8 @@ BEGIN
     END IF;
 
 -- Присваиваем роль "Управляющий"
-    INSERT INTO hr.employee_club(club_id, employee_id, employee_role_id)
-    SELECT v_club_id, v_employee_id, id
-    FROM hr.employee_role
-    WHERE name = 'Управляющий';
+    INSERT INTO hr.employee_club (club_id, employee_id, employee_role)
+    VALUES (v_club_id, v_employee_id, 'MANAGER'::hr.employee_role);
 
     RETURN v_club_id;
 END;
