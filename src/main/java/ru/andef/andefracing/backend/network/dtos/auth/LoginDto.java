@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
-import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 /**
  * Dto для логина
