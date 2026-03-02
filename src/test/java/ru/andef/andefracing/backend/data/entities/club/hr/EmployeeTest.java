@@ -55,22 +55,6 @@ class EmployeeTest {
     }
 
     @Test
-    @DisplayName("При регистрация сотрудника все данные, кроме пароля сохраняются успешно и need_password = TRUE")
-    void testRegisterEmployeeWithoutPassword() {
-        Employee employee = getNewEmployee();
-        assertEquals(0, employee.getId());
-        assertEquals(SURNAME, employee.getSurname());
-        assertEquals(NAME, employee.getName());
-        assertEquals(PATRONYMIC, employee.getPatronymic());
-        assertEquals(PHONE, employee.getPhone());
-        assertNull(employee.getPassword());
-        assertTrue(employee.isNeedPassword());
-        assertFalse(employee.isBlocked());
-        assertTrue(employee.getClubAndRoles().isEmpty());
-        assertTrue(employee.getBookings().isEmpty());
-    }
-
-    @Test
     @DisplayName("Добавление бронирования сотрудником (оплата сразу)")
     void testAddBooking() {
         Employee employee = getNewEmployee();

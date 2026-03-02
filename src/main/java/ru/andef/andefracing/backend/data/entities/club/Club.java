@@ -1,10 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.club;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.club.game.Game;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
@@ -27,14 +24,6 @@ import java.util.stream.Collectors;
 
 /**
  * Клуб
- *
- * @see City город
- * @see Photo фотография в клубе
- * @see Price цена за кол-во минут в клубе
- * @see EmployeeClub клуб - сотрудник - роль
- * @see WorkSchedule день из графика работы клуба
- * @see WorkScheduleException день-исключение в графике работы клуба
- * @see Game игра
  */
 @Entity
 @Table(name = "club", schema = "info")
@@ -67,6 +56,10 @@ public class Club {
     @Setter
     private short cntEquipment;
 
+    @Column(name = "is_open", nullable = false)
+    @Setter
+    private boolean isOpen;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id", nullable = false)
     @OrderBy(value = "sequenceNumber ASC")
@@ -74,6 +67,16 @@ public class Club {
 
     @OneToMany(mappedBy = "club", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<EmployeeClub> employeesAndRoles = new ArrayList<>();
+
+    @Getter(AccessLevel.NONE)
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "game_club",
+            schema = "info",
+            joinColumns = @JoinColumn(name = "club_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "game_id", nullable = false)
+    )
+    private List<Game> games = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id", nullable = false)
@@ -85,18 +88,10 @@ public class Club {
     @OrderBy(value = "dayOfWeek ASC")
     private List<WorkSchedule> workSchedules = new ArrayList<>();
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "club_id", nullable = false)
     private List<WorkScheduleException> workScheduleExceptions = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "game_club",
-            schema = "info",
-            joinColumns = @JoinColumn(name = "club_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "game_id", nullable = false)
-    )
-    private List<Game> games = new ArrayList<>();
 
     /**
      * Добавление сотрудника в клуб

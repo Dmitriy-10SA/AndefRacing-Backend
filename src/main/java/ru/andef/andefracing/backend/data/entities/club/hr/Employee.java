@@ -1,6 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.club.hr;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,6 +56,7 @@ public class Employee {
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<EmployeeClub> clubAndRoles = new ArrayList<>();
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "createdByEmployee", fetch = FetchType.LAZY)
     private List<Booking> bookings = new ArrayList<>();
 
@@ -95,7 +97,7 @@ public class Employee {
     }
 
     /**
-     * Установка пароля сотрудника
+     * Установка|изменение пароля сотрудника
      */
     public void setPassword(String password) {
         if (needPassword) {

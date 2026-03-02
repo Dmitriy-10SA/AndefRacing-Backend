@@ -10,8 +10,6 @@ import java.util.Objects;
 
 /**
  * Город
- *
- * @see Region регион
  */
 @Entity
 @Table(name = "city", schema = "location")

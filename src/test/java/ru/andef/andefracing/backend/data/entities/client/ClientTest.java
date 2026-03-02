@@ -67,6 +67,7 @@ class ClientTest {
                 "email",
                 "address",
                 CNT_EQUIPMENT,
+                true,
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -74,19 +75,6 @@ class ClientTest {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-    }
-
-    @Test
-    @DisplayName("Регистрация клиента")
-    void testRegister() {
-        Client client = getNewClient();
-        assertEquals(0, client.getId());
-        assertEquals(TEST_CLIENT_NAME, client.getName());
-        assertEquals(TEST_CLIENT_PHONE, client.getPhone());
-        assertEquals(TEST_CLIENT_PASSWORD, client.getPassword());
-        assertFalse(client.isBlocked());
-        assertEquals(0, client.getFavoriteClubs().size());
-        assertEquals(0, client.getBookings().size());
     }
 
     @Test

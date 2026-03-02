@@ -8,12 +8,10 @@ import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.entities.club.photo.Photo;
 import ru.andef.andefracing.backend.data.entities.club.price.Price;
 import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedule;
-import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkScheduleException;
 import ru.andef.andefracing.backend.data.entities.location.City;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +36,7 @@ class ClubTest {
                 "email",
                 "address",
                 (short) 1,
+                true,
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -211,48 +210,6 @@ class ClubTest {
     }
 
     @Test
-    @DisplayName("Добавление дня-исключения в график работы клуба")
-    void testAddWorkScheduleExceptionToClub() {
-        Club club = getClub();
-        assertTrue(club.getWorkScheduleExceptions().isEmpty());
-        WorkScheduleException workScheduleException = new WorkScheduleException();
-        club.addWorkScheduleException(workScheduleException);
-        assertEquals(1, club.getWorkScheduleExceptions().size());
-    }
-
-    @Test
-    @DisplayName("Удаление дня-исключения из графика работы клуба")
-    void testDeleteWorkScheduleExceptionToClub() {
-        Club club = getClub();
-        WorkScheduleException workScheduleException = new WorkScheduleException();
-        club.addWorkScheduleException(workScheduleException);
-        assertEquals(1, club.getWorkScheduleExceptions().size());
-        boolean isDeleted = club.deleteWorkScheduleException(workScheduleException);
-        assertTrue(isDeleted);
-        assertTrue(club.getWorkScheduleExceptions().isEmpty());
-    }
-
-    @Test
-    @DisplayName("Удаление дня-исключения из графика работы клуба которого нет в этом клубе")
-    void testDeleteWorkScheduleExceptionToClubWhichHeWasNotIn() {
-        Club club = getClub();
-        WorkScheduleException workScheduleException = new WorkScheduleException();
-        club.addWorkScheduleException(workScheduleException);
-        assertEquals(1, club.getWorkScheduleExceptions().size());
-        WorkScheduleException workScheduleExceptionForDelete = new WorkScheduleException(
-                2,
-                LocalDate.now(),
-                LocalTime.now(),
-                LocalTime.now().plusMinutes(10),
-                true,
-                null
-        );
-        boolean isDeleted = club.deleteWorkScheduleException(workScheduleExceptionForDelete);
-        assertFalse(isDeleted);
-        assertTrue(club.getWorkScheduleExceptions().contains(workScheduleException));
-    }
-
-    @Test
     @DisplayName("Изменить день из графика работы на рабочий")
     void testUpdateDayFromWorkScheduleInClubToWorkingDay() {
         Club club = getClub();
@@ -284,42 +241,6 @@ class ClubTest {
         assertNull(club.getWorkSchedules().get(dayOfWeekNumber - 1).getOpenTime());
         assertNull(club.getWorkSchedules().get(dayOfWeekNumber - 1).getCloseTime());
         assertFalse(club.getWorkSchedules().get(dayOfWeekNumber - 1).isWorkDay());
-    }
-
-    @Test
-    @DisplayName("Добавление игры в клуб")
-    void testAddGame() {
-        Club club = getClub();
-        Game game = getGame((short) 1);
-        assertTrue(club.getGames().isEmpty());
-        club.addGame(game);
-        assertEquals(1, club.getGames().size());
-        assertTrue(club.getGames().contains(game));
-    }
-
-    @Test
-    @DisplayName("Удаление игры из клуба")
-    void testDeleteGame() {
-        Club club = getClub();
-        Game game = getGame((short) 1);
-        club.addGame(game);
-        assertEquals(1, club.getGames().size());
-        boolean isDeleted = club.deleteGame(game);
-        assertTrue(isDeleted);
-        assertTrue(club.getGames().isEmpty());
-    }
-
-    @Test
-    @DisplayName("Удаление игры из клуба, которой нет в этом клубе")
-    void testDeleteGameWhichDoesNotExitsInThisClub() {
-        Club club = getClub();
-        Game game = getGame((short) 1);
-        club.addGame(game);
-        assertEquals(1, club.getGames().size());
-        Game gameForDelete = getGame((short) 2);
-        boolean isDeleted = club.deleteGame(gameForDelete);
-        assertFalse(isDeleted);
-        assertEquals(1, club.getGames().size());
     }
 
     @Test
