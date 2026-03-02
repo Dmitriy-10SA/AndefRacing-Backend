@@ -97,8 +97,8 @@ class ClubTest {
         assertTrue(club.getEmployeesAndRoles().isEmpty());
         Employee employee = getEmployee();
         List<EmployeeRole> employeeRoles = new ArrayList<>();
-        employeeRoles.add(new EmployeeRole((short) 1, "ADMIN"));
-        employeeRoles.add(new EmployeeRole((short) 2, "OWNER"));
+        employeeRoles.add(EmployeeRole.ADMIN);
+        employeeRoles.add(EmployeeRole.MANAGER);
         club.addEmployee(employee, employeeRoles);
         assertEquals(2, club.getEmployeesAndRoles().size());
         club.getEmployeesAndRoles().forEach(employeeClub -> {
@@ -114,11 +114,11 @@ class ClubTest {
         Club club = getClub();
         Employee employee = getEmployee();
         List<EmployeeRole> employeeRoles = new ArrayList<>();
-        employeeRoles.add(new EmployeeRole((short) 1, "ADMIN"));
-        employeeRoles.add(new EmployeeRole((short) 2, "OWNER"));
+        employeeRoles.add(EmployeeRole.ADMIN);
+        employeeRoles.add(EmployeeRole.MANAGER);
         club.addEmployee(employee, employeeRoles);
         assertEquals(2, club.getEmployeesAndRoles().size());
-        EmployeeRole newEmployeeRole = new EmployeeRole((short) 3, "USUAL");
+        EmployeeRole newEmployeeRole = EmployeeRole.EMPLOYEE;
         club.addRoleForEmployee(employee, newEmployeeRole);
         assertEquals(3, club.getEmployeesAndRoles().size());
         long cnt = club.getEmployeesAndRoles()
@@ -134,8 +134,8 @@ class ClubTest {
         Club club = getClub();
         Employee employee = getEmployee();
         List<EmployeeRole> employeeRoles = new ArrayList<>();
-        employeeRoles.add(new EmployeeRole((short) 1, "ADMIN"));
-        employeeRoles.add(new EmployeeRole((short) 2, "OWNER"));
+        employeeRoles.add(EmployeeRole.ADMIN);
+        employeeRoles.add(EmployeeRole.MANAGER);
         club.addEmployee(employee, employeeRoles);
         assertEquals(2, club.getEmployeesAndRoles().size());
         boolean isDeleted = club.deleteRoleForEmployee(employee, employeeRoles.get(0));
@@ -154,8 +154,8 @@ class ClubTest {
         Club club = getClub();
         Employee employee = getEmployee();
         List<EmployeeRole> employeeRoles = new ArrayList<>();
-        employeeRoles.add(new EmployeeRole((short) 1, "ADMIN"));
-        EmployeeRole employeeRole = new EmployeeRole((short) 2, "OWNER");
+        employeeRoles.add(EmployeeRole.ADMIN);
+        EmployeeRole employeeRole = EmployeeRole.MANAGER;
         club.addEmployee(employee, employeeRoles);
         assertEquals(1, club.getEmployeesAndRoles().size());
         boolean isDeleted = club.deleteRoleForEmployee(employee, employeeRole);
@@ -175,8 +175,8 @@ class ClubTest {
         assertTrue(club.getEmployeesAndRoles().isEmpty());
         Employee employeeForDelete = getEmployee();
         List<EmployeeRole> employeeRoles = new ArrayList<>();
-        employeeRoles.add(new EmployeeRole((short) 1, "ADMIN"));
-        employeeRoles.add(new EmployeeRole((short) 2, "OWNER"));
+        employeeRoles.add(EmployeeRole.ADMIN);
+        employeeRoles.add(EmployeeRole.MANAGER);
         club.addEmployee(employeeForDelete, employeeRoles);
         assertEquals(2, club.getEmployeesAndRoles().size());
         boolean isDeleted = club.deleteEmployee(employeeForDelete);
@@ -191,8 +191,8 @@ class ClubTest {
         assertTrue(club.getEmployeesAndRoles().isEmpty());
         Employee employee = getEmployee();
         List<EmployeeRole> employeeRoles = new ArrayList<>();
-        employeeRoles.add(new EmployeeRole((short) 1, "ADMIN"));
-        employeeRoles.add(new EmployeeRole((short) 2, "OWNER"));
+        employeeRoles.add(EmployeeRole.ADMIN);
+        employeeRoles.add(EmployeeRole.MANAGER);
         club.addEmployee(employee, employeeRoles);
         assertEquals(2, club.getEmployeesAndRoles().size());
         Employee employeeForDelete = getEmployeeWithId(2);
