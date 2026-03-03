@@ -6,9 +6,9 @@ import lombok.Getter;
  * Роль сотрудника
  */
 public enum EmployeeRole {
-    EMPLOYEE("Сотрудник"),
-    ADMIN("Администратор"),
-    MANAGER("Управляющий");
+    EMPLOYEE("Сотрудник", "ROLE_EMPLOYEE"),
+    ADMIN("Администратор", "ROLE_ADMIN"),
+    MANAGER("Управляющий", "ROLE_MANAGER");
 
     /**
      * Представление в виде текста на русском языке
@@ -16,7 +16,11 @@ public enum EmployeeRole {
     @Getter
     private final String ru;
 
-    EmployeeRole(String ru) {
+    @Getter
+    private final String role;
+
+    EmployeeRole(String ru, String role) {
         this.ru = ru;
+        this.role=role;
     }
 }

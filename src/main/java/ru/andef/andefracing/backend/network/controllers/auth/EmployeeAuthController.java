@@ -12,6 +12,9 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 @RestController
 @RequestMapping("/auth/employee")
 public class EmployeeAuthController {
+    /**
+     * Проверка, первый ли вход для сотрудника в систему (нужно ли задать пароль)
+     */
     @GetMapping("/is-first-enter")
     public ResponseEntity<Boolean> isFirstEnter(
             @RequestParam(name = "phone")
@@ -26,12 +29,18 @@ public class EmployeeAuthController {
         return ResponseEntity.ok(false);
     }
 
+    /**
+     * Вход в систему для сотрудника
+     */
     @PostMapping("/login")
     public ResponseEntity<EmployeeAuthResponseDto> login(@RequestBody @Valid EmployeeLoginDto loginDto) {
         // TODO
         return ResponseEntity.ok(new EmployeeAuthResponseDto(""));
     }
 
+    /**
+     * Смена пароля у сотрудника по номеру телефона
+     */
     @PatchMapping("/change-password")
     public ResponseEntity<EmployeeAuthResponseDto> changePassword(
             @RequestBody @Valid EmployeeChangePasswordDto changePasswordDto
