@@ -14,7 +14,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
  */
 @RestController
 @RequestMapping("/auth/client")
-public class AuthClientController {
+public class ClientAuthController {
     @PostMapping("/register")
     public ResponseEntity<ClientAuthResponseDto> register(@RequestBody @Valid ClientRegisterDto registerDto) {
         // TODO

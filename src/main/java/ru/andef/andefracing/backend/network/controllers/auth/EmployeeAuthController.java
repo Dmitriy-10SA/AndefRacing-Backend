@@ -14,7 +14,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
  */
 @RestController
 @RequestMapping("/auth/employee")
-public class AuthEmployeeController {
+public class EmployeeAuthController {
     @GetMapping("/is-first-enter")
     public ResponseEntity<Boolean> isFirstEnter(
             @RequestParam(name = "phone")
