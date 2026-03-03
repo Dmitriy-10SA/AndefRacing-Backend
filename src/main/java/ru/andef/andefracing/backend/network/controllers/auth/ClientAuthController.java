@@ -9,9 +9,6 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswor
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 
-/**
- * Controller для всех Auth действий клиента
- */
 @RestController
 @RequestMapping("/auth/client")
 public class ClientAuthController {

@@ -9,9 +9,6 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthRespo
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
-/**
- * Controller для всех Auth действий сотрудника
- */
 @RestController
 @RequestMapping("/auth/employee")
 public class EmployeeAuthController {
