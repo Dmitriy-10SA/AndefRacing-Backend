@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
@@ -11,6 +12,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 @RestController
 @RequestMapping("/auth/employee")
+@Validated
 public class EmployeeAuthController {
     /**
      * Проверка, первый ли вход для сотрудника в систему (нужно ли задать пароль)
