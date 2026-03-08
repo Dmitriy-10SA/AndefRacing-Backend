@@ -177,6 +177,7 @@ CREATE TABLE bookings.booking
     status                 bookings.booking_status NOT NULL,
     is_walk_in             BOOLEAN                 NOT NULL,
     created_by_employee_id BIGINT REFERENCES hr.employee (id),
+    note                   TEXT,
 
     CHECK (start_datetime < end_datetime),
     CHECK (

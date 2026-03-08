@@ -66,6 +66,9 @@ public class Booking {
     @Setter
     private Employee createdByEmployee;
 
+    @Column(name = "note")
+    private String note;
+
     /**
      * Бронирование, созданное клиентом (оплата в течение 10 минут)
      */
