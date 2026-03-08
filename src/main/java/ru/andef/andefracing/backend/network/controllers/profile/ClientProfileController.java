@@ -3,7 +3,7 @@ package ru.andef.andefracing.backend.network.controllers.profile;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.network.dtos.PagedClubShortListDto;
+import ru.andef.andefracing.backend.network.dtos.PagedFavoriteClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 
@@ -43,7 +43,7 @@ public class ClientProfileController {
      * Получение списка избранных клубов клиента с пагинацией
      */
     @GetMapping("/favorite-club")
-    public ResponseEntity<PagedClubShortListDto> getFavoriteClubs() {
+    public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs() {
         // TODO
         return ResponseEntity.ok(null);
     }

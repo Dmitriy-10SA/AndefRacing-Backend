@@ -1,16 +1,19 @@
 package ru.andef.andefracing.backend.network.dtos;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Dto клуба с краткой информацией о клубе
  */
-public record ClubShortDto(
-        int id,
-        String name,
-        String phone,
-        String email,
-        String address,
-        short cntEquipment,
-        boolean isOpen,
-        PhotoDto mainPhoto
-) {
+@Getter
+@RequiredArgsConstructor
+public abstract class ClubShortDto {
+    private final int id;
+    private final String name;
+    private final String phone;
+    private final String email;
+    private final String address;
+    private final short cntEquipment;
+    private final boolean isOpen;
 }
