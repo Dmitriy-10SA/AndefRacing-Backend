@@ -8,7 +8,7 @@ import java.time.LocalDate;
 /**
  * DTO для получения свободных слотов бронирования
  */
-public record FreeBookingSlotsRequest(
+public record FreeBookingSlotsRequestDto(
         @Min(1) short durationMinutes,
         @Min(1) short cntEquipment,
         @NotNull LocalDate date
