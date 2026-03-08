@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos;
+package ru.andef.andefracing.backend.network.dtos.common.club;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
