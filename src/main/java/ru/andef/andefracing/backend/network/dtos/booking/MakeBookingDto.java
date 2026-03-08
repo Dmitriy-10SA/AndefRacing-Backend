@@ -1,6 +1,7 @@
 package ru.andef.andefracing.backend.network.dtos.booking;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public abstract class MakeBookingDto {
-    @Valid
-    FreeBookingSlotsRequestDto freeBookingSlotsRequest;
+    @Min(1)
+    private final short durationMinutes;
+    @Min(1)
+    private final short cntEquipment;
     @NotNull
     @Valid
     private final FreeBookingSlotDto slot;

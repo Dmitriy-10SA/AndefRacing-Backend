@@ -4,7 +4,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.MakeBookingDto;
 
 public class EmployeeMakeBookingDto extends MakeBookingDto {
-    public EmployeeMakeBookingDto(FreeBookingSlotDto slot, String note) {
-        super(slot, note);
+    public EmployeeMakeBookingDto(short durationMinutes, short cntEquipment, FreeBookingSlotDto slot, String note) {
+        super(durationMinutes, cntEquipment, slot, note);
     }
 }
