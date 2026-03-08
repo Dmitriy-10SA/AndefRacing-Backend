@@ -24,5 +24,5 @@ public class JwtProperties {
     private final String clientSubject = "CLIENT";
     private final String employeeSubject = "EMPLOYEE";
 
-    private final String clientRole = "ROLE_CLIENT";
+    private final String clientRole = "CLIENT";
 }

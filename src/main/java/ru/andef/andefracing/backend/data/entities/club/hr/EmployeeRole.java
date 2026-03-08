@@ -6,9 +6,9 @@ import lombok.Getter;
  * Роль сотрудника
  */
 public enum EmployeeRole {
-    EMPLOYEE("Сотрудник", "ROLE_EMPLOYEE"),
-    ADMIN("Администратор", "ROLE_ADMIN"),
-    MANAGER("Управляющий", "ROLE_MANAGER");
+    EMPLOYEE("Сотрудник", "EMPLOYEE"),
+    ADMIN("Администратор", "ADMIN"),
+    MANAGER("Управляющий", "MANAGER");
 
     /**
      * Представление в виде текста на русском языке

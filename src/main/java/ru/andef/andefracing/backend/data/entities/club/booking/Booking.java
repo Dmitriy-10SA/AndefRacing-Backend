@@ -70,7 +70,7 @@ public class Booking {
     private String note;
 
     /**
-     * Бронирование, созданное клиентом (оплата в течение 10 минут)
+     * Бронирование, созданное клиентом
      */
     public Booking(
             Club club,
@@ -86,13 +86,13 @@ public class Booking {
         this.endDateTime = endDateTime;
         this.cntEquipment = cntEquipment;
         this.priceValue = priceValue;
-        this.status = BookingStatus.PENDING;
+        this.status = BookingStatus.PAID;
         this.isWalkIn = false;
         this.createdByEmployee = null;
     }
 
     /**
-     * Бронирование, созданное сотрудником (оплата сразу)
+     * Бронирование, созданное сотрудником
      */
     public Booking(
             Club club,
@@ -111,13 +111,6 @@ public class Booking {
         this.status = BookingStatus.PAID;
         this.isWalkIn = true;
         this.createdByEmployee = employee;
-    }
-
-    /**
-     * Оплата бронирования
-     */
-    public void paid() {
-        this.status = BookingStatus.PAID;
     }
 
     /**
