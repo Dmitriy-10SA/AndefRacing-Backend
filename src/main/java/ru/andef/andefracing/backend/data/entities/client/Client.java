@@ -84,13 +84,6 @@ public class Client {
     }
 
     /**
-     * Оплатить бронирование
-     */
-    public void paidBooking(Booking booking) {
-        booking.paid();
-    }
-
-    /**
      * Добавление клуба в список избранных
      */
     public void addFavoriteClub(Club club) {

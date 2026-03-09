@@ -89,19 +89,9 @@ class ClientTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PENDING, booking.getStatus());
+        assertEquals(BookingStatus.PAID, booking.getStatus());
         assertFalse(booking.isWalkIn());
         assertNull(booking.getCreatedByEmployee());
-    }
-
-    @Test
-    @DisplayName("Оплата бронирования клиентом")
-    void testPaidBooking() {
-        Client client = getNewClient();
-        Booking booking = getClientBooking(client);
-        assertEquals(BookingStatus.PENDING, booking.getStatus());
-        client.paidBooking(booking);
-        assertEquals(BookingStatus.PAID, booking.getStatus());
     }
 
     @Test
