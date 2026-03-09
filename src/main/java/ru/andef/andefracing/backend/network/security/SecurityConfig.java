@@ -40,6 +40,8 @@ public class SecurityConfig {
                     //profile
                     it.requestMatchers("/client/profile/**").hasRole(jwtProperties.getClientRole());
                     it.requestMatchers("/employee/profile/**").hasAnyRole(allEmployeeRoles);
+                    //report
+                    it.requestMatchers("/reports/**").hasRole(EmployeeRole.MANAGER.getRole());
                 })
                 .sessionManagement(it ->
                         it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

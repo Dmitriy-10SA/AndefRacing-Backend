@@ -10,7 +10,7 @@ import ru.andef.andefracing.backend.network.dtos.report.FinancialStatisticsDto;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/reports")
 @Validated
 public class ReportController {
     /**
