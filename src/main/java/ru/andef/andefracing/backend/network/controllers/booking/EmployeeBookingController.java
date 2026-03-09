@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/employee/booking")
+@RequestMapping("/booking/employee")
 @Validated
 public class EmployeeBookingController {
     /**
@@ -47,8 +47,8 @@ public class EmployeeBookingController {
     /**
      * Отмена бронирования
      */
-    @PatchMapping("/cancel/{bookingId}")
-    public ResponseEntity<Void> cancelBooking(@PathVariable long bookingId) {
+    @PatchMapping("/cancel/{clubId}/{bookingId}")
+    public ResponseEntity<Void> cancelBooking(@PathVariable int clubId, @PathVariable long bookingId) {
         // TODO
         return ResponseEntity.ok(null);
     }
@@ -56,8 +56,9 @@ public class EmployeeBookingController {
     /**
      * Получение списка всех бронирований за диапазон дат и по номеру телефона клиента (номер телефона опционален)
      */
-    @GetMapping
+    @GetMapping("{clubId}")
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
+            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
@@ -75,8 +76,11 @@ public class EmployeeBookingController {
     /**
      * Просмотр полной информации о бронировании
      */
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(@PathVariable long bookingId) {
+    @GetMapping("/{clubId}/{bookingId}")
+    public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(
+            @PathVariable int clubId,
+            @PathVariable long bookingId
+    ) {
         // TODO
         return ResponseEntity.ok(null);
     }

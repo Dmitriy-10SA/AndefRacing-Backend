@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/client/booking")
+@RequestMapping("/booking/client")
 @Validated
 public class ClientBookingController {
     /**
@@ -47,8 +47,8 @@ public class ClientBookingController {
      */
     @GetMapping
     public ResponseEntity<List<ClientBookingShortDto>> getBookings(
-            @RequestParam("startDate") @NotNull LocalDate startDate,
-            @RequestParam("endDate") @NotNull LocalDate endDate
+            @RequestParam(name = "startDate") @NotNull LocalDate startDate,
+            @RequestParam(name = "endDate") @NotNull LocalDate endDate
     ) {
         // TODO
         return ResponseEntity.ok(null);
@@ -57,8 +57,11 @@ public class ClientBookingController {
     /**
      * Просмотр полной информации о бронировании
      */
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<ClientBookingFullInfoDto> getFullBookingInfo(@PathVariable long bookingId) {
+    @GetMapping("/{clubId}/{bookingId}")
+    public ResponseEntity<ClientBookingFullInfoDto> getFullBookingInfo(
+            @PathVariable int clubId,
+            @PathVariable long bookingId
+    ) {
         // TODO
         return ResponseEntity.ok(null);
     }

@@ -26,7 +26,16 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(it -> {
+                    //auth
                     it.requestMatchers("/auth/**").permitAll();
+                    //booking
+                    it.requestMatchers("/booking/client/**").hasRole(jwtProperties.getClientRole());
+                    it.requestMatchers("/booking/employee/**").hasAnyRole(
+                            EmployeeRole.ADMIN.getRole(),
+                            EmployeeRole.MANAGER.getRole()
+                    );
+
+
                     it.requestMatchers("/client/**").hasRole(jwtProperties.getClientRole());
                     it.requestMatchers("/employee/profile/**").hasAnyRole(allEmployeeRoles);
                 })

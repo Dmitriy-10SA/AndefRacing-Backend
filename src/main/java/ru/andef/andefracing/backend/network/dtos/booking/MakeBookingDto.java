@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class MakeBookingDto {
     @Min(1)
-    private final short durationMinutes;
-    @Min(1)
     private final short cntEquipment;
     @NotNull
     @Valid
