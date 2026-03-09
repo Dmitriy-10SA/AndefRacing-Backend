@@ -37,9 +37,8 @@ public class SecurityConfig {
                     );
                     //management
                     it.requestMatchers("/club-management/**").hasRole(EmployeeRole.MANAGER.getRole());
-
-
-                    it.requestMatchers("/client/**").hasRole(jwtProperties.getClientRole());
+                    //profile
+                    it.requestMatchers("/client/profile/**").hasRole(jwtProperties.getClientRole());
                     it.requestMatchers("/employee/profile/**").hasAnyRole(allEmployeeRoles);
                 })
                 .sessionManagement(it ->

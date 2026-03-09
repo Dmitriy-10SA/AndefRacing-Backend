@@ -13,8 +13,8 @@ public class EmployeeProfileController {
     /**
      * Получение информации о сотруднике (фамилия, имя, отчество, номер телефона, роли в текущем клубе)
      */
-    @GetMapping("/personal-info/{currentClubId}")
-    public ResponseEntity<EmployeePersonalInfoDto> getPersonalInfo(@PathVariable int currentClubId) {
+    @GetMapping("/personal-info/{clubId}")
+    public ResponseEntity<EmployeePersonalInfoDto> getPersonalInfo(@PathVariable int clubId) {
         // TODO
         return ResponseEntity.ok(null);
     }
