@@ -29,11 +29,13 @@ public class SecurityConfig {
                     //auth
                     it.requestMatchers("/auth/**").permitAll();
                     //booking
-                    it.requestMatchers("/booking/client/**").hasRole(jwtProperties.getClientRole());
-                    it.requestMatchers("/booking/employee/**").hasAnyRole(
+                    it.requestMatchers("/client/bookings/**").hasRole(jwtProperties.getClientRole());
+                    it.requestMatchers("/employee/bookings/**").hasAnyRole(
                             EmployeeRole.ADMIN.getRole(),
                             EmployeeRole.MANAGER.getRole()
                     );
+                    //management
+                    it.requestMatchers("/club-management/**").hasRole(EmployeeRole.MANAGER.getRole());
 
 
                     it.requestMatchers("/client/**").hasRole(jwtProperties.getClientRole());

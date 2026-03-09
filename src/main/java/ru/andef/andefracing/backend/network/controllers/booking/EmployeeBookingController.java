@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/booking/employee")
+@RequestMapping("/employee/bookings")
 @Validated
 public class EmployeeBookingController {
     /**
