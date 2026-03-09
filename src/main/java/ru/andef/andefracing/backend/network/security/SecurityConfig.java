@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(it -> {
                     //auth
-                    it.requestMatchers("/auth/**").permitAll();
+                    it.requestMatchers("/client/auth/**").permitAll();
+                    it.requestMatchers("/employee/auth/**").permitAll();
                     //booking
                     it.requestMatchers("/client/bookings/**").hasRole(jwtProperties.getClientRole());
                     it.requestMatchers("/employee/bookings/**").hasAnyRole(

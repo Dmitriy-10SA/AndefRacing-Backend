@@ -10,7 +10,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 
 @RestController
-@RequestMapping("/auth/client")
+@RequestMapping("/client/auth")
 public class ClientAuthController {
     /**
      * Регистрация в системе для клиента

@@ -11,7 +11,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePas
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 @RestController
-@RequestMapping("/auth/employee")
+@RequestMapping("/employee/auth")
 @Validated
 public class EmployeeAuthController {
     /**
