@@ -3,8 +3,11 @@ package ru.andef.andefracing.backend.network.controllers.management;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.dtos.common.WorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.UpdateWorkScheduleDto;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/club-management/work-schedule")
@@ -12,7 +15,7 @@ public class ClubWorkScheduleManagementController {
     /**
      * Добавление «дня-исключения» в график работы в выбранном текущим клубе
      */
-    @PostMapping("/exception/{clubId}")
+    @PostMapping("/exceptions/{clubId}")
     public ResponseEntity<Void> addWorkScheduleException(
             @PathVariable int clubId,
             @RequestBody @Valid AddWorkScheduleExceptionDto addWorkScheduleExceptionDto
@@ -22,9 +25,18 @@ public class ClubWorkScheduleManagementController {
     }
 
     /**
+     * Получение исключений в расписании на неделю
+     */
+    @GetMapping("/exceptions")
+    public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptionsForWeek() {
+        // TODO
+        return null;
+    }
+
+    /**
      * Удаление «дня-исключения» в графике работы в выбранном текущим клубе
      */
-    @DeleteMapping("/exception/{clubId}/{workScheduleExceptionId}")
+    @DeleteMapping("/exceptions/{clubId}/{workScheduleExceptionId}")
     public ResponseEntity<Void> deleteWorkScheduleException(
             @PathVariable int clubId,
             @PathVariable long workScheduleExceptionId

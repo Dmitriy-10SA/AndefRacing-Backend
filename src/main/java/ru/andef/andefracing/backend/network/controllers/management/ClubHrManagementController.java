@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.network.dtos.common.EmployeeAndRolesDto;
 
 import java.util.List;
 
@@ -31,6 +32,15 @@ public class ClubHrManagementController {
     ) {
         // TODO
         return null;
+    }
+
+    /**
+     * Получение списка сотрудников и их ролей в клубе
+     */
+    @GetMapping("/{clubId}")
+    public ResponseEntity<List<EmployeeAndRolesDto>> getEmployeesAndRoles(@PathVariable int clubId) {
+        // TODO
+        return ResponseEntity.ok(null);
     }
 
     /**

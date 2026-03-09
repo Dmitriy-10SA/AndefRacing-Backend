@@ -42,6 +42,9 @@ public class SecurityConfig {
                     it.requestMatchers("/employee/profile/**").hasAnyRole(allEmployeeRoles);
                     //report
                     it.requestMatchers("/reports/**").hasRole(EmployeeRole.MANAGER.getRole());
+                    //search
+                    it.requestMatchers("/search/**").permitAll();
+                    it.anyRequest().authenticated();
                 })
                 .sessionManagement(it ->
                         it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/club-management/games")
 public class ClubGamesManagementController {
@@ -18,6 +20,15 @@ public class ClubGamesManagementController {
     ) {
         // TODO: Добавить игру в список активных игр клуба
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Получение справочника игр (только активных)
+     */
+    @GetMapping
+    public ResponseEntity<List<GameDto>> getAllGames() {
+        // TODO
+        return null;
     }
 
     /**
