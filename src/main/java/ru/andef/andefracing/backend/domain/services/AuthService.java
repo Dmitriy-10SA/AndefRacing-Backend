@@ -5,10 +5,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.Client;
+import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
-import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
-import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
+import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
@@ -23,6 +26,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     private final ClientRepository clientRepository;
+    private final EmployeeRepository employeeRepository;
 
     private final ClientMapper clientMapper;
 
@@ -67,5 +71,15 @@ public class AuthService {
         client.setPassword(passwordHash);
         String jwt = jwtUtil.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
+    }
+
+    /**
+     * Проверка на первый вход сотрудника
+     */
+    @Transactional(readOnly = true)
+    public boolean isEmployeeFirstEnter(String phone) {
+        Employee employee = employeeRepository.findByPhone(phone)
+                .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(phone));
+        return employee.isNeedPassword();
     }
 }

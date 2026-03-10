@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
-import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -49,6 +50,17 @@ public class ExceptionHandlerRestControllerAdvice {
     @ExceptionHandler(ClientWithThisPhoneNotFoundException.class)
     public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
             ClientWithThisPhoneNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент не найден по номеру телефона
+     */
+    @ExceptionHandler(EmployeeWithThisPhoneNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEmployeeWithThisPhoneNotFoundException(
+            EmployeeWithThisPhoneNotFoundException ex,
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);

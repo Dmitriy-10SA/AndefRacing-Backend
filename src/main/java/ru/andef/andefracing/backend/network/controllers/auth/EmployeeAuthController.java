@@ -3,9 +3,11 @@ package ru.andef.andefracing.backend.network.controllers.auth;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
@@ -14,7 +16,10 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 @RestController
 @RequestMapping(ApiPaths.AUTH_EMPLOYEE)
 @Validated
+@RequiredArgsConstructor
 public class EmployeeAuthController {
+    private final AuthService authService;
+
     /**
      * Проверка, первый ли вход для сотрудника в систему (нужно ли задать пароль)
      */
@@ -28,8 +33,8 @@ public class EmployeeAuthController {
             )
             String phone
     ) {
-        // TODO
-        return ResponseEntity.ok(false);
+        boolean isFirstEnter = authService.isEmployeeFirstEnter(phone);
+        return ResponseEntity.ok(isFirstEnter);
     }
 
     /**

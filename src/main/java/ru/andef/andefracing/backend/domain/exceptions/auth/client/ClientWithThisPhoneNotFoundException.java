@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.domain.exceptions;
+package ru.andef.andefracing.backend.domain.exceptions.auth.client;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
