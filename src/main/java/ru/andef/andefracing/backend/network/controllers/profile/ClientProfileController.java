@@ -4,9 +4,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.network.ApiPaths;
-import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
+import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
 
 @RestController
 @RequestMapping(ApiPaths.PROFILE_CLIENT)

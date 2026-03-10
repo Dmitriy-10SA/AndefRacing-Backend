@@ -86,7 +86,7 @@ public class Booking {
         this.endDateTime = endDateTime;
         this.cntEquipment = cntEquipment;
         this.priceValue = priceValue;
-        this.status = BookingStatus.PAID;
+        this.status = BookingStatus.PENDING_PAYMENT;
         this.isWalkIn = false;
         this.createdByEmployee = null;
     }
@@ -108,9 +108,16 @@ public class Booking {
         this.endDateTime = endDateTime;
         this.cntEquipment = cntEquipment;
         this.priceValue = priceValue;
-        this.status = BookingStatus.PAID;
+        this.status = BookingStatus.PENDING_PAYMENT;
         this.isWalkIn = true;
         this.createdByEmployee = employee;
+    }
+
+    /**
+     * Оплата бронирования
+     */
+    public void pay() {
+        this.status = BookingStatus.PAID;
     }
 
     /**

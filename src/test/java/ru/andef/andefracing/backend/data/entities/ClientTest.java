@@ -1,8 +1,7 @@
-package ru.andef.andefracing.backend.data.entities.client;
+package ru.andef.andefracing.backend.data.entities;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
@@ -90,7 +89,7 @@ class ClientTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         assertFalse(booking.isWalkIn());
         assertNull(booking.getCreatedByEmployee());
     }

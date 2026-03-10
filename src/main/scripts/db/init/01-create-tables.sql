@@ -163,7 +163,7 @@ CREATE TABLE clients.client
 --------------------------------------------------------------------------------------------
 -- Таблицы и ENUM для bookings схемы
 --------------------------------------------------------------------------------------------
-CREATE TYPE bookings.booking_status AS ENUM ('PAID','CANCELLED');
+CREATE TYPE bookings.booking_status AS ENUM ('PENDING_PAYMENT', 'PAID','CANCELLED');
 
 CREATE TABLE bookings.booking
 (

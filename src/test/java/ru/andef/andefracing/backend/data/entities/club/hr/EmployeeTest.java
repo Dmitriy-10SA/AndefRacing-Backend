@@ -55,7 +55,7 @@ class EmployeeTest {
     }
 
     @Test
-    @DisplayName("Добавление бронирования сотрудником (оплата сразу)")
+    @DisplayName("Добавление бронирования сотрудником")
     void testAddBooking() {
         Employee employee = getNewEmployee();
         Booking booking = getEmployeeBooking(employee);
@@ -66,9 +66,19 @@ class EmployeeTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         assertTrue(booking.isWalkIn());
         assertNull(booking.getClient());
+    }
+
+    @Test
+    @DisplayName("Подтверждения оплаты бронирования сотрудником")
+    void testConfirmBookingPayment() {
+        Employee employee = getNewEmployee();
+        Booking booking = getEmployeeBooking(employee);
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
+        employee.confirmBookingPayment(booking);
+        assertEquals(BookingStatus.PAID, booking.getStatus());
     }
 
     @Test
@@ -76,7 +86,7 @@ class EmployeeTest {
     void testCancelBooking() {
         Employee employee = getNewEmployee();
         Booking booking = getEmployeeBooking(employee);
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         employee.cancelBooking(booking);
         assertEquals(BookingStatus.CANCELLED, booking.getStatus());
     }

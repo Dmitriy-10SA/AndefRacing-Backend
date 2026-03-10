@@ -34,6 +34,15 @@ public class EmployeeBookingController {
     }
 
     /**
+     * Подтверждение оплаты бронирования
+     */
+    @PatchMapping("/confirm-booking-payment")
+    public ResponseEntity<Void> confirmBookingPayment(@PathVariable int clubId) {
+        // TODO
+        return null;
+    }
+
+    /**
      * Сделать бронирование
      */
     @PostMapping("/make-booking")

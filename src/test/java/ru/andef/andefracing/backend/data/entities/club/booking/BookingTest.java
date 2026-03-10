@@ -1,11 +1,9 @@
-package ru.andef.andefracing.backend.data.entities.booking;
+package ru.andef.andefracing.backend.data.entities.club.booking;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
-import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
-import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 
 import java.math.BigDecimal;
@@ -50,7 +48,7 @@ class BookingTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         assertFalse(booking.isWalkIn());
         assertNull(booking.getCreatedByEmployee());
     }
@@ -74,8 +72,28 @@ class BookingTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         assertTrue(booking.isWalkIn());
         assertNull(booking.getClient());
+    }
+
+    @Test
+    @DisplayName("Оплата бронирования переводит его в статус PAID")
+    void testPayingForAReservationChangesItsStateToPaid() {
+        Client client = new Client();
+        Booking booking = getBookingByClient(client);
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
+        booking.pay();
+        assertEquals(BookingStatus.PAID, booking.getStatus());
+    }
+
+    @Test
+    @DisplayName("Отмена оплаченного заказа приводить к состоянию canceled")
+    void testCancelPayment() {
+        Client client = new Client();
+        Booking booking = getBookingByClient(client);
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
+        booking.cancel();
+        assertEquals(BookingStatus.CANCELLED, booking.getStatus());
     }
 }

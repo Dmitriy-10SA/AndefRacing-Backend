@@ -2,9 +2,9 @@ package ru.andef.andefracing.backend.network.dtos.booking.client;
 
 import lombok.Getter;
 import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
-import ru.andef.andefracing.backend.network.dtos.common.location.CityDto;
-import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.BookingShortDto;
+import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
+import ru.andef.andefracing.backend.network.dtos.common.location.CityDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
