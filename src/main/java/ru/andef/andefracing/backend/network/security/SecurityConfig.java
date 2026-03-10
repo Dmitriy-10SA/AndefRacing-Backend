@@ -9,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.network.ApiPaths;
 
 import java.util.Arrays;
 
@@ -17,35 +18,46 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final JwtProperties jwtProperties;
-    private final String[] allEmployeeRoles = Arrays.stream(EmployeeRole.values())
-            .map(EmployeeRole::getRole)
-            .toArray(String[]::new);
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
+        final String[] allEmployeeRoles = Arrays.stream(EmployeeRole.values())
+                .map(EmployeeRole::getRole)
+                .toArray(String[]::new);
+        final String[] allEmployeeRolesForBookings = Arrays.stream(EmployeeRole.values())
+                .map(EmployeeRole::getRole)
+                .filter(role -> {
+                    String adminRole = EmployeeRole.ADMIN.getRole();
+                    String managerRole = EmployeeRole.MANAGER.getRole();
+                    return role.equals(adminRole) || role.equals(managerRole);
+                })
+                .toArray(String[]::new);
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(it -> {
-                    //auth
-                    it.requestMatchers("/client/auth/**").permitAll();
-                    it.requestMatchers("/employee/auth/**").permitAll();
-                    //booking
-                    it.requestMatchers("/client/bookings/**").hasRole(jwtProperties.getClientRole());
-                    it.requestMatchers("/employee/bookings/**").hasAnyRole(
-                            EmployeeRole.ADMIN.getRole(),
-                            EmployeeRole.MANAGER.getRole()
-                    );
-                    //management
-                    it.requestMatchers("/club-management/**").hasRole(EmployeeRole.MANAGER.getRole());
-                    //profile
-                    it.requestMatchers("/client/profile/**").hasRole(jwtProperties.getClientRole());
-                    it.requestMatchers("/employee/profile/**").hasAnyRole(allEmployeeRoles);
-                    //report
-                    it.requestMatchers("/reports/**").hasRole(EmployeeRole.MANAGER.getRole());
-                    //search
-                    it.requestMatchers("/search/**").permitAll();
-                    it.anyRequest().authenticated();
-                })
+                .authorizeHttpRequests(auth -> auth
+                        // auth
+                        .requestMatchers(ApiPaths.AUTH_CLIENT + "/**").permitAll()
+                        .requestMatchers(ApiPaths.AUTH_EMPLOYEE + "/**").permitAll()
+
+                        // bookings
+                        .requestMatchers(ApiPaths.BOOKINGS_CLIENT + "/**").hasRole(jwtProperties.getClientRole())
+                        .requestMatchers(ApiPaths.BOOKINGS_EMPLOYEE + "/**").hasAnyRole(allEmployeeRolesForBookings)
+                        // management
+                        .requestMatchers(ApiPaths.CLUB_MANAGEMENT + "/**").hasRole(EmployeeRole.MANAGER.getRole())
+
+                        // profile
+                        .requestMatchers(ApiPaths.PROFILE_CLIENT + "/**").hasRole(jwtProperties.getClientRole())
+                        .requestMatchers(ApiPaths.PROFILE_EMPLOYEE + "/**").hasAnyRole(allEmployeeRoles)
+
+                        // reports
+                        .requestMatchers(ApiPaths.REPORTS + "/**").hasRole(EmployeeRole.MANAGER.getRole())
+
+                        // search
+                        .requestMatchers(ApiPaths.SEARCH + "/**").permitAll()
+
+                        // other
+                        .anyRequest().authenticated()
+                )
                 .sessionManagement(it ->
                         it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

@@ -5,13 +5,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/employee/profile")
+@RequestMapping(ApiPaths.PROFILE_EMPLOYEE)
 public class EmployeeProfileController {
     /**
      * Получение информации о сотруднике (фамилия, имя, отчество, номер телефона, роли в текущем клубе)

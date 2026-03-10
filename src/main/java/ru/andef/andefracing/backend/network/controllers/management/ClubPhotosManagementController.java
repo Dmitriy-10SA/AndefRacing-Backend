@@ -5,18 +5,19 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/club-management/photos")
+@RequestMapping(ApiPaths.CLUB_MANAGEMENT_PHOTOS)
 @Validated
 public class ClubPhotosManagementController {
     /**
      * Добавление фотографии
      */
-    @PostMapping("/{clubId}")
+    @PostMapping
     public ResponseEntity<Void> addPhoto(
             @PathVariable int clubId,
             @RequestBody @Valid AddPhotoDto addPhotoDto
@@ -28,7 +29,7 @@ public class ClubPhotosManagementController {
     /**
      * Удаление фотографии
      */
-    @DeleteMapping("/{clubId}/{photoId}")
+    @DeleteMapping("/{photoId}")
     public ResponseEntity<Void> deletePhoto(@PathVariable int clubId, @PathVariable long photoId) {
         // TODO: Удалить фотографию из галереи клуба
         return ResponseEntity.ok().build();
@@ -37,7 +38,7 @@ public class ClubPhotosManagementController {
     /**
      * Переупорядочивание фотографий
      */
-    @PatchMapping("/reorder/{clubId}")
+    @PatchMapping("/reorder")
     public ResponseEntity<Void> reorderPhotos(
             @PathVariable int clubId,
             @RequestBody @Valid @NotNull List<@NotNull Long> orderedPhotoIds

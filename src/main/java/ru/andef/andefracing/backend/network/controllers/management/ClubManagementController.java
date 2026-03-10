@@ -4,15 +4,16 @@ import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
 
 @RestController
-@RequestMapping("/club-management")
+@RequestMapping(ApiPaths.CLUB_MANAGEMENT)
 @Validated
 public class ClubManagementController {
     /**
      * Изменение количества симуляторов в выбранном текущим клубе
      */
-    @PatchMapping("/{clubId}")
+    @PatchMapping
     public ResponseEntity<Void> updateCntEquipmentInClub(
             @PathVariable int clubId,
             @RequestParam(name = "cntEquipment") @Min(1) int cntEquipment
@@ -24,7 +25,7 @@ public class ClubManagementController {
     /**
      * Открыть клуб
      */
-    @PatchMapping("/{clubId}/open")
+    @PatchMapping("/open")
     public ResponseEntity<Void> openClub(@PathVariable int clubId) {
         // TODO: Установить статус клуба как "открыт"
         return ResponseEntity.ok().build();
@@ -33,7 +34,7 @@ public class ClubManagementController {
     /**
      * Закрыть клуб
      */
-    @PatchMapping("/{clubId}/close")
+    @PatchMapping("/close")
     public ResponseEntity<Void> closeClub(@PathVariable int clubId) {
         // TODO: Установить статус клуба как "закрыт"
         return ResponseEntity.ok().build();

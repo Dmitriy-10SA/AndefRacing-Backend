@@ -3,12 +3,13 @@ package ru.andef.andefracing.backend.network.controllers.management;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/club-management/games")
+@RequestMapping(ApiPaths.CLUB_MANAGEMENT_GAMES)
 public class ClubGamesManagementController {
     /**
      * Добавить активную игру в клуб (из справочника)

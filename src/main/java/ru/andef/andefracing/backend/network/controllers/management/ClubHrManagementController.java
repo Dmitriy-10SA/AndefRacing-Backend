@@ -7,18 +7,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.management.hr.EmployeeAndRolesDto;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/club-management/hr")
+@RequestMapping(ApiPaths.CLUB_MANAGEMENT_HR)
 @Validated
 public class ClubHrManagementController {
     /**
      * Добавление сотрудника в выбранный текущим клуб по номеру телефона сотрудника с заданием ролей
      */
-    @PostMapping("/add-employee/{clubId}")
+    @PostMapping("/add-employee")
     public ResponseEntity<Void> addEmployee(
             @PathVariable int clubId,
             @RequestParam(name = "employeePhone")
@@ -37,7 +38,7 @@ public class ClubHrManagementController {
     /**
      * Получение списка сотрудников и их ролей в клубе
      */
-    @GetMapping("/{clubId}")
+    @GetMapping
     public ResponseEntity<List<EmployeeAndRolesDto>> getEmployeesAndRoles(@PathVariable int clubId) {
         // TODO
         return ResponseEntity.ok(null);
@@ -46,7 +47,7 @@ public class ClubHrManagementController {
     /**
      * Удаление сотрудника из выбранного текущим клуба
      */
-    @DeleteMapping("/delete-employee/{clubId}/{employeeId}")
+    @DeleteMapping("/delete-employee/{employeeId}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable int clubId, @PathVariable long employeeId) {
         // TODO
         return null;
@@ -55,7 +56,7 @@ public class ClubHrManagementController {
     /**
      * Добавить роль сотруднику в выбранном текущим клубе
      */
-    @PostMapping("/add-role-to-employee/{clubId}/{employeeId}")
+    @PostMapping("/add-role-to-employee/{employeeId}")
     public ResponseEntity<Void> addRoleToEmployee(
             @PathVariable int clubId,
             @PathVariable long employeeId,
@@ -68,7 +69,7 @@ public class ClubHrManagementController {
     /**
      * Изменить роль сотрудника в выбранном текущем клубе
      */
-    @PatchMapping("/update-employee-role/{clubId}/{employeeId}")
+    @PatchMapping("/update-employee-role/{employeeId}")
     public ResponseEntity<Void> updateEmployeeRole(
             @PathVariable int clubId,
             @PathVariable long employeeId,
@@ -82,7 +83,7 @@ public class ClubHrManagementController {
     /**
      * Удалить роль сотрудника в выбранном текущим клубе
      */
-    @DeleteMapping("/delete-employee-role/{clubId}/{employeeId}")
+    @DeleteMapping("/delete-employee-role/{employeeId}")
     public ResponseEntity<Void> deleteEmployeeRole(
             @PathVariable int clubId,
             @PathVariable long employeeId,
