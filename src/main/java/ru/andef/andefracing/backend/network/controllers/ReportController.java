@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.controllers.report;
+package ru.andef.andefracing.backend.network.controllers;
 
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
