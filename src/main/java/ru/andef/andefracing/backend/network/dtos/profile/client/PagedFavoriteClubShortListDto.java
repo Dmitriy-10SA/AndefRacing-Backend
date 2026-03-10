@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos.common.club;
+package ru.andef.andefracing.backend.network.dtos.profile.client;
 
 import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 

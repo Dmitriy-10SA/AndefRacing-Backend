@@ -3,6 +3,9 @@ package ru.andef.andefracing.backend.network.dtos.common.club;
 import lombok.Getter;
 import ru.andef.andefracing.backend.network.dtos.common.PhotoDto;
 
+/**
+ * DTO - информация о клубе
+ */
 @Getter
 public class ClubInfoDto extends ClubShortDto {
     private final PhotoDto mainPhoto;

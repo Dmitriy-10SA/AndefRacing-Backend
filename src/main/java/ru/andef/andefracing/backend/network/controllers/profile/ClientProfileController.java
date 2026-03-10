@@ -3,7 +3,7 @@ package ru.andef.andefracing.backend.network.controllers.profile;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.network.dtos.common.club.PagedFavoriteClubShortListDto;
+import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 

@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.andef.andefracing.backend.network.dtos.common.club.ClubFullInfoDto;
-import ru.andef.andefracing.backend.network.dtos.common.club.PagedClubShortListDto;
+import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
+import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.RegionShortDto;
 

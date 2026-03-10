@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
-import ru.andef.andefracing.backend.network.dtos.common.EmployeeAndRolesDto;
+import ru.andef.andefracing.backend.network.dtos.management.EmployeeAndRolesDto;
 
 import java.util.List;
 

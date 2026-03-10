@@ -1,7 +1,10 @@
-package ru.andef.andefracing.backend.network.dtos.common;
+package ru.andef.andefracing.backend.network.dtos.search;
 
 import java.math.BigDecimal;
 
+/**
+ * DTO - цена за количество минут
+ */
 public record PriceDto(
         long id,
         short durationMinutes,
