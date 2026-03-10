@@ -112,6 +112,7 @@ public class AuthService {
                 .orElseThrow(() -> new ClientWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         client.setPassword(passwordHash);
+        client = clientRepository.save(client);
         String jwt = jwtUtil.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
@@ -130,7 +131,11 @@ public class AuthService {
     public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
         Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
                 .orElseThrow(InvalidPhoneOrPasswordException::new);
-        if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
+        if (employee.isNeedPassword()) {
+            String passwordHash = passwordEncoder.encode(loginDto.getPassword());
+            employee.setPassword(passwordHash);
+            employeeRepository.save(employee);
+        } else if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
             throw new InvalidPhoneOrPasswordException();
         }
         List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
@@ -162,6 +167,7 @@ public class AuthService {
                 .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         employee.setPassword(passwordHash);
+        employee = employeeRepository.save(employee);
         Club club = findClubByIdOrThrow(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
