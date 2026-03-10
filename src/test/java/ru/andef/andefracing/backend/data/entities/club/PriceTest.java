@@ -1,8 +1,7 @@
-package ru.andef.andefracing.backend.data.entities.club.price;
+package ru.andef.andefracing.backend.data.entities.club;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.andef.andefracing.backend.data.entities.club.Price;
 
 import java.math.BigDecimal;
 
