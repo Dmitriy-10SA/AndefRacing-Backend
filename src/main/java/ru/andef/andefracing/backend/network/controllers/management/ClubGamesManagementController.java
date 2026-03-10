@@ -1,0 +1,43 @@
+package ru.andef.andefracing.backend.network.controllers.management;
+
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.dtos.common.GameDto;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(ApiPaths.CLUB_MANAGEMENT_GAMES)
+public class ClubGamesManagementController {
+    /**
+     * Добавить активную игру в клуб (из справочника)
+     */
+    @PostMapping("/{clubId}")
+    public ResponseEntity<Void> addGameToClub(
+            @PathVariable int clubId,
+            @RequestBody @Valid GameDto gameDto
+    ) {
+        // TODO: Добавить игру в список активных игр клуба
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Получение справочника игр (только активных)
+     */
+    @GetMapping
+    public ResponseEntity<List<GameDto>> getAllGames() {
+        // TODO
+        return null;
+    }
+
+    /**
+     * Удалить игру из клуба
+     */
+    @DeleteMapping("/{clubId}/{gameId}")
+    public ResponseEntity<Void> removeGameFromClub(@PathVariable int clubId, @PathVariable short gameId) {
+        // TODO: Удалить игру из списка активных игр клуба
+        return ResponseEntity.ok().build();
+    }
+}

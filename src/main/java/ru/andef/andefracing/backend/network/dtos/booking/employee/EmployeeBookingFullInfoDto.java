@@ -2,7 +2,7 @@ package ru.andef.andefracing.backend.network.dtos.booking.employee;
 
 import lombok.Getter;
 import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
-import ru.andef.andefracing.backend.network.dtos.common.ClientDto;
+import ru.andef.andefracing.backend.network.dtos.booking.ClientDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
  * DTO свободного слота бронирования
  */
 public record FreeBookingSlotDto(
-        @NotNull OffsetDateTime startDateTime,
-        @NotNull OffsetDateTime endDateTime
+        @NotNull(message = "Необходимо передать начало слота") OffsetDateTime startDateTime,
+        @NotNull(message = "Необходимо передать конец слота") OffsetDateTime endDateTime
 ) {
 }

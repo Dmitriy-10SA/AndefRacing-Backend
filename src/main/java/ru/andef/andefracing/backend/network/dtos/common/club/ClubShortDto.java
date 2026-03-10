@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public abstract class ClubShortDto {
+public class ClubShortDto {
     private final int id;
     private final String name;
     private final String phone;

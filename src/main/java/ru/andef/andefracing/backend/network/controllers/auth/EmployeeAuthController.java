@@ -6,12 +6,13 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 @RestController
-@RequestMapping("/auth/employee")
+@RequestMapping(ApiPaths.AUTH_EMPLOYEE)
 @Validated
 public class EmployeeAuthController {
     /**

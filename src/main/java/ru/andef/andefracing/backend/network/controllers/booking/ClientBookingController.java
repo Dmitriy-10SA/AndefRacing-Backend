@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/client/booking")
+@RequestMapping(ApiPaths.BOOKINGS_CLIENT)
 @Validated
 public class ClientBookingController {
     /**
@@ -47,8 +48,8 @@ public class ClientBookingController {
      */
     @GetMapping
     public ResponseEntity<List<ClientBookingShortDto>> getBookings(
-            @RequestParam("startDate") @NotNull LocalDate startDate,
-            @RequestParam("endDate") @NotNull LocalDate endDate
+            @RequestParam(name = "startDate") @NotNull LocalDate startDate,
+            @RequestParam(name = "endDate") @NotNull LocalDate endDate
     ) {
         // TODO
         return ResponseEntity.ok(null);
@@ -57,8 +58,11 @@ public class ClientBookingController {
     /**
      * Просмотр полной информации о бронировании
      */
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<ClientBookingFullInfoDto> getFullBookingInfo(@PathVariable long bookingId) {
+    @GetMapping("/{clubId}/{bookingId}")
+    public ResponseEntity<ClientBookingFullInfoDto> getFullBookingInfo(
+            @PathVariable int clubId,
+            @PathVariable long bookingId
+    ) {
         // TODO
         return ResponseEntity.ok(null);
     }

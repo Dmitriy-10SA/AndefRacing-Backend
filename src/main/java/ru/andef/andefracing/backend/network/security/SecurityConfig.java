@@ -9,6 +9,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.network.ApiPaths;
 
 import java.util.Arrays;
 
@@ -17,19 +18,46 @@ import java.util.Arrays;
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final JwtProperties jwtProperties;
-    private final String[] allEmployeeRoles = Arrays.stream(EmployeeRole.values())
-            .map(EmployeeRole::getRole)
-            .toArray(String[]::new);
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) {
+        final String[] allEmployeeRoles = Arrays.stream(EmployeeRole.values())
+                .map(EmployeeRole::getRole)
+                .toArray(String[]::new);
+        final String[] allEmployeeRolesForBookings = Arrays.stream(EmployeeRole.values())
+                .map(EmployeeRole::getRole)
+                .filter(role -> {
+                    String adminRole = EmployeeRole.ADMIN.getRole();
+                    String managerRole = EmployeeRole.MANAGER.getRole();
+                    return role.equals(adminRole) || role.equals(managerRole);
+                })
+                .toArray(String[]::new);
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(it -> {
-                    it.requestMatchers("/auth/**").permitAll();
-                    it.requestMatchers("/client/**").hasRole(jwtProperties.getClientRole());
-                    it.requestMatchers("/employee/profile/**").hasAnyRole(allEmployeeRoles);
-                })
+                .authorizeHttpRequests(auth -> auth
+                        // auth
+                        .requestMatchers(ApiPaths.AUTH_CLIENT + "/**").permitAll()
+                        .requestMatchers(ApiPaths.AUTH_EMPLOYEE + "/**").permitAll()
+
+                        // bookings
+                        .requestMatchers(ApiPaths.BOOKINGS_CLIENT + "/**").hasRole(jwtProperties.getClientRole())
+                        .requestMatchers(ApiPaths.BOOKINGS_EMPLOYEE + "/**").hasAnyRole(allEmployeeRolesForBookings)
+                        // management
+                        .requestMatchers(ApiPaths.CLUB_MANAGEMENT + "/**").hasRole(EmployeeRole.MANAGER.getRole())
+
+                        // profile
+                        .requestMatchers(ApiPaths.PROFILE_CLIENT + "/**").hasRole(jwtProperties.getClientRole())
+                        .requestMatchers(ApiPaths.PROFILE_EMPLOYEE + "/**").hasAnyRole(allEmployeeRoles)
+
+                        // reports
+                        .requestMatchers(ApiPaths.REPORTS + "/**").hasRole(EmployeeRole.MANAGER.getRole())
+
+                        // search
+                        .requestMatchers(ApiPaths.SEARCH + "/**").permitAll()
+
+                        // other
+                        .anyRequest().authenticated()
+                )
                 .sessionManagement(it ->
                         it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

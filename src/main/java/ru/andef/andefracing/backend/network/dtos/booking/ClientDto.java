@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos.common;
+package ru.andef.andefracing.backend.network.dtos.booking;
 
 /**
  * Dto - клиент

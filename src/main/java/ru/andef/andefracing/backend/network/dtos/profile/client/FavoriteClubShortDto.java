@@ -1,7 +1,8 @@
-package ru.andef.andefracing.backend.network.dtos.common.club;
+package ru.andef.andefracing.backend.network.dtos.profile.client;
 
 import lombok.Getter;
 import ru.andef.andefracing.backend.network.dtos.common.PhotoDto;
+import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityDto;
 
 /**

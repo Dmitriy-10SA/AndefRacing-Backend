@@ -1,22 +1,20 @@
-package ru.andef.andefracing.backend.network.controllers.search;
+package ru.andef.andefracing.backend.network.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.andef.andefracing.backend.network.dtos.common.EmployeeAndRolesDto;
-import ru.andef.andefracing.backend.network.dtos.common.GameDto;
-import ru.andef.andefracing.backend.network.dtos.common.WorkScheduleExceptionDto;
-import ru.andef.andefracing.backend.network.dtos.common.club.ClubFullInfoDto;
-import ru.andef.andefracing.backend.network.dtos.common.club.PagedClubShortListDto;
+import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
+import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.RegionShortDto;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/search")
+@RequestMapping(ApiPaths.SEARCH)
 public class SearchController {
     /**
      * Получение всех регионов
@@ -52,32 +50,5 @@ public class SearchController {
     public ResponseEntity<ClubFullInfoDto> getClubFullInfo(@PathVariable int clubId) {
         // TODO
         return ResponseEntity.ok(null);
-    }
-
-    /**
-     * Получение списка сотрудников и их ролей в клубе
-     */
-    @GetMapping("/hr/employees-and-roles/{clubId}")
-    public ResponseEntity<List<EmployeeAndRolesDto>> getEmployeesAndRoles(@PathVariable int clubId) {
-        // TODO
-        return ResponseEntity.ok(null);
-    }
-
-    /**
-     * Получение справочника игр (только активных)
-     */
-    @GetMapping("/games")
-    public ResponseEntity<List<GameDto>> getAllGames() {
-        // TODO
-        return null;
-    }
-
-    /**
-     * Получение исключений в расписании на неделю
-     */
-    @GetMapping("/work--schedule-exceptions-for-week")
-    public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptionsForWeek() {
-        // TODO
-        return null;
     }
 }

@@ -3,12 +3,13 @@ package ru.andef.andefracing.backend.network.controllers.profile;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.network.dtos.common.club.PagedFavoriteClubShortListDto;
+import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 
 @RestController
-@RequestMapping("/client/profile")
+@RequestMapping(ApiPaths.PROFILE_CLIENT)
 public class ClientProfileController {
     /**
      * Получение информации о клиенте (имя, номер телефона)
@@ -22,7 +23,7 @@ public class ClientProfileController {
     /**
      * Редактирование личной информации клиента (имя, номер телефона)
      */
-    @PutMapping("/change-personal-info")
+    @PatchMapping("/change-personal-info")
     public ResponseEntity<Void> changePersonalInfo(
             @RequestBody @Valid ClientChangePersonalInfoDto changePersonalInfoDto
     ) {
@@ -42,7 +43,7 @@ public class ClientProfileController {
     /**
      * Получение списка избранных клубов клиента с пагинацией
      */
-    @GetMapping("/favorite-club")
+    @GetMapping("/favorite-clubs")
     public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs() {
         // TODO
         return ResponseEntity.ok(null);
@@ -51,7 +52,7 @@ public class ClientProfileController {
     /**
      * Удаление клуба из списка избранных клубов клиента
      */
-    @DeleteMapping("/favorite-club/{clubId}")
+    @DeleteMapping("/favorite-clubs/{clubId}")
     public ResponseEntity<Void> deleteFavoriteClub(@PathVariable int clubId) {
         // TODO
         return ResponseEntity.noContent().build();

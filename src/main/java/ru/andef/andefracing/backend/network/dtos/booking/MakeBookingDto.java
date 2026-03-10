@@ -12,11 +12,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public abstract class MakeBookingDto {
-    @Min(1)
-    private final short durationMinutes;
-    @Min(1)
+    @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1")
     private final short cntEquipment;
-    @NotNull
+    @NotNull(message = "Необходимо передать слот")
     @Valid
     private final FreeBookingSlotDto slot;
     private final String note;

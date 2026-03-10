@@ -1,13 +1,15 @@
-package ru.andef.andefracing.backend.network.dtos.common.club;
+package ru.andef.andefracing.backend.network.dtos.search;
 
 import lombok.Getter;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
 import ru.andef.andefracing.backend.network.dtos.common.PhotoDto;
-import ru.andef.andefracing.backend.network.dtos.common.PriceDto;
-import ru.andef.andefracing.backend.network.dtos.common.WorkScheduleDto;
+import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
 
 import java.util.List;
 
+/**
+ * DTO - полная информация о клубе
+ */
 @Getter
 public class ClubFullInfoDto extends ClubShortDto {
     private final List<PhotoDto> photos;

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
@@ -17,13 +18,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/employee/booking")
+@RequestMapping(ApiPaths.BOOKINGS_EMPLOYEE)
 @Validated
 public class EmployeeBookingController {
     /**
      * Получение доступных слотов для бронирования
      */
-    @GetMapping("/free-slots/{clubId}")
+    @GetMapping("/free-slots")
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
             @PathVariable int clubId,
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
@@ -35,7 +36,7 @@ public class EmployeeBookingController {
     /**
      * Сделать бронирование
      */
-    @PostMapping("/make-booking/{clubId}")
+    @PostMapping("/make-booking")
     public ResponseEntity<Void> makeBooking(
             @PathVariable int clubId,
             @RequestBody @Valid EmployeeMakeBookingDto makeBookingDto
@@ -48,7 +49,7 @@ public class EmployeeBookingController {
      * Отмена бронирования
      */
     @PatchMapping("/cancel/{bookingId}")
-    public ResponseEntity<Void> cancelBooking(@PathVariable long bookingId) {
+    public ResponseEntity<Void> cancelBooking(@PathVariable int clubId, @PathVariable long bookingId) {
         // TODO
         return ResponseEntity.ok(null);
     }
@@ -58,6 +59,7 @@ public class EmployeeBookingController {
      */
     @GetMapping
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
+            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
@@ -76,7 +78,10 @@ public class EmployeeBookingController {
      * Просмотр полной информации о бронировании
      */
     @GetMapping("/{bookingId}")
-    public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(@PathVariable long bookingId) {
+    public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(
+            @PathVariable int clubId,
+            @PathVariable long bookingId
+    ) {
         // TODO
         return ResponseEntity.ok(null);
     }
