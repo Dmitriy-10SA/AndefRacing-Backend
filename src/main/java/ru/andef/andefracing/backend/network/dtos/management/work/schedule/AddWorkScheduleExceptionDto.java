@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos.management;
+package ru.andef.andefracing.backend.network.dtos.management.work.schedule;
 
 import jakarta.validation.constraints.NotNull;
 

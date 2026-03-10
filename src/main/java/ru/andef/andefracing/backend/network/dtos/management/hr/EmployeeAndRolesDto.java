@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos.management;
+package ru.andef.andefracing.backend.network.dtos.management.hr;
 
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 

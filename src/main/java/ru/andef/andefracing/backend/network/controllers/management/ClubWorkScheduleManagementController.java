@@ -3,9 +3,9 @@ package ru.andef.andefracing.backend.network.controllers.management;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.network.dtos.management.WorkScheduleExceptionDto;
-import ru.andef.andefracing.backend.network.dtos.management.AddWorkScheduleExceptionDto;
-import ru.andef.andefracing.backend.network.dtos.management.UpdateWorkScheduleDto;
+import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
+import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
+import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
 
 import java.util.List;
 

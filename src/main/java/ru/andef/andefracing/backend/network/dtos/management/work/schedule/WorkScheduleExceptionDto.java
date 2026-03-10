@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos.management;
+package ru.andef.andefracing.backend.network.dtos.management.work.schedule;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
