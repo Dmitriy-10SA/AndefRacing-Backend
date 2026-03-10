@@ -9,8 +9,8 @@ import java.time.LocalDate;
  * DTO для получения свободных слотов бронирования
  */
 public record FreeBookingSlotsRequestDto(
-        @Min(1) short durationMinutes,
-        @Min(1) short cntEquipment,
-        @NotNull LocalDate date
+        @Min(value = 1, message = "Длительность бронирования должна быть >= 1 минуты") short durationMinutes,
+        @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1") short cntEquipment,
+        @NotNull(message = "Необходимо передать дату") LocalDate date
 ) {
 }

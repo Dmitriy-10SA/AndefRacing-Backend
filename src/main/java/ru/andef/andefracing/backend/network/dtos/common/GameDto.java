@@ -9,8 +9,13 @@ import jakarta.validation.constraints.Size;
  */
 public record GameDto(
         short id,
-        @NotNull @NotBlank @Size(max = 100) String name,
-        @NotNull @NotBlank String photoUrl,
+        @NotNull(message = "Необходимо указать название игры")
+        @NotBlank(message = "Название должно содержать хотя бы один символ")
+        @Size(max = 100, message = "Длина названия игра должна быть не более 100 символов")
+        String name,
+        @NotNull(message = "Необходимо указать url для фото игры")
+        @NotBlank(message = "url должен содержать хотя бы один символ")
+        String photoUrl,
         boolean isActive
 ) {
 }

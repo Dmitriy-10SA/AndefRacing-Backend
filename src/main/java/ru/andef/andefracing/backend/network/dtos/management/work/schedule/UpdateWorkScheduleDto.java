@@ -9,9 +9,9 @@ import java.time.LocalTime;
  * DTO для изменения основного графика работы
  */
 public record UpdateWorkScheduleDto(
-        @NotNull DayOfWeek dayOfWeek,
-        @NotNull LocalTime openTime,
-        @NotNull LocalTime closeTime,
+        @NotNull(message = "Необходимо передать дату") DayOfWeek dayOfWeek,
+        LocalTime openTime,
+        LocalTime closeTime,
         boolean isWorkDay
 ) {
 }
