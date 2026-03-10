@@ -1,23 +1,35 @@
 package ru.andef.andefracing.backend.network.controllers.profile;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
+import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 @RestController
 @RequestMapping(ApiPaths.PROFILE_CLIENT)
+@RequiredArgsConstructor
 public class ClientProfileController {
+    private final ProfileService profileService;
+
     /**
      * Получение информации о клиенте (имя, номер телефона)
      */
     @GetMapping("/personal-info")
-    public ResponseEntity<ClientPersonalInfoDto> getPersonalInfo() {
-        // TODO
-        return ResponseEntity.ok(null);
+    public ResponseEntity<ClientPersonalInfoDto> getPersonalInfo(Authentication authentication) {
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        ClientPersonalInfoDto clientPersonalInfoDto = profileService.getClientPersonalInfo(principal.id());
+        return ResponseEntity.ok(clientPersonalInfoDto);
     }
 
     /**
