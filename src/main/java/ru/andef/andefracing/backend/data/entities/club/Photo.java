@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.data.entities.club.price;
+package ru.andef.andefracing.backend.data.entities.club;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -7,33 +7,32 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
- * Цена в клубе (за кол-во минут)
+ * Фотография в клубе
  */
 @Entity
-@Table(name = "price", schema = "info")
+@Table(name = "photo", schema = "info")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Price {
+public class Photo {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "duration_minutes", nullable = false)
-    private short durationMinutes;
+    @Column(name = "url", nullable = false)
+    private String url;
 
-    @Column(name = "value", nullable = false, precision = 8, scale = 2)
+    @Column(name = "sequence_number", nullable = false)
     @Setter
-    private BigDecimal value;
+    private short sequenceNumber;
 
-    public Price(short durationMinutes, BigDecimal value) {
-        this.durationMinutes = durationMinutes;
-        this.value = value;
+    public Photo(String url, short sequenceNumber) {
+        this.url = url;
+        this.sequenceNumber = sequenceNumber;
     }
 
     @Override
@@ -45,8 +44,8 @@ public class Price {
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ?
                 ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        Price price = (Price) o;
-        return Objects.equals(getId(), price.getId());
+        Photo photo = (Photo) o;
+        return Objects.equals(getId(), photo.getId());
     }
 
     @Override

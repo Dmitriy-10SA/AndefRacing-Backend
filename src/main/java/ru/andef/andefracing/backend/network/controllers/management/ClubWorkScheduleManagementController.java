@@ -1,17 +1,21 @@
 package ru.andef.andefracing.backend.network.controllers.management;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT_WORK_SCHEDULE)
+@Validated
 public class ClubWorkScheduleManagementController {
     /**
      * Добавление «дня-исключения» в график работы в выбранном текущим клубе
@@ -29,8 +33,10 @@ public class ClubWorkScheduleManagementController {
      * Получение исключений в расписании на неделю
      */
     @GetMapping("/exceptions")
-    public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptionsForWeek(
-            @PathVariable int clubId
+    public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptions(
+            @PathVariable int clubId,
+            @RequestParam("startDate") @NotNull LocalDate startDate,
+            @RequestParam("endDate") @NotNull LocalDate endDate
     ) {
         // TODO
         return null;
