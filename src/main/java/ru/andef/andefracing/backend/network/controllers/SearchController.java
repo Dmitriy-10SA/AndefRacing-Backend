@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.network.ApiPaths;
-import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
-import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.RegionShortDto;
+import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
+import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 
 import java.util.List;
 

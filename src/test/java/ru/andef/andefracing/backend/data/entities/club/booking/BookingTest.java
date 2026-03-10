@@ -1,11 +1,9 @@
-package ru.andef.andefracing.backend.data.entities.booking;
+package ru.andef.andefracing.backend.data.entities.club.booking;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
-import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
-import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 
 import java.math.BigDecimal;
