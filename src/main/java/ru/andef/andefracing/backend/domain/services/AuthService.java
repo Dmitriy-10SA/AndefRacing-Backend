@@ -23,6 +23,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswor
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.security.JwtUtil;
 
@@ -39,6 +40,25 @@ public class AuthService {
     private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
+
+    /**
+     * Получение ролей (в виде List из String) сотрудника в клубе
+     */
+    private List<String> getEmployeeRolesInClub(int clubId, Employee employee) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
+        List<String> roles = club.getEmployeesAndRoles().stream()
+                .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
+                .map(EmployeeClub::getEmployeeRole)
+                .map(EmployeeRole::getRole)
+                .toList();
+        if (roles.isEmpty()) {
+            throw new EntityNotFoundException(
+                    "Сотрудник с номером телефона " + employee.getPhone() + " не найден в клубе с id " + clubId
+            );
+        }
+        return roles;
+    }
 
     /**
      * Регистрация в системе для клиента
@@ -103,18 +123,21 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
             throw new InvalidPhoneOrPasswordException();
         }
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
-        List<String> roles = club.getEmployeesAndRoles().stream()
-                .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
-                .map(EmployeeClub::getEmployeeRole)
-                .map(EmployeeRole::getRole)
-                .toList();
-        if (roles.isEmpty()) {
-            throw new EntityNotFoundException(
-                    "Сотрудник с номером телефона " + loginDto.getPhone() + " не найден в клубе с id " + clubId
-            );
-        }
+        List<String> roles = getEmployeeRolesInClub(clubId, employee);
+        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), roles);
+        return new EmployeeAuthResponseDto(jwt);
+    }
+
+    /**
+     * Изменение пароля по номеру телефона (без получения СМС, да - плохо)
+     */
+    @Transactional
+    public EmployeeAuthResponseDto changePasswordEmployee(int clubId, EmployeeChangePasswordDto changePasswordDto) {
+        Employee employee = employeeRepository.findByPhone(changePasswordDto.getPhone())
+                .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
+        String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
+        employee.setPassword(passwordHash);
+        List<String> roles = getEmployeeRolesInClub(clubId, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), roles);
         return new EmployeeAuthResponseDto(jwt);
     }

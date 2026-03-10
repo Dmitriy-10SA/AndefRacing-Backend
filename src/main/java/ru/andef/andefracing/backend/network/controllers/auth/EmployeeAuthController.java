@@ -52,11 +52,13 @@ public class EmployeeAuthController {
     /**
      * Смена пароля у сотрудника по номеру телефона
      */
-    @PatchMapping("/change-password")
+    @PatchMapping("/change-password/{clubId}")
     public ResponseEntity<EmployeeAuthResponseDto> changePassword(
+            @PathVariable int clubId,
             @RequestBody @Valid EmployeeChangePasswordDto changePasswordDto
     ) {
-        // TODO ("без СМС, упрощаем, хоть и плохо")
-        return ResponseEntity.ok(new EmployeeAuthResponseDto(""));
+        EmployeeAuthResponseDto employeeAuthResponseDto = authService
+                .changePasswordEmployee(clubId, changePasswordDto);
+        return ResponseEntity.ok(employeeAuthResponseDto);
     }
 }
