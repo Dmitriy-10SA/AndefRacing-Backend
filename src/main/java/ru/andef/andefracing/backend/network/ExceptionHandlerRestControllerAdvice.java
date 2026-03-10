@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionHandlerRestControllerAdvice {
     private static final String VALIDATION_ERROR = "Validation error";
+    private static final String AUTH_ERROR = "Auth error";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -26,6 +28,17 @@ public class ExceptionHandlerRestControllerAdvice {
     ) {
         ErrorDto errorDto = new ErrorDto(Instant.now(), status.value(), error, message, request.getRequestURI());
         return ResponseEntity.status(status).body(errorDto);
+    }
+
+    /**
+     * Обработки ошибки, когда клиент при попытке зарегистрироваться уже зарегистрирован
+     */
+    @ExceptionHandler(ClientWithThisPhoneAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> handleClientWithThisPhoneAlreadyExistsException(
+            ClientWithThisPhoneAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
     }
 
     /**

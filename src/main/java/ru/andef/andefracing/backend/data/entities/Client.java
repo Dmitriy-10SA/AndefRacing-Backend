@@ -42,6 +42,7 @@ public class Client {
     private String password;
 
     @Column(name = "is_blocked", nullable = false)
+    @Setter
     private boolean isBlocked;
 
     @OneToMany(fetch = FetchType.LAZY)
