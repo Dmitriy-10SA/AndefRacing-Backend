@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.domain.mappers;
+package ru.andef.andefracing.backend.domain.mappers.location;
 
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

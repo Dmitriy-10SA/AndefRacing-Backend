@@ -17,10 +17,10 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.mappers.CityMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
-import ru.andef.andefracing.backend.domain.mappers.ClubMapper;
-import ru.andef.andefracing.backend.domain.mappers.RegionMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;

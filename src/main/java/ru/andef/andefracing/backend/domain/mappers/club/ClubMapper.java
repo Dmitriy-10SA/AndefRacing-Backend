@@ -1,7 +1,9 @@
-package ru.andef.andefracing.backend.domain.mappers;
+package ru.andef.andefracing.backend.domain.mappers.club;
 
 import org.mapstruct.*;
 import ru.andef.andefracing.backend.data.entities.club.Club;
+import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 
 import java.util.List;
