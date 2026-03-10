@@ -82,7 +82,7 @@ public class JwtFilter extends OncePerRequestFilter {
     /**
      * Principal для клиента
      */
-    public record ClientPrincipal(long userId) {
+    public record ClientPrincipal(long id) {
     }
 
     /**
