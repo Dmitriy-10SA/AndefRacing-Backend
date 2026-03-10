@@ -7,6 +7,7 @@ import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
+import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 
 @Service
@@ -31,5 +32,16 @@ public class ProfileService {
     public ClientPersonalInfoDto getClientPersonalInfo(long clientId) {
         Client client = findClientByIdOrThrow(clientId);
         return clientMapper.toPersonalInfoDto(client);
+    }
+
+    /**
+     * Редактирование личной информации клиента (имя, номер телефона)
+     */
+    @Transactional
+    public void changeClientPersonalInfo(long clientId, ClientChangePersonalInfoDto changePersonalInfoDto) {
+        Client client = findClientByIdOrThrow(clientId);
+        client.setName(changePersonalInfoDto.name());
+        client.setPhone(changePersonalInfoDto.phone());
+        clientRepository.save(client);
     }
 }

@@ -37,9 +37,14 @@ public class ClientProfileController {
      */
     @PatchMapping("/change-personal-info")
     public ResponseEntity<Void> changePersonalInfo(
-            @RequestBody @Valid ClientChangePersonalInfoDto changePersonalInfoDto
+            @RequestBody @Valid ClientChangePersonalInfoDto changePersonalInfoDto,
+            Authentication authentication
     ) {
-        // TODO
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        profileService.changeClientPersonalInfo(principal.id(), changePersonalInfoDto);
         return ResponseEntity.ok().build();
     }
 
