@@ -41,6 +41,15 @@ public class EmployeeAuthController {
     }
 
     /**
+     * Подготовительный шаг для входа в систему для сотрудника
+     */
+    @PostMapping("/pre-login")
+    public ResponseEntity<List<EmployeeClubDto>> preLogin(@RequestBody @Valid EmployeeLoginDto loginDto) {
+        List<EmployeeClubDto> clubsWhenWork = authService.preLoginEmployee(loginDto);
+        return ResponseEntity.ok().body(clubsWhenWork);
+    }
+
+    /**
      * Вход в систему для сотрудника
      */
     @PostMapping("/login/{clubId}")
@@ -63,22 +72,5 @@ public class EmployeeAuthController {
         EmployeeAuthResponseDto employeeAuthResponseDto = authService
                 .changePasswordEmployee(clubId, changePasswordDto);
         return ResponseEntity.ok(employeeAuthResponseDto);
-    }
-
-    /**
-     * Получение списка всех клубов, где работает сотрудник
-     */
-    @GetMapping("/clubs")
-    public ResponseEntity<List<EmployeeClubDto>> getAllClubsWhenEmployeeWork(
-            @RequestParam(name = "phone")
-            @NotBlank(message = "Номер телефона должен быть заполнен")
-            @Pattern(
-                    regexp = "^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$",
-                    message = "Телефон должен быть в формате: +7-XXX-XXX-XX-XX"
-            )
-            String phone
-    ) {
-        List<EmployeeClubDto> clubs = authService.getAllClubsWhenEmployeeWork(phone);
-        return ResponseEntity.ok(clubs);
     }
 }

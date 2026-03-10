@@ -17,9 +17,9 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
@@ -120,6 +120,17 @@ public class AuthService {
         return employee.isNeedPassword();
     }
 
+    @Transactional(readOnly = true)
+    public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
+        Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
+                .orElseThrow(InvalidPhoneOrPasswordException::new);
+        if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
+            throw new InvalidPhoneOrPasswordException();
+        }
+        List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
+        return clubMapper.toEmployeeClubDto(clubs, cityMapper, regionMapper);
+    }
+
     /**
      * Вход в систему для сотрудника
      */
@@ -147,16 +158,5 @@ public class AuthService {
         List<String> roles = getEmployeeRolesInClub(clubId, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), clubId, roles);
         return new EmployeeAuthResponseDto(jwt);
-    }
-
-    /**
-     * Получение всех клубов, где работает сотрудник
-     */
-    @Transactional(readOnly = true)
-    public List<EmployeeClubDto> getAllClubsWhenEmployeeWork(String phone) {
-        Employee employee = employeeRepository.findByPhone(phone)
-                .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(phone));
-        List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
-        return clubMapper.toEmployeeClubDto(clubs, cityMapper, regionMapper);
     }
 }
