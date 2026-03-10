@@ -17,13 +17,17 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.mappers.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
+import ru.andef.andefracing.backend.domain.mappers.ClubMapper;
+import ru.andef.andefracing.backend.domain.mappers.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.security.JwtUtil;
 
@@ -40,6 +44,9 @@ public class AuthService {
     private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
+    private final ClubMapper clubMapper;
+    private final CityMapper cityMapper;
+    private final RegionMapper regionMapper;
 
     /**
      * Получение ролей (в виде List из String) сотрудника в клубе
@@ -140,5 +147,16 @@ public class AuthService {
         List<String> roles = getEmployeeRolesInClub(clubId, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), clubId, roles);
         return new EmployeeAuthResponseDto(jwt);
+    }
+
+    /**
+     * Получение всех клубов, где работает сотрудник
+     */
+    @Transactional(readOnly = true)
+    public List<EmployeeClubDto> getAllClubsWhenEmployeeWork(String phone) {
+        Employee employee = employeeRepository.findByPhone(phone)
+                .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(phone));
+        List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
+        return clubMapper.toEmployeeClubDto(clubs, cityMapper, regionMapper);
     }
 }

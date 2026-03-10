@@ -11,8 +11,8 @@ import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
-import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 import java.util.List;
 
@@ -69,8 +69,16 @@ public class EmployeeAuthController {
      * Получение списка всех клубов, где работает сотрудник
      */
     @GetMapping("/clubs")
-    public ResponseEntity<List<EmployeeClubDto>> getAllClubs() {
-        // TODO
-        return null;
+    public ResponseEntity<List<EmployeeClubDto>> getAllClubsWhenEmployeeWork(
+            @RequestParam(name = "phone")
+            @NotBlank(message = "Номер телефона должен быть заполнен")
+            @Pattern(
+                    regexp = "^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$",
+                    message = "Телефон должен быть в формате: +7-XXX-XXX-XX-XX"
+            )
+            String phone
+    ) {
+        List<EmployeeClubDto> clubs = authService.getAllClubsWhenEmployeeWork(phone);
+        return ResponseEntity.ok(clubs);
     }
 }
