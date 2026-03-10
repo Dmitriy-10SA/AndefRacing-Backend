@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * DTO для отчета «Финансовая статистика»
+ */
 public record FinancialStatisticsDto(
         int clubId,
         LocalDate startDate,
