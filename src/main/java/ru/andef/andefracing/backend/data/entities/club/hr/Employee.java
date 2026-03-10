@@ -74,7 +74,7 @@ public class Employee {
     }
 
     /**
-     * Добавление бронирования, которое было создано сотрудником, только после оплаты (с возвратом бронирования)
+     * Добавление бронирования, которое было создано сотрудником
      */
     public Booking addBooking(
             Club club,
@@ -87,6 +87,13 @@ public class Employee {
         bookings.add(booking);
         booking.setCreatedByEmployee(this);
         return booking;
+    }
+
+    /**
+     * Подтверждение оплаты бронирования
+     */
+    public void confirmBookingPayment(Booking booking) {
+        booking.pay();
     }
 
     /**

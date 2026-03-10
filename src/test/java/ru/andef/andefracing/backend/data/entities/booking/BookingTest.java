@@ -50,7 +50,7 @@ class BookingTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         assertFalse(booking.isWalkIn());
         assertNull(booking.getCreatedByEmployee());
     }
@@ -74,8 +74,28 @@ class BookingTest {
         assertEquals(TEST_END_DATE_TIME, booking.getEndDateTime());
         assertEquals(CNT_EQUIPMENT, booking.getCntEquipment());
         assertEquals(PRICE_VALUE, booking.getPriceValue());
-        assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
         assertTrue(booking.isWalkIn());
         assertNull(booking.getClient());
+    }
+
+    @Test
+    @DisplayName("Оплата бронирования переводит его в статус PAID")
+    void testPayingForAReservationChangesItsStateToPaid() {
+        Client client = new Client();
+        Booking booking = getBookingByClient(client);
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
+        booking.pay();
+        assertEquals(BookingStatus.PAID, booking.getStatus());
+    }
+
+    @Test
+    @DisplayName("Отмена оплаченного заказа приводить к состоянию canceled")
+    void testCancelPayment() {
+        Client client = new Client();
+        Booking booking = getBookingByClient(client);
+        assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
+        booking.cancel();
+        assertEquals(BookingStatus.CANCELLED, booking.getStatus());
     }
 }

@@ -21,6 +21,6 @@ public enum EmployeeRole {
 
     EmployeeRole(String ru, String role) {
         this.ru = ru;
-        this.role=role;
+        this.role = role;
     }
 }
