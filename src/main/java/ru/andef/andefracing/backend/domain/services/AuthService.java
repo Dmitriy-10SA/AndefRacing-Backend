@@ -68,7 +68,7 @@ public class AuthService {
     /**
      * Получение клуба по id или выброс исключения
      */
-    private Club findClubByIdOrThrows(int clubId) {
+    private Club findClubByIdOrThrow(int clubId) {
         return clubRepository.findById(clubId)
                 .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
     }
@@ -147,7 +147,7 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
             throw new InvalidPhoneOrPasswordException();
         }
-        Club club = findClubByIdOrThrows(clubId);
+        Club club = findClubByIdOrThrow(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
@@ -162,7 +162,7 @@ public class AuthService {
                 .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         employee.setPassword(passwordHash);
-        Club club = findClubByIdOrThrows(clubId);
+        Club club = findClubByIdOrThrow(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
