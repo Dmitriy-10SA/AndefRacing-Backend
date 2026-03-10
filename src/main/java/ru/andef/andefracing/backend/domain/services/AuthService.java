@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
+import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.security.JwtUtil;
@@ -50,6 +52,19 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDto.getPassword(), client.getPassword())) {
             throw new InvalidPhoneOrPasswordException();
         }
+        String jwt = jwtUtil.generateClientToken(client.getId());
+        return new ClientAuthResponseDto(jwt);
+    }
+
+    /**
+     * Изменение пароля по номеру телефона (без получения СМС, да - плохо)
+     */
+    @Transactional
+    public ClientAuthResponseDto changePasswordClient(ClientChangePasswordDto changePasswordDto) {
+        Client client = clientRepository.findByPhone(changePasswordDto.getPhone())
+                .orElseThrow(() -> new ClientWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
+        String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
+        client.setPassword(passwordHash);
         String jwt = jwtUtil.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }

@@ -43,7 +43,7 @@ public class ClientAuthController {
     public ResponseEntity<ClientAuthResponseDto> changePassword(
             @RequestBody @Valid ClientChangePasswordDto changePasswordDto
     ) {
-        // TODO ("без СМС, упрощаем, хоть и плохо")
-        return ResponseEntity.ok(new ClientAuthResponseDto(""));
+        ClientAuthResponseDto clientAuthResponseDto = authService.changePasswordClient(changePasswordDto);
+        return ResponseEntity.ok(clientAuthResponseDto);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.InvalidPhoneOrPasswordException;
 
 import java.time.Instant;
@@ -40,6 +41,17 @@ public class ExceptionHandlerRestControllerAdvice {
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.UNAUTHORIZED, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент не найден по номеру телефона
+     */
+    @ExceptionHandler(ClientWithThisPhoneNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
+            ClientWithThisPhoneNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
     }
 
     /**
