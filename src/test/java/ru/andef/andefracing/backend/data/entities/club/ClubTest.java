@@ -4,8 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
-import ru.andef.andefracing.backend.data.entities.club.photo.Photo;
-import ru.andef.andefracing.backend.data.entities.club.price.Price;
 import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedule;
 import ru.andef.andefracing.backend.data.entities.location.City;
 

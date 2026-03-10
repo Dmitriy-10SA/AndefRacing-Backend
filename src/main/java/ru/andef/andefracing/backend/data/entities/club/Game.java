@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.data.entities.club.game;
+package ru.andef.andefracing.backend.data.entities.club;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
