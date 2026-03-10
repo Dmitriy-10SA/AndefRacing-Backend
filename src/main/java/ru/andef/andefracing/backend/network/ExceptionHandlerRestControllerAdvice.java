@@ -45,7 +45,7 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
-     * Обработка ошибок валидации параметров запроса (@RequestParam, @PathVariable)
+     * Обработка ошибок валидации параметров запроса (@RequestParam и т.д.)
      */
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ErrorDto> handleConstraintViolation(
