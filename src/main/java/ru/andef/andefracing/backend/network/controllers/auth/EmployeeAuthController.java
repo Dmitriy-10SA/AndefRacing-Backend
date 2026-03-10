@@ -70,7 +70,7 @@ public class EmployeeAuthController {
             @RequestBody @Valid EmployeeChangePasswordDto changePasswordDto
     ) {
         EmployeeAuthResponseDto employeeAuthResponseDto = authService
-                .changePasswordEmployee(clubId, changePasswordDto);
+                .changeEmployeePassword(clubId, changePasswordDto);
         return ResponseEntity.ok(employeeAuthResponseDto);
     }
 }

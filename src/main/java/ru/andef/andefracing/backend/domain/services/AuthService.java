@@ -101,7 +101,7 @@ public class AuthService {
      * Изменение пароля по номеру телефона (без получения СМС, да - плохо)
      */
     @Transactional
-    public ClientAuthResponseDto changePasswordClient(ClientChangePasswordDto changePasswordDto) {
+    public ClientAuthResponseDto changeClientPassword(ClientChangePasswordDto changePasswordDto) {
         Client client = clientRepository.findByPhone(changePasswordDto.getPhone())
                 .orElseThrow(() -> new ClientWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
@@ -150,7 +150,7 @@ public class AuthService {
      * Изменение пароля по номеру телефона (без получения СМС, да - плохо)
      */
     @Transactional
-    public EmployeeAuthResponseDto changePasswordEmployee(int clubId, EmployeeChangePasswordDto changePasswordDto) {
+    public EmployeeAuthResponseDto changeEmployeePassword(int clubId, EmployeeChangePasswordDto changePasswordDto) {
         Employee employee = employeeRepository.findByPhone(changePasswordDto.getPhone())
                 .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());

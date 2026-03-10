@@ -43,7 +43,7 @@ public class ClientAuthController {
     public ResponseEntity<ClientAuthResponseDto> changePassword(
             @RequestBody @Valid ClientChangePasswordDto changePasswordDto
     ) {
-        ClientAuthResponseDto clientAuthResponseDto = authService.changePasswordClient(changePasswordDto);
+        ClientAuthResponseDto clientAuthResponseDto = authService.changeClientPassword(changePasswordDto);
         return ResponseEntity.ok(clientAuthResponseDto);
     }
 }
