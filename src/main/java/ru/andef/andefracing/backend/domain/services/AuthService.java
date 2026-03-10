@@ -127,7 +127,7 @@ public class AuthService {
         return employee.isNeedPassword();
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
         Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
                 .orElseThrow(InvalidPhoneOrPasswordException::new);
