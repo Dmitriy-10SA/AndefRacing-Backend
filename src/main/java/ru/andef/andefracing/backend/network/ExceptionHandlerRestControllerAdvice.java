@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 public class ExceptionHandlerRestControllerAdvice {
     private static final String VALIDATION_ERROR = "Validation error";
     private static final String AUTH_ERROR = "Auth error";
+    private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -64,6 +66,17 @@ public class ExceptionHandlerRestControllerAdvice {
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки сущность не найдена
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEntityNotFoundException(
+            EntityNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ENTITY_NOT_FOUND_ERROR, ex.getMessage(), request);
     }
 
     /**

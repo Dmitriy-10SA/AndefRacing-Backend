@@ -40,10 +40,13 @@ public class EmployeeAuthController {
     /**
      * Вход в систему для сотрудника
      */
-    @PostMapping("/login")
-    public ResponseEntity<EmployeeAuthResponseDto> login(@RequestBody @Valid EmployeeLoginDto loginDto) {
-        // TODO
-        return ResponseEntity.ok(new EmployeeAuthResponseDto(""));
+    @PostMapping("/login/{clubId}")
+    public ResponseEntity<EmployeeAuthResponseDto> login(
+            @PathVariable int clubId,
+            @RequestBody @Valid EmployeeLoginDto loginDto
+    ) {
+        EmployeeAuthResponseDto employeeAuthResponseDto = authService.loginEmployee(clubId, loginDto);
+        return ResponseEntity.ok(employeeAuthResponseDto);
     }
 
     /**

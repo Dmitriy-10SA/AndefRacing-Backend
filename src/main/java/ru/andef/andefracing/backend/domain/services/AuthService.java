@@ -5,9 +5,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.Client;
+import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
+import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
+import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
+import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
+import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
@@ -17,7 +22,11 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseD
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.security.JwtUtil;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +36,7 @@ public class AuthService {
 
     private final ClientRepository clientRepository;
     private final EmployeeRepository employeeRepository;
+    private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
 
@@ -81,5 +91,31 @@ public class AuthService {
         Employee employee = employeeRepository.findByPhone(phone)
                 .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(phone));
         return employee.isNeedPassword();
+    }
+
+    /**
+     * Вход в систему для сотрудника
+     */
+    @Transactional(readOnly = true)
+    public EmployeeAuthResponseDto loginEmployee(int clubId, EmployeeLoginDto loginDto) {
+        Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
+                .orElseThrow(InvalidPhoneOrPasswordException::new);
+        if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
+            throw new InvalidPhoneOrPasswordException();
+        }
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
+        List<String> roles = club.getEmployeesAndRoles().stream()
+                .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
+                .map(EmployeeClub::getEmployeeRole)
+                .map(EmployeeRole::getRole)
+                .toList();
+        if (roles.isEmpty()) {
+            throw new EntityNotFoundException(
+                    "Сотрудник с номером телефона " + loginDto.getPhone() + " не найден в клубе с id " + clubId
+            );
+        }
+        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), roles);
+        return new EmployeeAuthResponseDto(jwt);
     }
 }
