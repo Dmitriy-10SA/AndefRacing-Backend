@@ -51,9 +51,7 @@ public class AuthService {
     /**
      * Получение ролей (в виде List из String) сотрудника в клубе
      */
-    private List<String> getEmployeeRolesInClub(int clubId, Employee employee) {
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
+    private List<String> getEmployeeRolesInClub(Club club, Employee employee) {
         List<String> roles = club.getEmployeesAndRoles().stream()
                 .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
                 .map(EmployeeClub::getEmployeeRole)
@@ -61,10 +59,18 @@ public class AuthService {
                 .toList();
         if (roles.isEmpty()) {
             throw new EntityNotFoundException(
-                    "Сотрудник с номером телефона " + employee.getPhone() + " не найден в клубе с id " + clubId
+                    "Сотрудник с номером телефона " + employee.getPhone() + " не найден в клубе с id " + club.getId()
             );
         }
         return roles;
+    }
+
+    /**
+     * Получение клуба по id или выброс исключения
+     */
+    private Club findClubByIdOrThrows(int clubId) {
+        return clubRepository.findById(clubId)
+                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
     }
 
     /**
@@ -141,8 +147,9 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
             throw new InvalidPhoneOrPasswordException();
         }
-        List<String> roles = getEmployeeRolesInClub(clubId, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), clubId, roles);
+        Club club = findClubByIdOrThrows(clubId);
+        List<String> roles = getEmployeeRolesInClub(club, employee);
+        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
     }
 
@@ -155,8 +162,9 @@ public class AuthService {
                 .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         employee.setPassword(passwordHash);
-        List<String> roles = getEmployeeRolesInClub(clubId, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), clubId, roles);
+        Club club = findClubByIdOrThrows(clubId);
+        List<String> roles = getEmployeeRolesInClub(club, employee);
+        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
     }
 }

@@ -45,11 +45,12 @@ public class JwtUtil {
     /**
      * Генерация JWT токена для сотрудника
      */
-    public String generateEmployeeToken(long employeeId, int clubId, List<String> roles) {
+    public String generateEmployeeToken(long employeeId, int clubId, String clubName, List<String> roles) {
         return Jwts.builder()
                 .setSubject(jwtProperties.getEmployeeSubject())
                 .claim(jwtProperties.getIdClaim(), employeeId)
                 .claim(jwtProperties.getClubIdClaim(), clubId)
+                .claim(jwtProperties.getClubNameClaim(), clubName)
                 .claim(jwtProperties.getRolesClaim(), roles)
                 .setIssuer(jwtProperties.getIssuer())
                 .setIssuedAt(new Date())
