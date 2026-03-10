@@ -12,6 +12,9 @@ import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.AUTH_EMPLOYEE)
@@ -60,5 +63,14 @@ public class EmployeeAuthController {
         EmployeeAuthResponseDto employeeAuthResponseDto = authService
                 .changePasswordEmployee(clubId, changePasswordDto);
         return ResponseEntity.ok(employeeAuthResponseDto);
+    }
+
+    /**
+     * Получение списка всех клубов, где работает сотрудник
+     */
+    @GetMapping("/clubs")
+    public ResponseEntity<List<EmployeeClubDto>> getAllClubs() {
+        // TODO
+        return null;
     }
 }

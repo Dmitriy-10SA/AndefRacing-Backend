@@ -17,6 +17,7 @@ public class JwtProperties {
     private long expirationMillis;
 
     private final String idClaim = "id";
+    private final String clubIdClaim = "clubId";
     private final String rolesClaim = "roles";
 
     private final String issuer = "AndefRacingBackendApplication";

@@ -22,7 +22,6 @@ public class ClubWorkScheduleManagementController {
      */
     @PostMapping("/exceptions")
     public ResponseEntity<Void> addWorkScheduleException(
-            @PathVariable int clubId,
             @RequestBody @Valid AddWorkScheduleExceptionDto addWorkScheduleExceptionDto
     ) {
         // TODO: Обработка добавления дня-исключения
@@ -34,7 +33,6 @@ public class ClubWorkScheduleManagementController {
      */
     @GetMapping("/exceptions")
     public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptions(
-            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate
     ) {
@@ -47,7 +45,6 @@ public class ClubWorkScheduleManagementController {
      */
     @DeleteMapping("/exceptions/{workScheduleExceptionId}")
     public ResponseEntity<Void> deleteWorkScheduleException(
-            @PathVariable int clubId,
             @PathVariable long workScheduleExceptionId
     ) {
         // TODO: Обработка удаления дня-исключения
@@ -59,7 +56,6 @@ public class ClubWorkScheduleManagementController {
      */
     @PutMapping
     public ResponseEntity<Void> updateWorkSchedule(
-            @PathVariable int clubId,
             @RequestBody @Valid UpdateWorkScheduleDto updateWorkScheduleDto
     ) {
         // TODO: Обновление расписания на день недели

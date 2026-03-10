@@ -14,11 +14,8 @@ public class ClubGamesManagementController {
     /**
      * Добавить активную игру в клуб (из справочника)
      */
-    @PostMapping("/{clubId}")
-    public ResponseEntity<Void> addGameToClub(
-            @PathVariable int clubId,
-            @RequestBody @Valid GameDto gameDto
-    ) {
+    @PostMapping
+    public ResponseEntity<Void> addGameToClub(@RequestBody @Valid GameDto gameDto) {
         // TODO: Добавить игру в список активных игр клуба
         return ResponseEntity.ok().build();
     }
@@ -35,8 +32,8 @@ public class ClubGamesManagementController {
     /**
      * Удалить игру из клуба
      */
-    @DeleteMapping("/{clubId}/{gameId}")
-    public ResponseEntity<Void> removeGameFromClub(@PathVariable int clubId, @PathVariable short gameId) {
+    @DeleteMapping("/{gameId}")
+    public ResponseEntity<Void> removeGameFromClub(@PathVariable short gameId) {
         // TODO: Удалить игру из списка активных игр клуба
         return ResponseEntity.ok().build();
     }

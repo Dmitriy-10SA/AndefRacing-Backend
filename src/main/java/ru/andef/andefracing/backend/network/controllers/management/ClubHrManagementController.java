@@ -21,7 +21,6 @@ public class ClubHrManagementController {
      */
     @PostMapping("/add-employee")
     public ResponseEntity<Void> addEmployee(
-            @PathVariable int clubId,
             @RequestParam(name = "employeePhone")
             @NotBlank(message = "Номер телефона должен быть заполнен")
             @Pattern(
@@ -39,7 +38,7 @@ public class ClubHrManagementController {
      * Получение списка сотрудников и их ролей в клубе
      */
     @GetMapping
-    public ResponseEntity<List<EmployeeAndRolesDto>> getEmployeesAndRoles(@PathVariable int clubId) {
+    public ResponseEntity<List<EmployeeAndRolesDto>> getEmployeesAndRoles() {
         // TODO
         return ResponseEntity.ok(null);
     }
@@ -48,7 +47,7 @@ public class ClubHrManagementController {
      * Удаление сотрудника из выбранного текущим клуба
      */
     @DeleteMapping("/delete-employee/{employeeId}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable int clubId, @PathVariable long employeeId) {
+    public ResponseEntity<Void> deleteEmployee(@PathVariable long employeeId) {
         // TODO
         return null;
     }
@@ -58,7 +57,6 @@ public class ClubHrManagementController {
      */
     @PostMapping("/add-role-to-employee/{employeeId}")
     public ResponseEntity<Void> addRoleToEmployee(
-            @PathVariable int clubId,
             @PathVariable long employeeId,
             @RequestParam(name = "role") @NotNull EmployeeRole role
     ) {
@@ -71,7 +69,6 @@ public class ClubHrManagementController {
      */
     @PatchMapping("/update-employee-role/{employeeId}")
     public ResponseEntity<Void> updateEmployeeRole(
-            @PathVariable int clubId,
             @PathVariable long employeeId,
             @RequestParam(name = "oldRole") @NotNull EmployeeRole oldRole,
             @RequestParam(name = "newRole") @NotNull EmployeeRole newRole
@@ -85,7 +82,6 @@ public class ClubHrManagementController {
      */
     @DeleteMapping("/delete-employee-role/{employeeId}")
     public ResponseEntity<Void> deleteEmployeeRole(
-            @PathVariable int clubId,
             @PathVariable long employeeId,
             @RequestParam(name = "role") @NotNull EmployeeRole role
     ) {

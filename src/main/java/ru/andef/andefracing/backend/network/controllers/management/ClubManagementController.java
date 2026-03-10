@@ -3,7 +3,10 @@ package ru.andef.andefracing.backend.network.controllers.management;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.network.ApiPaths;
 
 @RestController
@@ -15,7 +18,6 @@ public class ClubManagementController {
      */
     @PatchMapping
     public ResponseEntity<Void> updateCntEquipmentInClub(
-            @PathVariable int clubId,
             @RequestParam(name = "cntEquipment") @Min(1) int cntEquipment
     ) {
         // TODO: Проверить, что count >= 0, и обновить количество симуляторов
@@ -26,7 +28,7 @@ public class ClubManagementController {
      * Открыть клуб
      */
     @PatchMapping("/open")
-    public ResponseEntity<Void> openClub(@PathVariable int clubId) {
+    public ResponseEntity<Void> openClub() {
         // TODO: Установить статус клуба как "открыт"
         return ResponseEntity.ok().build();
     }
@@ -35,7 +37,7 @@ public class ClubManagementController {
      * Закрыть клуб
      */
     @PatchMapping("/close")
-    public ResponseEntity<Void> closeClub(@PathVariable int clubId) {
+    public ResponseEntity<Void> closeClub() {
         // TODO: Установить статус клуба как "закрыт"
         return ResponseEntity.ok().build();
     }

@@ -19,10 +19,7 @@ public class ClubPricesManagementController {
      * Добавление цены за кол-во минут игры
      */
     @PostMapping
-    public ResponseEntity<Void> addPriceForMinutes(
-            @PathVariable int clubId,
-            @RequestBody @Valid AddPriceDto addPriceDto
-    ) {
+    public ResponseEntity<Void> addPriceForMinutes(@RequestBody @Valid AddPriceDto addPriceDto) {
         // TODO: Добавить цену за указанные минуты
         return ResponseEntity.ok().build();
     }
@@ -32,7 +29,6 @@ public class ClubPricesManagementController {
      */
     @PatchMapping("/{priceId}")
     public ResponseEntity<Void> updatePriceForMinutes(
-            @PathVariable int clubId,
             @PathVariable long priceId,
             @RequestParam(name = "value") @NotNull @Min(1) BigDecimal value
     ) {
@@ -44,7 +40,7 @@ public class ClubPricesManagementController {
      * Удаление цены за кол-во минут игры
      */
     @DeleteMapping("/{priceId}")
-    public ResponseEntity<Void> deletePriceForMinutes(@PathVariable int clubId, @PathVariable long priceId) {
+    public ResponseEntity<Void> deletePriceForMinutes(@PathVariable long priceId) {
         // TODO: Удалить цену за указанное количество минут
         return ResponseEntity.ok().build();
     }

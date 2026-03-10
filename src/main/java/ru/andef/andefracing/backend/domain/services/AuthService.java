@@ -124,7 +124,7 @@ public class AuthService {
             throw new InvalidPhoneOrPasswordException();
         }
         List<String> roles = getEmployeeRolesInClub(clubId, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), roles);
+        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), clubId, roles);
         return new EmployeeAuthResponseDto(jwt);
     }
 
@@ -138,7 +138,7 @@ public class AuthService {
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         employee.setPassword(passwordHash);
         List<String> roles = getEmployeeRolesInClub(clubId, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), roles);
+        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), clubId, roles);
         return new EmployeeAuthResponseDto(jwt);
     }
 }

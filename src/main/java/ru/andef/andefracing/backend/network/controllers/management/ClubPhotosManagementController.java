@@ -18,10 +18,7 @@ public class ClubPhotosManagementController {
      * Добавление фотографии
      */
     @PostMapping
-    public ResponseEntity<Void> addPhoto(
-            @PathVariable int clubId,
-            @RequestBody @Valid AddPhotoDto addPhotoDto
-    ) {
+    public ResponseEntity<Void> addPhoto(@RequestBody @Valid AddPhotoDto addPhotoDto) {
         // TODO: Добавить URL фотографии в галерею клуба
         return ResponseEntity.ok().build();
     }
@@ -30,7 +27,7 @@ public class ClubPhotosManagementController {
      * Удаление фотографии
      */
     @DeleteMapping("/{photoId}")
-    public ResponseEntity<Void> deletePhoto(@PathVariable int clubId, @PathVariable long photoId) {
+    public ResponseEntity<Void> deletePhoto(@PathVariable long photoId) {
         // TODO: Удалить фотографию из галереи клуба
         return ResponseEntity.ok().build();
     }
@@ -39,10 +36,7 @@ public class ClubPhotosManagementController {
      * Переупорядочивание фотографий
      */
     @PatchMapping("/reorder")
-    public ResponseEntity<Void> reorderPhotos(
-            @PathVariable int clubId,
-            @RequestBody @Valid @NotNull List<@NotNull Long> orderedPhotoIds
-    ) {
+    public ResponseEntity<Void> reorderPhotos(@RequestBody @Valid @NotNull List<@NotNull Long> orderedPhotoIds) {
         // TODO: Обновить порядок фотографий в галерее
         return ResponseEntity.ok().build();
     }

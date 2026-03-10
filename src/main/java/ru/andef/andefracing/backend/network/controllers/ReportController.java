@@ -20,7 +20,6 @@ public class ReportController {
      */
     @GetMapping("/booking-statistics")
     public ResponseEntity<BookingStatisticsDto> getBookingStatistics(
-            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate
     ) {
@@ -34,7 +33,6 @@ public class ReportController {
      */
     @GetMapping("/financial-statistics")
     public ResponseEntity<FinancialStatisticsDto> getFinancialStatistics(
-            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate
     ) {

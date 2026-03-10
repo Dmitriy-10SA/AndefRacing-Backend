@@ -26,7 +26,6 @@ public class EmployeeBookingController {
      */
     @GetMapping("/free-slots")
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
-            @PathVariable int clubId,
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
     ) {
         // TODO
@@ -37,7 +36,7 @@ public class EmployeeBookingController {
      * Подтверждение оплаты бронирования
      */
     @PatchMapping("/confirm-booking-payment")
-    public ResponseEntity<Void> confirmBookingPayment(@PathVariable int clubId) {
+    public ResponseEntity<Void> confirmBookingPayment() {
         // TODO
         return null;
     }
@@ -46,10 +45,7 @@ public class EmployeeBookingController {
      * Сделать бронирование
      */
     @PostMapping("/make-booking")
-    public ResponseEntity<Void> makeBooking(
-            @PathVariable int clubId,
-            @RequestBody @Valid EmployeeMakeBookingDto makeBookingDto
-    ) {
+    public ResponseEntity<Void> makeBooking(@RequestBody @Valid EmployeeMakeBookingDto makeBookingDto) {
         // TODO
         return ResponseEntity.ok(null);
     }
@@ -58,7 +54,7 @@ public class EmployeeBookingController {
      * Отмена бронирования
      */
     @PatchMapping("/cancel/{bookingId}")
-    public ResponseEntity<Void> cancelBooking(@PathVariable int clubId, @PathVariable long bookingId) {
+    public ResponseEntity<Void> cancelBooking(@PathVariable long bookingId) {
         // TODO
         return ResponseEntity.ok(null);
     }
@@ -68,7 +64,6 @@ public class EmployeeBookingController {
      */
     @GetMapping
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
-            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
@@ -87,10 +82,7 @@ public class EmployeeBookingController {
      * Просмотр полной информации о бронировании
      */
     @GetMapping("/{bookingId}")
-    public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(
-            @PathVariable int clubId,
-            @PathVariable long bookingId
-    ) {
+    public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(@PathVariable long bookingId) {
         // TODO
         return ResponseEntity.ok(null);
     }
