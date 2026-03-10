@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.data.entities.client;
+package ru.andef.andefracing.backend.data.entities;
 
 import jakarta.persistence.*;
 import lombok.*;

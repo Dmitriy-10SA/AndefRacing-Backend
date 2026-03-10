@@ -2,7 +2,7 @@ package ru.andef.andefracing.backend.data.entities.booking;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.andef.andefracing.backend.data.entities.client.Client;
+import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
