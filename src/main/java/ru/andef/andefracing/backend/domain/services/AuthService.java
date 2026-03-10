@@ -7,8 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
+import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.security.JwtUtil;
 
@@ -34,6 +36,20 @@ public class AuthService {
         registerDto = new ClientRegisterDto(registerDto.name(), registerDto.phone(), passwordHash);
         Client client = clientMapper.toEntity(registerDto);
         client = clientRepository.save(client);
+        String jwt = jwtUtil.generateClientToken(client.getId());
+        return new ClientAuthResponseDto(jwt);
+    }
+
+    /**
+     * Вход в систему для клиента
+     */
+    @Transactional(readOnly = true)
+    public ClientAuthResponseDto loginClient(ClientLoginDto loginDto) {
+        Client client = clientRepository.findByPhone(loginDto.getPhone())
+                .orElseThrow(InvalidPhoneOrPasswordException::new);
+        if (!passwordEncoder.matches(loginDto.getPassword(), client.getPassword())) {
+            throw new InvalidPhoneOrPasswordException();
+        }
         String jwt = jwtUtil.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }

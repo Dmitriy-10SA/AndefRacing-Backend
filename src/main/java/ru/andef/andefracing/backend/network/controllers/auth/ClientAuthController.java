@@ -32,8 +32,8 @@ public class ClientAuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<ClientAuthResponseDto> login(@RequestBody @Valid ClientLoginDto loginDto) {
-        // TODO
-        return ResponseEntity.ok(new ClientAuthResponseDto(""));
+        ClientAuthResponseDto clientAuthResponseDto = authService.loginClient(loginDto);
+        return ResponseEntity.ok(clientAuthResponseDto);
     }
 
     /**

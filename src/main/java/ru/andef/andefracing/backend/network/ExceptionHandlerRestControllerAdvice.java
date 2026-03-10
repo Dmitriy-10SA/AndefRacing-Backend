@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.andef.andefracing.backend.domain.exceptions.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.InvalidPhoneOrPasswordException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -31,7 +32,18 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
-     * Обработки ошибки, когда клиент при попытке зарегистрироваться уже зарегистрирован
+     * Обработка ошибки, когда клиент при попытке войти не зарегистрирован
+     */
+    @ExceptionHandler(InvalidPhoneOrPasswordException.class)
+    public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
+            InvalidPhoneOrPasswordException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент при попытке зарегистрироваться уже зарегистрирован
      */
     @ExceptionHandler(ClientWithThisPhoneAlreadyExistsException.class)
     public ResponseEntity<ErrorDto> handleClientWithThisPhoneAlreadyExistsException(
