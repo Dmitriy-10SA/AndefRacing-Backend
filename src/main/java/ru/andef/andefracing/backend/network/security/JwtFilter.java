@@ -49,22 +49,26 @@ public class JwtFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authToken;
                 if (subject.equals(jwtProperties.getClientSubject())) {
                     long clientId = claims.get(jwtProperties.getIdClaim(), long.class);
+                    ClientPrincipal principal = new ClientPrincipal(clientId);
                     authToken = new UsernamePasswordAuthenticationToken(
-                            clientId,
+                            principal,
                             null,
                             List.of(new SimpleGrantedAuthority(jwtProperties.getClientRole()))
                     );
                 } else if (subject.equals(jwtProperties.getEmployeeSubject())) {
                     long employeeId = claims.get(jwtProperties.getIdClaim(), long.class);
+                    int clubId = claims.get(jwtProperties.getClubIdClaim(), int.class);
+                    String clubName = claims.get(jwtProperties.getClubNameClaim(), String.class);
                     String[] roles = claims.get(jwtProperties.getRolesClaim(), String[].class);
                     List<SimpleGrantedAuthority> authorities = Arrays.stream(roles)
                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                             .collect(Collectors.toList());
-                    authToken = new UsernamePasswordAuthenticationToken(employeeId, null, authorities);
+                    EmployeePrincipal principal = new EmployeePrincipal(employeeId, clubId, clubName);
+                    authToken = new UsernamePasswordAuthenticationToken(principal, null, authorities);
                 } else {
                     authToken = null;
                 }
-                if (Objects.nonNull(authToken)) {
+                if (Objects.nonNull(authToken) && SecurityContextHolder.getContext().getAuthentication() == null) {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             } catch (Exception e) {
@@ -73,5 +77,21 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    /**
+     * Principal для клиента
+     */
+    public record ClientPrincipal(long userId) {
+    }
+
+    /**
+     * Principal для сотрудника
+     */
+    public record EmployeePrincipal(
+            long id,
+            int clubId,
+            String clubName
+    ) {
     }
 }
