@@ -5,7 +5,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/employee/profile")
@@ -17,5 +20,14 @@ public class EmployeeProfileController {
     public ResponseEntity<EmployeePersonalInfoDto> getPersonalInfo(@PathVariable int clubId) {
         // TODO
         return ResponseEntity.ok(null);
+    }
+
+    /**
+     * Получение списка всех клубов, где работает сотрудник
+     */
+    @GetMapping("/clubs")
+    public ResponseEntity<List<EmployeeClubDto>> getAllClubs() {
+        // TODO
+        return null;
     }
 }
