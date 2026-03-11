@@ -12,6 +12,7 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateGameInClubException;
 import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
 import java.time.Instant;
@@ -35,6 +36,17 @@ public class ExceptionHandlerRestControllerAdvice {
     ) {
         ErrorDto errorDto = new ErrorDto(Instant.now(), status.value(), error, message, request.getRequestURI());
         return ResponseEntity.status(status).body(errorDto);
+    }
+
+    /**
+     * Обработка ошибки дубликат игры в клубе
+     */
+    @ExceptionHandler(DuplicateGameInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateGameInClubException(
+            DuplicateGameInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
     }
 
     /**

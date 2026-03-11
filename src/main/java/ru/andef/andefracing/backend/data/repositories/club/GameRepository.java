@@ -18,4 +18,6 @@ public interface GameRepository extends JpaRepository<Game, Short> {
                     """
     )
     List<Game> findAllActiveGamesInClub(int clubId);
+
+    List<Game> findAllByIsActiveTrue();
 }
