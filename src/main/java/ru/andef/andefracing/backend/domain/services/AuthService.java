@@ -26,7 +26,6 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswor
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
-import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.security.JwtUtil;
@@ -127,6 +126,9 @@ public class AuthService {
         return employee.isNeedPassword();
     }
 
+    /**
+     * Подготовительный шаг для входа в систему для сотрудника
+     */
     @Transactional
     public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
         Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
@@ -152,22 +154,6 @@ public class AuthService {
         if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
             throw new InvalidPhoneOrPasswordException();
         }
-        Club club = findClubByIdOrThrow(clubId);
-        List<String> roles = getEmployeeRolesInClub(club, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
-        return new EmployeeAuthResponseDto(jwt);
-    }
-
-    /**
-     * Изменение пароля по номеру телефона (без получения СМС, да - плохо)
-     */
-    @Transactional
-    public EmployeeAuthResponseDto changeEmployeePassword(int clubId, EmployeeChangePasswordDto changePasswordDto) {
-        Employee employee = employeeRepository.findByPhone(changePasswordDto.getPhone())
-                .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
-        String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
-        employee.setPassword(passwordHash);
-        employee = employeeRepository.save(employee);
         Club club = findClubByIdOrThrow(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
         String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);

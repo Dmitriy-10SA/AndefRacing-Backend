@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
-import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
@@ -58,19 +57,6 @@ public class EmployeeAuthController {
             @RequestBody @Valid EmployeeLoginDto loginDto
     ) {
         EmployeeAuthResponseDto employeeAuthResponseDto = authService.loginEmployee(clubId, loginDto);
-        return ResponseEntity.ok(employeeAuthResponseDto);
-    }
-
-    /**
-     * Смена пароля у сотрудника по номеру телефона
-     */
-    @PatchMapping("/change-password/{clubId}")
-    public ResponseEntity<EmployeeAuthResponseDto> changePassword(
-            @PathVariable int clubId,
-            @RequestBody @Valid EmployeeChangePasswordDto changePasswordDto
-    ) {
-        EmployeeAuthResponseDto employeeAuthResponseDto = authService
-                .changeEmployeePassword(clubId, changePasswordDto);
         return ResponseEntity.ok(employeeAuthResponseDto);
     }
 }
