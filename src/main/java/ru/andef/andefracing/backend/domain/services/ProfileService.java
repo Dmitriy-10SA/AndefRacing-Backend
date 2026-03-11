@@ -8,12 +8,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
+import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
+import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
+import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
+import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
@@ -22,6 +27,7 @@ import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePers
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.FavoriteClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
+import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
 
 import java.util.List;
 
@@ -31,9 +37,11 @@ public class ProfileService {
     private static final String NAME = "name";
 
     private final ClientRepository clientRepository;
+    private final EmployeeRepository employeeRepository;
     private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
+    private final EmployeeMapper employeeMapper;
     private final ClubMapper clubMapper;
     private final CityMapper cityMapper;
     private final RegionMapper regionMapper;
@@ -53,6 +61,14 @@ public class ProfileService {
     private Client findClientByIdOrThrow(long clientId) {
         return clientRepository.findById(clientId)
                 .orElseThrow(() -> new EntityNotFoundException("Клиент с id " + clientId + " не найден"));
+    }
+
+    /**
+     * Получение сотрудника по id или выброс исключения
+     */
+    private Employee findEmployeeByIdOrThrow(long employeeId) {
+        return employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + employeeId + " не найден"));
     }
 
     /**
@@ -118,5 +134,19 @@ public class ProfileService {
         }
         client.deleteFavoriteClub(club);
         clientRepository.save(client);
+    }
+
+    /**
+     * Получение информации о сотруднике (фамилия, имя, отчество, номер телефона, роли в текущем клубе)
+     */
+    @Transactional(readOnly = true)
+    public EmployeePersonalInfoDto getEmployeePersonalInfo(long employeeId, int clubId) {
+        Employee employee = findEmployeeByIdOrThrow(employeeId);
+        Club club = findClubByIdOrThrow(clubId);
+        List<EmployeeRole> roles = club.getEmployeesAndRoles().stream()
+                .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
+                .map(EmployeeClub::getEmployeeRole)
+                .toList();
+        return employeeMapper.toPersonalInfo(employee, roles);
     }
 }
