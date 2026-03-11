@@ -5,18 +5,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.Game;
+import ru.andef.andefracing.backend.data.entities.club.Photo;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
-import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
-import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
-import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
-import ru.andef.andefracing.backend.data.repositories.club.GameRepository;
+import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
+import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddExistingEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddNewEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.EmployeeAndRolesDto;
@@ -33,9 +33,11 @@ public class ManagementService {
     private final GameRepository gameRepository;
     private final EmployeeRepository employeeRepository;
     private final BookingRepository bookingRepository;
+    private final PhotoRepository photoRepository;
 
     private final GameMapper gameMapper;
     private final EmployeeMapper employeeMapper;
+    private final PhotoMapper photoMapper;
 
     /**
      * Получение клуба по id или выброс исключения
@@ -43,6 +45,14 @@ public class ManagementService {
     private Club findClubByIdOrThrow(int clubId) {
         return clubRepository.findById(clubId)
                 .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
+    }
+
+    /**
+     * Получение фото по id или выброс исключения
+     */
+    private Photo findPhotoByIdOrThrow(long photoId) {
+        return photoRepository.findById(photoId)
+                .orElseThrow(() -> new EntityNotFoundException("Фото с id " + photoId + " не найдено"));
     }
 
     /**
@@ -304,5 +314,63 @@ public class ManagementService {
         } else {
             throw new ClubCloseConditionsNotMetException(clubId);
         }
+    }
+
+    /**
+     * Добавление фотографии в клуб
+     */
+    @Transactional
+    public void addPhotoInClub(int clubId, AddPhotoDto addPhotoDto) {
+        Club club = findClubByIdOrThrow(clubId);
+        List<Photo> photosInClub = club.getPhotos();
+        List<String> urls = photosInClub.stream().map(Photo::getUrl).toList();
+        List<Short> sequenceNumbers = photosInClub.stream().map(Photo::getSequenceNumber).toList();
+        if (urls.contains(addPhotoDto.url())) {
+            throw new DuplicatePhotoInClubException(addPhotoDto.url());
+        } else if (sequenceNumbers.contains(addPhotoDto.sequenceNumber())) {
+            throw new DuplicatePhotoInClubException(addPhotoDto.sequenceNumber());
+        }
+        Photo photo = photoMapper.toEntity(addPhotoDto);
+        club.addPhoto(photo);
+        clubRepository.save(club);
+    }
+
+    /**
+     * Удаление фотографии из клуба
+     */
+    @Transactional
+    public void deletePhotoFromClub(int clubId, long photoId) {
+        Club club = findClubByIdOrThrow(clubId);
+        Photo photo = findPhotoByIdOrThrow(photoId);
+        boolean isDeleted = club.deletePhoto(photo);
+        if (isDeleted) {
+            clubRepository.save(club);
+        } else {
+            throw new EntityNotFoundException("Фото с id " + photoId + " не найдено в клубе");
+        }
+    }
+
+    /**
+     * Переупорядочивание фотографий в клубе
+     */
+    @Transactional
+    public void reorderPhotosInClub(int clubId, List<Long> orderedPhotoIds) {
+        Club club = findClubByIdOrThrow(clubId);
+        List<Photo> photosInClub = club.getPhotos();
+        if (photosInClub.size() != orderedPhotoIds.size()) {
+            throw new PhotoReorderMismatchException(
+                    "Несовпадение кол-ва фотографий в клубе (" + photosInClub.size() +
+                            ") и для переупорядочивания (" + orderedPhotoIds.size() + ")"
+            );
+        }
+        photosInClub.forEach(photo -> {
+            if (!orderedPhotoIds.contains(photo.getId())) {
+                throw new PhotoReorderMismatchException(
+                        "Фото с id " + photo.getId() + " не указано, хотя должно быть"
+                );
+            }
+        });
+        club.reorderPhotos(orderedPhotoIds);
+        clubRepository.save(club);
     }
 }

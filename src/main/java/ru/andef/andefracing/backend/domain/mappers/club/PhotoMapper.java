@@ -6,6 +6,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.andef.andefracing.backend.data.entities.club.Photo;
 import ru.andef.andefracing.backend.network.dtos.common.PhotoDto;
+import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 
 import java.util.List;
 
@@ -17,4 +18,8 @@ public interface PhotoMapper {
     PhotoDto toDto(Photo photo);
 
     List<PhotoDto> toDto(List<Photo> photos);
+
+    @Mapping(target = "url", expression = "java(photo.url())")
+    @Mapping(target = "sequenceNumber", expression = "java(photo.sequenceNumber())")
+    Photo toEntity(AddPhotoDto addPhotoDto);
 }

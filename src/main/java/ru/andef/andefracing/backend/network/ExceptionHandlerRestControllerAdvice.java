@@ -95,6 +95,17 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
+     * Обработка ошибки при попытке изменить порядок фотографий
+     */
+    @ExceptionHandler(PhotoReorderMismatchException.class)
+    public ResponseEntity<ErrorDto> handlePhotoReorderMismatchException(
+            PhotoReorderMismatchException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
      * Обработка ошибки дубликат сотрудника в клубе
      */
     @ExceptionHandler(DuplicateEmployeeInClubException.class)
