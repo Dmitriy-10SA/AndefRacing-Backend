@@ -26,4 +26,6 @@ public interface ClubRepository extends JpaRepository<Club, Integer> {
                     """
     )
     Page<Club> getClientFavoriteClubs(@Param(value = "clientId") long clientId, Pageable pageable);
+
+    Page<Club> findAllByCity_IdAndIsOpenTrue(short cityId, Pageable pageable);
 }
