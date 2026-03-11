@@ -50,8 +50,7 @@ public class Client {
             joinColumns = @JoinColumn(name = "client_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "club_id", nullable = false)
     )
-    @OrderBy("name ASC")
-    private List<Club> favoriteClubs = new ArrayList<>();
+    private Set<Club> favoriteClubs = new HashSet<>();
 
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
