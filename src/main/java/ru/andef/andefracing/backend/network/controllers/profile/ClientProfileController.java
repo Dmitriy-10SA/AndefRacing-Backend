@@ -1,10 +1,13 @@
 package ru.andef.andefracing.backend.network.controllers.profile;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
@@ -15,6 +18,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 @RestController
 @RequestMapping(ApiPaths.PROFILE_CLIENT)
+@Validated
 @RequiredArgsConstructor
 public class ClientProfileController {
     private final ProfileService profileService;
@@ -65,17 +69,33 @@ public class ClientProfileController {
      * Получение списка избранных клубов клиента с пагинацией
      */
     @GetMapping("/favorite-clubs")
-    public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs() {
-        // TODO
-        return ResponseEntity.ok(null);
+    public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs(
+            @RequestParam @Min(value = 0) int pageNumber,
+            @RequestParam @Min(value = 1) @Max(value = 100) int pageSize,
+            Authentication authentication
+    ) {
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        PagedFavoriteClubShortListDto clubs = profileService.getClientFavoriteClubs(
+                principal.id(),
+                pageNumber,
+                pageSize
+        );
+        return ResponseEntity.ok(clubs);
     }
 
     /**
      * Удаление клуба из списка избранных клубов клиента
      */
     @DeleteMapping("/favorite-clubs/{clubId}")
-    public ResponseEntity<Void> deleteFavoriteClub(@PathVariable int clubId) {
-        // TODO
+    public ResponseEntity<Void> deleteFavoriteClub(@PathVariable int clubId, Authentication authentication) {
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        profileService.deleteClubFromClientFavoriteClubs(principal.id(), clubId);
         return ResponseEntity.noContent().build();
     }
 }

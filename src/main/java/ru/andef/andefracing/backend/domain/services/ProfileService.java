@@ -1,6 +1,9 @@
 package ru.andef.andefracing.backend.domain.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.Client;
@@ -10,16 +13,31 @@ import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
+import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
+import ru.andef.andefracing.backend.network.dtos.profile.client.FavoriteClubShortDto;
+import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class ProfileService {
+    private static final String NAME = "name";
+
     private final ClientRepository clientRepository;
     private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
+    private final ClubMapper clubMapper;
+    private final CityMapper cityMapper;
+    private final RegionMapper regionMapper;
+    private final PhotoMapper photoMapper;
 
     /**
      * Получение клуба по id или выброс исключения
@@ -68,6 +86,37 @@ public class ProfileService {
             throw new DuplicateFavoriteClubException(clubId);
         }
         client.addFavoriteClub(club);
+        clientRepository.save(client);
+    }
+
+    /**
+     * Получение списка избранных клубов клиента с пагинацией
+     */
+    @Transactional(readOnly = true)
+    public PagedFavoriteClubShortListDto getClientFavoriteClubs(long clientId, int pageNumber, int pageSize) {
+        Client client = findClientByIdOrThrow(clientId);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(NAME));
+        Page<Club> clubsPage = clubRepository.getClientFavoriteClubs(client.getId(), pageRequest);
+        List<FavoriteClubShortDto> content = clubMapper
+                .toFavoriteClubShortDto(clubsPage.getContent(), cityMapper, regionMapper, photoMapper);
+        long totalElements = clubsPage.getTotalElements();
+        int totalPages = clubsPage.getTotalPages();
+        boolean isLast = clubsPage.isLast();
+        PageInfoDto pageInfoDto = new PageInfoDto(pageNumber, pageSize, totalElements, totalPages, isLast);
+        return new PagedFavoriteClubShortListDto(content, pageInfoDto);
+    }
+
+    /**
+     * Удаление клуба из списка избранных клубов клиента
+     */
+    @Transactional
+    public void deleteClubFromClientFavoriteClubs(long clientId, int clubId) {
+        Client client = findClientByIdOrThrow(clientId);
+        Club club = findClubByIdOrThrow(clubId);
+        if (!client.getFavoriteClubs().contains(club)) {
+            throw new EntityNotFoundException("У клиента нет избранного клуба с id " + clubId);
+        }
+        client.deleteFavoriteClub(club);
         clientRepository.save(client);
     }
 }
