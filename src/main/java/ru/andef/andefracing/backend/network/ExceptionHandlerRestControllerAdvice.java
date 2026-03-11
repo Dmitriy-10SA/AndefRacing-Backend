@@ -12,6 +12,7 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class ExceptionHandlerRestControllerAdvice {
     private static final String VALIDATION_ERROR = "Validation error";
     private static final String AUTH_ERROR = "Auth error";
     private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
+    private static final String DUPLICATE_ERROR = "Duplicate error";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -33,6 +35,17 @@ public class ExceptionHandlerRestControllerAdvice {
     ) {
         ErrorDto errorDto = new ErrorDto(Instant.now(), status.value(), error, message, request.getRequestURI());
         return ResponseEntity.status(status).body(errorDto);
+    }
+
+    /**
+     * Обработка ошибки дубликат избранного клуба
+     */
+    @ExceptionHandler(DuplicateFavoriteClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateFavoriteClubException(
+            DuplicateFavoriteClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
     }
 
     /**

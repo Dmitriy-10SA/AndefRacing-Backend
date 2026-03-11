@@ -52,8 +52,12 @@ public class ClientProfileController {
      * Добавление клуба в список избранных клубов клиента
      */
     @PostMapping("/favorite-clubs/{clubId}")
-    public ResponseEntity<Void> addFavoriteClub(@PathVariable int clubId) {
-        // TODO
+    public ResponseEntity<Void> addFavoriteClub(@PathVariable int clubId, Authentication authentication) {
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        profileService.addClubToClientFavoriteClubs(principal.id(), clubId);
         return ResponseEntity.ok().build();
     }
 
