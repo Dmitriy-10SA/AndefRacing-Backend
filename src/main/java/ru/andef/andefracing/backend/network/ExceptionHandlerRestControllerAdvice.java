@@ -12,7 +12,10 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateEmployeeInClubException;
+import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateEmployeeRoleInClubException;
 import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateGameInClubException;
+import ru.andef.andefracing.backend.domain.exceptions.management.EmployeeWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
 import java.time.Instant;
@@ -55,6 +58,28 @@ public class ExceptionHandlerRestControllerAdvice {
     @ExceptionHandler(DuplicateFavoriteClubException.class)
     public ResponseEntity<ErrorDto> handleDuplicateFavoriteClubException(
             DuplicateFavoriteClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат роли у сотрудника в клубе
+     */
+    @ExceptionHandler(DuplicateEmployeeRoleInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateEmployeeRoleInClubException(
+            DuplicateEmployeeRoleInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат сотрудника в клубе
+     */
+    @ExceptionHandler(DuplicateEmployeeInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateEmployeeInClubException(
+            DuplicateEmployeeInClubException ex,
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
@@ -110,6 +135,17 @@ public class ExceptionHandlerRestControllerAdvice {
     @ExceptionHandler(ClientWithThisPhoneAlreadyExistsException.class)
     public ResponseEntity<ErrorDto> handleClientWithThisPhoneAlreadyExistsException(
             ClientWithThisPhoneAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки EmployeeWithThisPhoneAlreadyExistsException
+     */
+    @ExceptionHandler(EmployeeWithThisPhoneAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> handleEmployeeWithThisPhoneAlreadyExistsException(
+            EmployeeWithThisPhoneAlreadyExistsException ex,
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
