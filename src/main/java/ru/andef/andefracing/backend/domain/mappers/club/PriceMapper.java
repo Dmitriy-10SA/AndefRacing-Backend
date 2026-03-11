@@ -5,6 +5,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import ru.andef.andefracing.backend.data.entities.club.Price;
+import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.dtos.search.PriceDto;
 
 import java.util.List;
@@ -17,4 +18,8 @@ public interface PriceMapper {
     PriceDto toDto(Price price);
 
     List<PriceDto> toDto(List<Price> prices);
+
+    @Mapping(target = "durationMinutes", expression = "java(game.durationMinutes())")
+    @Mapping(target = "value", expression = "java(game.value())")
+    Price toEntity(AddPriceDto addPriceDto);
 }

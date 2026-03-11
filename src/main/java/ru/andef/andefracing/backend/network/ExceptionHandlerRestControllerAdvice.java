@@ -95,6 +95,17 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
+     * Обработка ошибки дубликат цены за количество минут в клубе
+     */
+    @ExceptionHandler(DuplicatePriceInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicatePriceInClubException(
+            DuplicatePriceInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
      * Обработка ошибки при попытке изменить порядок фотографий
      */
     @ExceptionHandler(PhotoReorderMismatchException.class)

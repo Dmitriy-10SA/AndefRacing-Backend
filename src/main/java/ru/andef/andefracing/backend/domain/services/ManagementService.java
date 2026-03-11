@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.Game;
 import ru.andef.andefracing.backend.data.entities.club.Photo;
+import ru.andef.andefracing.backend.data.entities.club.Price;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
@@ -15,12 +16,16 @@ import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.PriceMapper;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
+import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddExistingEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddNewEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.EmployeeAndRolesDto;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +39,12 @@ public class ManagementService {
     private final EmployeeRepository employeeRepository;
     private final BookingRepository bookingRepository;
     private final PhotoRepository photoRepository;
+    private final PriceRepository priceRepository;
 
     private final GameMapper gameMapper;
     private final EmployeeMapper employeeMapper;
     private final PhotoMapper photoMapper;
+    private final PriceMapper priceMapper;
 
     /**
      * Получение клуба по id или выброс исключения
@@ -77,6 +84,14 @@ public class ManagementService {
     private Employee findEmployeeByIdOrThrow(long id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + id + " не найден"));
+    }
+
+    /**
+     * Получение цены по id или выброс исключения
+     */
+    private Price findPriceByIdOrThrow(long id) {
+        return priceRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Цена с id " + id + " не найдена"));
     }
 
     /**
@@ -372,5 +387,53 @@ public class ManagementService {
         });
         club.reorderPhotos(orderedPhotoIds);
         clubRepository.save(club);
+    }
+
+    /**
+     * Добавление цены за кол-во минут игры в клубе
+     */
+    @Transactional
+    public void addPriceForMinutesInClub(int clubId, AddPriceDto addPriceDto) {
+        Club club = findClubByIdOrThrow(clubId);
+        List<Price> pricesInClub = club.getPrices();
+        List<Short> durationMinutes = pricesInClub.stream().map(Price::getDurationMinutes).toList();
+        if (durationMinutes.contains(addPriceDto.durationMinutes())) {
+            throw new DuplicatePriceInClubException(clubId, addPriceDto.durationMinutes());
+        }
+        Price price = priceMapper.toEntity(addPriceDto);
+        price.setValue(price.getValue().setScale(2, RoundingMode.HALF_EVEN));
+        club.addPrice(price);
+        clubRepository.save(club);
+    }
+
+    /**
+     * Изменение цены за кол-во минут игры в клубе
+     */
+    @Transactional
+    public void updatePriceForMinutesInClub(int clubId, long priceId, BigDecimal value) {
+        Club club = findClubByIdOrThrow(clubId);
+        for (Price price : club.getPrices()) {
+            if (price.getId() == priceId) {
+                price.setValue(value.setScale(2, RoundingMode.HALF_EVEN));
+                priceRepository.save(price);
+                return;
+            }
+        }
+        throw new EntityNotFoundException("Цена с id " + priceId + " не найдена в клубе");
+    }
+
+    /**
+     * Удаление цены за кол-во минут игры в клубе
+     */
+    @Transactional
+    public void deletePriceForMinutesInClub(int clubId, long priceId) {
+        Club club = findClubByIdOrThrow(clubId);
+        Price price = findPriceByIdOrThrow(priceId);
+        boolean isDeleted = club.deletePrice(price);
+        if (isDeleted) {
+            clubRepository.save(club);
+        } else {
+            throw new EntityNotFoundException("Цена с id " + priceId + " не найдена в клубе");
+        }
     }
 }
