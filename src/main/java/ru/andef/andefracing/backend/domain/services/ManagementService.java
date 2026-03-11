@@ -8,14 +8,12 @@ import ru.andef.andefracing.backend.data.entities.club.Game;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.data.repositories.club.GameRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateEmployeeInClubException;
-import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateEmployeeRoleInClubException;
-import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateGameInClubException;
-import ru.andef.andefracing.backend.domain.exceptions.management.EmployeeWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
@@ -34,6 +32,7 @@ public class ManagementService {
     private final ClubRepository clubRepository;
     private final GameRepository gameRepository;
     private final EmployeeRepository employeeRepository;
+    private final BookingRepository bookingRepository;
 
     private final GameMapper gameMapper;
     private final EmployeeMapper employeeMapper;
@@ -256,10 +255,54 @@ public class ManagementService {
     /**
      * Удалить роль сотрудника в выбранном текущим клубе
      */
+    @Transactional
     public void deleteEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole role) {
         Club club = findClubByIdOrThrow(clubId);
         Employee employee = findEmployeeByIdOrThrow(employeeId);
         deleteEmployeeRoleInClub(club, employee, role);
         clubRepository.save(club);
+    }
+
+    /**
+     * Изменение количества симуляторов в выбранном текущим клубе
+     */
+    @Transactional
+    public void updateCntEquipmentInClub(int clubId, short cntEquipment) {
+        Club club = findClubByIdOrThrow(clubId);
+        club.setCntEquipment(cntEquipment);
+        clubRepository.save(club);
+    }
+
+    /**
+     * Открыть клуб
+     */
+    @Transactional
+    public void openClub(int clubId) {
+        Club club = findClubByIdOrThrow(clubId);
+        int photosCnt = club.getPhotos().size();
+        int pricesCnt = club.getPrices().size();
+        int workSchedulesCnt = club.getWorkSchedules().size();
+        int activeGamesCnt = gameRepository.findAllActiveGamesInClub(club.getId()).size();
+        if (photosCnt >= 1 && pricesCnt >= 1 && workSchedulesCnt == 7 && activeGamesCnt >= 1) {
+            club.setOpen(true);
+            clubRepository.save(club);
+        } else {
+            throw new ClubOpenConditionsNotMetException(clubId);
+        }
+    }
+
+    /**
+     * Закрыть клуб
+     */
+    @Transactional
+    public void closeClub(int clubId) {
+        Club club = findClubByIdOrThrow(clubId);
+        long countUpcomingPaidOrPendingBookings = bookingRepository.countUpcomingPaidOrPendingBookings(club.getId());
+        if (countUpcomingPaidOrPendingBookings <= 0) {
+            club.setOpen(false);
+            clubRepository.save(club);
+        } else {
+            throw new ClubCloseConditionsNotMetException(clubId);
+        }
     }
 }

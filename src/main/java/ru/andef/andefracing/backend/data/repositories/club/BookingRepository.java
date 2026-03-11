@@ -109,4 +109,17 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param(value = "start") OffsetDateTime start,
             @Param(value = "end") OffsetDateTime end
     );
+
+    /**
+     * Получение числа всех предстоящих оплаченных или ожидающих оплаты бронирований в клубе
+     */
+    @Query(
+            value = """
+                    SELECT COUNT(b)
+                    FROM Booking b
+                    WHERE b.club.id = :clubId AND
+                    b.endDateTime >= CURRENT_TIMESTAMP AND
+                    b.status IN ('PAID', 'PENDING_PAYMENT')"""
+    )
+    long countUpcomingPaidOrPendingBookings(@Param(value = "clubId") int clubId);
 }

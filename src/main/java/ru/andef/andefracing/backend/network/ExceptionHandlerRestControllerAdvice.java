@@ -12,10 +12,7 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateEmployeeInClubException;
-import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateEmployeeRoleInClubException;
-import ru.andef.andefracing.backend.domain.exceptions.management.DuplicateGameInClubException;
-import ru.andef.andefracing.backend.domain.exceptions.management.EmployeeWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
 import java.time.Instant;
@@ -27,6 +24,7 @@ public class ExceptionHandlerRestControllerAdvice {
     private static final String AUTH_ERROR = "Auth error";
     private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
     private static final String DUPLICATE_ERROR = "Duplicate error";
+    private static final String CONDITIONS_NOT_MET_ERROR = "Сonditions not met error";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -61,6 +59,28 @@ public class ExceptionHandlerRestControllerAdvice {
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки открытия клуба из-за несоответствия условиям открытия
+     */
+    @ExceptionHandler(ClubOpenConditionsNotMetException.class)
+    public ResponseEntity<ErrorDto> handleClubOpenConditionsNotMetException(
+            ClubOpenConditionsNotMetException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки закрытия клуба из-за несоответствия условиям закрытия
+     */
+    @ExceptionHandler(ClubCloseConditionsNotMetException.class)
+    public ResponseEntity<ErrorDto> handleClubCloseConditionsNotMetException(
+            ClubCloseConditionsNotMetException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
     }
 
     /**
