@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
@@ -42,152 +43,65 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
-     * Обработка ошибки дублирования
+     * Получение HttpStatus из исключения
      */
-    @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<ErrorDto> handleDuplicateException(
-            DuplicateException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    private HttpStatus getHttpStatus(RuntimeException ex) {
+        ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
+        return (responseStatus != null) ? responseStatus.code() : HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     /**
-     * Обработка ошибки открытия клуба из-за несоответствия условиям открытия
+     * Обработка ошибок, связанных с дублированием
      */
-    @ExceptionHandler(ClubOpenConditionsNotMetException.class)
-    public ResponseEntity<ErrorDto> handleClubOpenConditionsNotMetException(
-            ClubOpenConditionsNotMetException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    @ExceptionHandler(value = {DuplicateException.class, BookingIntersectionException.class})
+    public ResponseEntity<ErrorDto> handleDuplicateExceptions(RuntimeException ex, HttpServletRequest request) {
+        return buildErrorResponse(getHttpStatus(ex), DUPLICATE_ERROR, ex.getMessage(), request);
     }
 
     /**
-     * Обработка ошибки закрытия клуба из-за несоответствия условиям закрытия
+     * Обработка ошибок, связанных с несоответствием условиям
      */
-    @ExceptionHandler(ClubCloseConditionsNotMetException.class)
-    public ResponseEntity<ErrorDto> handleClubCloseConditionsNotMetException(
-            ClubCloseConditionsNotMetException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    @ExceptionHandler(
+            value = {
+                    ClubOpenConditionsNotMetException.class,
+                    ClubCloseConditionsNotMetException.class,
+                    InvalidWorkScheduleException.class,
+                    InvalidBookingSlotException.class,
+                    PhotoReorderMismatchException.class
+            }
+    )
+    public ResponseEntity<ErrorDto> handleConditionsNotMetExceptions(RuntimeException ex, HttpServletRequest request) {
+        return buildErrorResponse(getHttpStatus(ex), CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
     }
 
     /**
-     * Обработка ошибки недостатка симуляторов для бронирования
+     * Обработка Auth ошибок
      */
-    @ExceptionHandler(BookingIntersectionException.class)
-    public ResponseEntity<ErrorDto> handleBookingIntersectionException(
-            BookingIntersectionException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки неверных данных расписания работы
-     */
-    @ExceptionHandler(InvalidWorkScheduleException.class)
-    public ResponseEntity<ErrorDto> handleInvalidWorkScheduleException(
-            InvalidWorkScheduleException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки неверных данных в слоте бронирования
-     */
-    @ExceptionHandler(InvalidBookingSlotException.class)
-    public ResponseEntity<ErrorDto> handleInvalidBookingSlotException(
-            InvalidBookingSlotException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки при попытке изменить порядок фотографий
-     */
-    @ExceptionHandler(PhotoReorderMismatchException.class)
-    public ResponseEntity<ErrorDto> handlePhotoReorderMismatchException(
-            PhotoReorderMismatchException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки, когда клиент при попытке войти не зарегистрирован
-     */
-    @ExceptionHandler(InvalidPhoneOrPasswordException.class)
-    public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
-            InvalidPhoneOrPasswordException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.UNAUTHORIZED, AUTH_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки, когда клиент не найден по номеру телефона
-     */
-    @ExceptionHandler(ClientWithThisPhoneNotFoundException.class)
-    public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
-            ClientWithThisPhoneNotFoundException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки, когда клиент не найден по номеру телефона
-     */
-    @ExceptionHandler(EmployeeWithThisPhoneNotFoundException.class)
-    public ResponseEntity<ErrorDto> handleEmployeeWithThisPhoneNotFoundException(
-            EmployeeWithThisPhoneNotFoundException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
+    @ExceptionHandler(
+            value = {
+                    InvalidPhoneOrPasswordException.class,
+                    ClientWithThisPhoneNotFoundException.class,
+                    EmployeeWithThisPhoneNotFoundException.class,
+                    ClientWithThisPhoneAlreadyExistsException.class,
+                    EmployeeWithThisPhoneAlreadyExistsException.class
+            }
+    )
+    public ResponseEntity<ErrorDto> handleAuthExceptions(RuntimeException ex, HttpServletRequest request) {
+        return buildErrorResponse(getHttpStatus(ex), AUTH_ERROR, ex.getMessage(), request);
     }
 
     /**
      * Обработка ошибки сущность не найдена
      */
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorDto> handleEntityNotFoundException(
-            EntityNotFoundException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.NOT_FOUND, ENTITY_NOT_FOUND_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки, когда клиент при попытке зарегистрироваться уже зарегистрирован
-     */
-    @ExceptionHandler(ClientWithThisPhoneAlreadyExistsException.class)
-    public ResponseEntity<ErrorDto> handleClientWithThisPhoneAlreadyExistsException(
-            ClientWithThisPhoneAlreadyExistsException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки EmployeeWithThisPhoneAlreadyExistsException
-     */
-    @ExceptionHandler(EmployeeWithThisPhoneAlreadyExistsException.class)
-    public ResponseEntity<ErrorDto> handleEmployeeWithThisPhoneAlreadyExistsException(
-            EmployeeWithThisPhoneAlreadyExistsException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
+    @ExceptionHandler(value = EntityNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEntityNotFoundException(RuntimeException ex, HttpServletRequest request) {
+        return buildErrorResponse(getHttpStatus(ex), ENTITY_NOT_FOUND_ERROR, ex.getMessage(), request);
     }
 
     /**
      * Обработка ошибок валидации тела запроса (@Valid)
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorDto> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
             HttpServletRequest request
@@ -203,7 +117,7 @@ public class ExceptionHandlerRestControllerAdvice {
     /**
      * Обработка ошибок валидации параметров запроса (@RequestParam и т.д.)
      */
-    @ExceptionHandler(ConstraintViolationException.class)
+    @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<ErrorDto> handleConstraintViolation(
             ConstraintViolationException ex,
             HttpServletRequest request
