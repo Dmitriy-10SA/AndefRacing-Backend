@@ -6,8 +6,6 @@ import ru.andef.andefracing.backend.network.dtos.booking.BookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityDto;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
 
 /**
