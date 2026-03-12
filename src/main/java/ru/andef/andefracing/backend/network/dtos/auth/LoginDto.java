@@ -2,7 +2,6 @@ package ru.andef.andefracing.backend.network.dtos.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -19,10 +18,5 @@ public abstract class LoginDto {
     )
     private final String phone;
     @NotBlank(message = "Пароль должен быть заполнен")
-    @Size(min = 8, message = "Пароль должен содержать не менее 8 символов")
-    @Pattern(
-            regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{}|;:',.<>/?]).+$",
-            message = "Пароль должен содержать хотя бы одну заглавную букву, одну цифру и один спецсимвол"
-    )
     private final String password;
 }

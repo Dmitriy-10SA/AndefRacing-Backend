@@ -2,15 +2,20 @@ package ru.andef.andefracing.backend.network.controllers.booking;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.domain.services.BookingService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
+import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,7 +23,10 @@ import java.util.List;
 @RestController
 @RequestMapping(ApiPaths.BOOKINGS_CLIENT)
 @Validated
+@RequiredArgsConstructor
 public class ClientBookingController {
+    private final BookingService bookingService;
+
     /**
      * Получение доступных слотов для бронирования
      */
@@ -27,8 +35,9 @@ public class ClientBookingController {
             @PathVariable int clubId,
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        List<FreeBookingSlotDto> freeBookingSlots = bookingService
+                .getFreeBookingSlots(clubId, freeBookingSlotsRequestDto);
+        return ResponseEntity.ok(freeBookingSlots);
     }
 
     /**
@@ -37,10 +46,15 @@ public class ClientBookingController {
     @PostMapping("/make-booking/{clubId}")
     public ResponseEntity<Void> makeBooking(
             @PathVariable int clubId,
-            @RequestBody @Valid ClientMakeBookingDto makeBookingDto
+            @RequestBody @Valid ClientMakeBookingDto makeBookingDto,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        bookingService.makeClientBooking(principal.id(), clubId, makeBookingDto);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -49,10 +63,16 @@ public class ClientBookingController {
     @GetMapping
     public ResponseEntity<List<ClientBookingShortDto>> getBookings(
             @RequestParam(name = "startDate") @NotNull LocalDate startDate,
-            @RequestParam(name = "endDate") @NotNull LocalDate endDate
+            @RequestParam(name = "endDate") @NotNull LocalDate endDate,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<ClientBookingShortDto> bookings = bookingService
+                .getAllClientBookings(principal.id(), startDate, endDate);
+        return ResponseEntity.ok(bookings);
     }
 
     /**
@@ -61,9 +81,15 @@ public class ClientBookingController {
     @GetMapping("/{clubId}/{bookingId}")
     public ResponseEntity<ClientBookingFullInfoDto> getFullBookingInfo(
             @PathVariable int clubId,
-            @PathVariable long bookingId
+            @PathVariable long bookingId,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        ClientBookingFullInfoDto clientBookingFullInfoDto = bookingService
+                .getBookingFullInfoForClient(principal.id(), clubId, bookingId);
+        return ResponseEntity.ok(clientBookingFullInfoDto);
     }
 }

@@ -25,6 +25,7 @@ public class Price {
     private long id;
 
     @Column(name = "duration_minutes", nullable = false)
+    @Setter
     private short durationMinutes;
 
     @Column(name = "value", nullable = false, precision = 8, scale = 2)

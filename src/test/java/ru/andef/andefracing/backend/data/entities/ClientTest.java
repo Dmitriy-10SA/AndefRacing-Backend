@@ -102,7 +102,7 @@ class ClientTest {
         Club favoriteClub = new Club();
         client.addFavoriteClub(favoriteClub);
         assertEquals(1, client.getFavoriteClubs().size());
-        assertEquals(favoriteClub, client.getFavoriteClubs().get(0));
+        assertEquals(favoriteClub, client.getFavoriteClubs().stream().findFirst().orElseThrow());
     }
 
     @Test

@@ -3,18 +3,25 @@ package ru.andef.andefracing.backend.network.controllers.auth;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
-import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeChangePasswordDto;
+import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(ApiPaths.AUTH_EMPLOYEE)
 @Validated
+@RequiredArgsConstructor
 public class EmployeeAuthController {
+    private final AuthService authService;
+
     /**
      * Проверка, первый ли вход для сотрудника в систему (нужно ли задать пароль)
      */
@@ -28,27 +35,28 @@ public class EmployeeAuthController {
             )
             String phone
     ) {
-        // TODO
-        return ResponseEntity.ok(false);
+        boolean isFirstEnter = authService.isEmployeeFirstEnter(phone);
+        return ResponseEntity.ok(isFirstEnter);
+    }
+
+    /**
+     * Подготовительный шаг для входа в систему для сотрудника
+     */
+    @PostMapping("/pre-login")
+    public ResponseEntity<List<EmployeeClubDto>> preLogin(@RequestBody @Valid EmployeeLoginDto loginDto) {
+        List<EmployeeClubDto> clubsWhenWork = authService.preLoginEmployee(loginDto);
+        return ResponseEntity.ok().body(clubsWhenWork);
     }
 
     /**
      * Вход в систему для сотрудника
      */
-    @PostMapping("/login")
-    public ResponseEntity<EmployeeAuthResponseDto> login(@RequestBody @Valid EmployeeLoginDto loginDto) {
-        // TODO
-        return ResponseEntity.ok(new EmployeeAuthResponseDto(""));
-    }
-
-    /**
-     * Смена пароля у сотрудника по номеру телефона
-     */
-    @PatchMapping("/change-password")
-    public ResponseEntity<EmployeeAuthResponseDto> changePassword(
-            @RequestBody @Valid EmployeeChangePasswordDto changePasswordDto
+    @PostMapping("/login/{clubId}")
+    public ResponseEntity<EmployeeAuthResponseDto> login(
+            @PathVariable int clubId,
+            @RequestBody @Valid EmployeeLoginDto loginDto
     ) {
-        // TODO ("без СМС, упрощаем, хоть и плохо")
-        return ResponseEntity.ok(new EmployeeAuthResponseDto(""));
+        EmployeeAuthResponseDto employeeAuthResponseDto = authService.loginEmployee(clubId, loginDto);
+        return ResponseEntity.ok(employeeAuthResponseDto);
     }
 }

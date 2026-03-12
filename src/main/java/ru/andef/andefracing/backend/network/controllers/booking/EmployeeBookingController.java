@@ -4,42 +4,60 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.andef.andefracing.backend.domain.services.BookingService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBookingDto;
+import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(ApiPaths.BOOKINGS_EMPLOYEE)
 @Validated
+@RequiredArgsConstructor
 public class EmployeeBookingController {
+    private final BookingService bookingService;
+
     /**
      * Получение доступных слотов для бронирования
      */
     @GetMapping("/free-slots")
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
-            @PathVariable int clubId,
-            @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
+            @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<FreeBookingSlotDto> freeBookingSlots = bookingService
+                .getFreeBookingSlots(principal.clubId(), freeBookingSlotsRequestDto);
+        return ResponseEntity.ok(freeBookingSlots);
     }
 
     /**
      * Подтверждение оплаты бронирования
      */
-    @PatchMapping("/confirm-booking-payment")
-    public ResponseEntity<Void> confirmBookingPayment(@PathVariable int clubId) {
-        // TODO
-        return null;
+    @PatchMapping("/confirm-booking-payment/{bookingId}")
+    public ResponseEntity<Void> confirmBookingPayment(@PathVariable long bookingId, Authentication authentication) {
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        bookingService.confirmBookingPaymentByEmployee(principal.id(), principal.clubId(), bookingId);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -47,20 +65,28 @@ public class EmployeeBookingController {
      */
     @PostMapping("/make-booking")
     public ResponseEntity<Void> makeBooking(
-            @PathVariable int clubId,
-            @RequestBody @Valid EmployeeMakeBookingDto makeBookingDto
+            @RequestBody @Valid EmployeeMakeBookingDto makeBookingDto,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        bookingService.makeEmployeeBooking(principal.id(), principal.clubId(), makeBookingDto);
+        return ResponseEntity.ok().build();
     }
 
     /**
      * Отмена бронирования
      */
     @PatchMapping("/cancel/{bookingId}")
-    public ResponseEntity<Void> cancelBooking(@PathVariable int clubId, @PathVariable long bookingId) {
-        // TODO
-        return ResponseEntity.ok(null);
+    public ResponseEntity<Void> cancelBooking(@PathVariable long bookingId, Authentication authentication) {
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        bookingService.cancelBookingByEmployee(principal.id(), principal.clubId(), bookingId);
+        return ResponseEntity.ok().build();
     }
 
     /**
@@ -68,7 +94,6 @@ public class EmployeeBookingController {
      */
     @GetMapping
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
-            @PathVariable int clubId,
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
@@ -77,10 +102,21 @@ public class EmployeeBookingController {
                     regexp = "^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$",
                     message = "Телефон должен быть в формате: +7-XXX-XXX-XX-XX"
             )
-            String clientPhone
+            String clientPhone,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<EmployeeBookingShortDto> bookings = bookingService.getBookingsForEmployee(
+                principal.id(),
+                principal.clubId(),
+                startDate,
+                endDate,
+                clientPhone == null ? Optional.empty() : Optional.of(clientPhone)
+        );
+        return ResponseEntity.ok(bookings);
     }
 
     /**
@@ -88,10 +124,15 @@ public class EmployeeBookingController {
      */
     @GetMapping("/{bookingId}")
     public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(
-            @PathVariable int clubId,
-            @PathVariable long bookingId
+            @PathVariable long bookingId,
+            Authentication authentication
     ) {
-        // TODO
-        return ResponseEntity.ok(null);
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        EmployeeBookingFullInfoDto employeeBookingFullInfoDto = bookingService
+                .getBookingFullInfoForEmployee(principal.id(), principal.clubId(), bookingId);
+        return ResponseEntity.ok(employeeBookingFullInfoDto);
     }
 }

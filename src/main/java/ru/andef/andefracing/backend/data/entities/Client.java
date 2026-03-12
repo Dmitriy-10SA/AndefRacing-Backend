@@ -8,9 +8,7 @@ import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Клиент
@@ -42,16 +40,17 @@ public class Client {
     private String password;
 
     @Column(name = "is_blocked", nullable = false)
+    @Setter
     private boolean isBlocked;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "client_favorite_club",
             schema = "favorite",
             joinColumns = @JoinColumn(name = "client_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "club_id", nullable = false)
     )
-    private List<Club> favoriteClubs = new ArrayList<>();
+    private Set<Club> favoriteClubs = new HashSet<>();
 
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)

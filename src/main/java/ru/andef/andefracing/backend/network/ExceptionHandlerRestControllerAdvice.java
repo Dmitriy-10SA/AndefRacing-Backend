@@ -7,6 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.exceptions.management.*;
+import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -14,6 +23,10 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class ExceptionHandlerRestControllerAdvice {
     private static final String VALIDATION_ERROR = "Validation error";
+    private static final String AUTH_ERROR = "Auth error";
+    private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
+    private static final String DUPLICATE_ERROR = "Duplicate error";
+    private static final String CONDITIONS_NOT_MET_ERROR = "Сonditions not met error";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -26,6 +39,204 @@ public class ExceptionHandlerRestControllerAdvice {
     ) {
         ErrorDto errorDto = new ErrorDto(Instant.now(), status.value(), error, message, request.getRequestURI());
         return ResponseEntity.status(status).body(errorDto);
+    }
+
+    /**
+     * Обработка ошибки дубликат игры в клубе
+     */
+    @ExceptionHandler(DuplicateGameInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateGameInClubException(
+            DuplicateGameInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат избранного клуба
+     */
+    @ExceptionHandler(DuplicateFavoriteClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateFavoriteClubException(
+            DuplicateFavoriteClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки открытия клуба из-за несоответствия условиям открытия
+     */
+    @ExceptionHandler(ClubOpenConditionsNotMetException.class)
+    public ResponseEntity<ErrorDto> handleClubOpenConditionsNotMetException(
+            ClubOpenConditionsNotMetException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки закрытия клуба из-за несоответствия условиям закрытия
+     */
+    @ExceptionHandler(ClubCloseConditionsNotMetException.class)
+    public ResponseEntity<ErrorDto> handleClubCloseConditionsNotMetException(
+            ClubCloseConditionsNotMetException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат роли у сотрудника в клубе
+     */
+    @ExceptionHandler(DuplicateEmployeeRoleInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateEmployeeRoleInClubException(
+            DuplicateEmployeeRoleInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат дня-исключения в клубе
+     */
+    @ExceptionHandler(DuplicateWorkScheduleExceptionInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateWorkScheduleExceptionInClubException(
+            DuplicateWorkScheduleExceptionInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки недостатка симуляторов для бронирования
+     */
+    @ExceptionHandler(BookingIntersectionException.class)
+    public ResponseEntity<ErrorDto> handleBookingIntersectionException(
+            BookingIntersectionException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки неверных данных расписания работы
+     */
+    @ExceptionHandler(InvalidWorkScheduleException.class)
+    public ResponseEntity<ErrorDto> handleInvalidWorkScheduleException(
+            InvalidWorkScheduleException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки неверных данных в слоте бронирования
+     */
+    @ExceptionHandler(InvalidBookingSlotException.class)
+    public ResponseEntity<ErrorDto> handleInvalidBookingSlotException(
+            InvalidBookingSlotException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат цены за количество минут в клубе
+     */
+    @ExceptionHandler(DuplicatePriceInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicatePriceInClubException(
+            DuplicatePriceInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки при попытке изменить порядок фотографий
+     */
+    @ExceptionHandler(PhotoReorderMismatchException.class)
+    public ResponseEntity<ErrorDto> handlePhotoReorderMismatchException(
+            PhotoReorderMismatchException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки дубликат сотрудника в клубе
+     */
+    @ExceptionHandler(DuplicateEmployeeInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateEmployeeInClubException(
+            DuplicateEmployeeInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент при попытке войти не зарегистрирован
+     */
+    @ExceptionHandler(InvalidPhoneOrPasswordException.class)
+    public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
+            InvalidPhoneOrPasswordException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.UNAUTHORIZED, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент не найден по номеру телефона
+     */
+    @ExceptionHandler(ClientWithThisPhoneNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleClientWithThisPhoneNotFoundException(
+            ClientWithThisPhoneNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент не найден по номеру телефона
+     */
+    @ExceptionHandler(EmployeeWithThisPhoneNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEmployeeWithThisPhoneNotFoundException(
+            EmployeeWithThisPhoneNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки сущность не найдена
+     */
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorDto> handleEntityNotFoundException(
+            EntityNotFoundException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, ENTITY_NOT_FOUND_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки, когда клиент при попытке зарегистрироваться уже зарегистрирован
+     */
+    @ExceptionHandler(ClientWithThisPhoneAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> handleClientWithThisPhoneAlreadyExistsException(
+            ClientWithThisPhoneAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки EmployeeWithThisPhoneAlreadyExistsException
+     */
+    @ExceptionHandler(EmployeeWithThisPhoneAlreadyExistsException.class)
+    public ResponseEntity<ErrorDto> handleEmployeeWithThisPhoneAlreadyExistsException(
+            EmployeeWithThisPhoneAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, AUTH_ERROR, ex.getMessage(), request);
     }
 
     /**

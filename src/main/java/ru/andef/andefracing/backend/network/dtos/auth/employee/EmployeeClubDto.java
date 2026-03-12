@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.dtos.profile.employee;
+package ru.andef.andefracing.backend.network.dtos.auth.employee;
 
 import lombok.Getter;
 import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
