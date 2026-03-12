@@ -7,6 +7,7 @@ import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.common.club.ClubInfoDto;
+import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.FavoriteClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
 
@@ -78,8 +79,8 @@ public interface ClubMapper {
     @Mapping(target = "isOpen", expression = "java(club.isOpen())")
     @Mapping(target = "photos", expression = "java(photoMapper.toDto(club.getPhotos()))")
     @Mapping(target = "games", expression = "java(gameMapper.toDto(games))")
-    @Mapping(target = "prices", expression = "java(priceMapper.toDto(club.getPrices())")
-    @Mapping(target = "workSchedules", expression = "java(workScheduleMapper.toDto(club.getWorkSchedules())")
+    @Mapping(target = "prices", expression = "java(priceMapper.toDto(club.getPrices()))")
+    @Mapping(target = "workSchedules", expression = "java(workScheduleMapper.toDto(club.getWorkSchedules()))")
     ClubFullInfoDto toFullInfoDto(
             Club club,
             List<Game> games,
@@ -88,4 +89,13 @@ public interface ClubMapper {
             @Context PriceMapper priceMapper,
             @Context WorkScheduleMapper workScheduleMapper
     );
+
+    @Mapping(target = "id", expression = "java(club.getId())")
+    @Mapping(target = "name", expression = "java(club.getName())")
+    @Mapping(target = "phone", expression = "java(club.getPhone())")
+    @Mapping(target = "email", expression = "java(club.getEmail())")
+    @Mapping(target = "address", expression = "java(club.getAddress())")
+    @Mapping(target = "cntEquipment", expression = "java(club.getCntEquipment())")
+    @Mapping(target = "isOpen", expression = "java(club.isOpen())")
+    ClubShortDto toShortDto(Club club);
 }

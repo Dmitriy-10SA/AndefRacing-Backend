@@ -5,8 +5,7 @@ import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 import ru.andef.andefracing.backend.network.dtos.booking.ClientDto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 /**
  * DTO для полной информации о бронировании для сотрудника
@@ -20,16 +19,15 @@ public class EmployeeBookingFullInfoDto extends EmployeeBookingShortDto {
 
     public EmployeeBookingFullInfoDto(
             long id,
-            LocalDate date,
-            LocalTime startTime,
-            LocalTime endTime,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
             BookingStatus status,
             short cntEquipment,
             BigDecimal price,
             String note,
             ClientDto client
     ) {
-        super(id, date, startTime, endTime, status);
+        super(id, startDateTime, endDateTime, status);
         this.cntEquipment = cntEquipment;
         this.price = price;
         this.note = note;

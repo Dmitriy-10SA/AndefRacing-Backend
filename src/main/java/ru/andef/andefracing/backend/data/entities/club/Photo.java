@@ -24,6 +24,7 @@ public class Photo {
     private long id;
 
     @Column(name = "url", nullable = false)
+    @Setter
     private String url;
 
     @Column(name = "sequence_number", nullable = false)

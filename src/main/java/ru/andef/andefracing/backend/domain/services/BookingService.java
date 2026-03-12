@@ -19,9 +19,11 @@ import ru.andef.andefracing.backend.data.repositories.club.WorkScheduleException
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.BookingMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
+import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
@@ -50,6 +52,8 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final ClubMapper clubMapper;
     private final CityMapper cityMapper;
+    private final ClientMapper clientMapper;
+    private final RegionMapper regionMapper;
 
     /**
      * Получение клуба по id или выброс исключения
@@ -211,7 +215,7 @@ public class BookingService {
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         List<Booking> bookings = bookingRepository.findAllByDateRangeAndClientId(clientId, start, end);
-        return bookingMapper.toClientBookingShortDto(bookings, clubMapper, cityMapper);
+        return bookingMapper.toClientBookingShortDto(bookings, clubMapper, cityMapper, regionMapper);
     }
 
     /**
@@ -225,7 +229,7 @@ public class BookingService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
                 );
-        return bookingMapper.toClientBookingFullInfoDto(booking);
+        return bookingMapper.toClientBookingFullInfoDto(booking, clientMapper);
     }
 
     /**
@@ -332,6 +336,6 @@ public class BookingService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
                 );
-        return bookingMapper.toEmployeeBookingFullInfoDto(booking);
+        return bookingMapper.toEmployeeBookingFullInfoDto(booking, clientMapper);
     }
 }

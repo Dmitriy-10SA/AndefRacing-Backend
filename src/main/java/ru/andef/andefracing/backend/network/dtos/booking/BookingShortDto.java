@@ -6,6 +6,7 @@ import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 /**
  * Dto для краткой информации о бронировании
@@ -14,8 +15,7 @@ import java.time.LocalTime;
 @RequiredArgsConstructor
 public abstract class BookingShortDto {
     private final long id;
-    private final LocalDate date;
-    private final LocalTime startTime;
-    private final LocalTime endTime;
+    private final OffsetDateTime startDateTime;
+    private final OffsetDateTime endDateTime;
     private final BookingStatus status;
 }

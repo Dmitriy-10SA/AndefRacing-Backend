@@ -5,6 +5,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.BookingShortDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
 
 /**
  * Dto для краткой информации о бронировании для сотрудника
@@ -12,11 +13,10 @@ import java.time.LocalTime;
 public class EmployeeBookingShortDto extends BookingShortDto {
     public EmployeeBookingShortDto(
             long id,
-            LocalDate date,
-            LocalTime startTime,
-            LocalTime endTime,
+            OffsetDateTime startDateTime,
+            OffsetDateTime endDateTime,
             BookingStatus status
     ) {
-        super(id, date, startTime, endTime, status);
+        super(id, startDateTime, endDateTime, status);
     }
 }

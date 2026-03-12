@@ -19,7 +19,7 @@ public interface PhotoMapper {
 
     List<PhotoDto> toDto(List<Photo> photos);
 
-    @Mapping(target = "url", expression = "java(photo.url())")
-    @Mapping(target = "sequenceNumber", expression = "java(photo.sequenceNumber())")
+    @Mapping(target = "url", expression = "java(photo.getUrl())")
+    @Mapping(target = "sequenceNumber", expression = "java(photo.getSequenceNumber())")
     Photo toEntity(AddPhotoDto addPhotoDto);
 }

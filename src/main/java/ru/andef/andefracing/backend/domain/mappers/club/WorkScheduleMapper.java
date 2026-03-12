@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface WorkScheduleMapper {
     @Mapping(target = "id", expression = "java(workSchedule.getId())")
-    @Mapping(target = "dayOfWeek", expression = "java(workSchedule.getDayOfWeek())")
+    @Mapping(target = "dayOfWeek", expression = "java(DayOfWeek.of(workSchedule.getDayOfWeek()))")
     @Mapping(target = "openTime", expression = "java(workSchedule.getOpenTime())")
     @Mapping(target = "closeTime", expression = "java(workSchedule.getCloseTime())")
     @Mapping(target = "isWorkDay", expression = "java(workSchedule.isWorkDay())")

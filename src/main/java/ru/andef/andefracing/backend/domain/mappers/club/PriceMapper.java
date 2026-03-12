@@ -12,14 +12,14 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface PriceMapper {
-    @Mapping(target = "id", expression = "java(game.getId())")
-    @Mapping(target = "durationMinutes", expression = "java(game.getDurationMinutes())")
-    @Mapping(target = "value", expression = "java(game.getValue())")
+    @Mapping(target = "id", expression = "java(price.getId())")
+    @Mapping(target = "durationMinutes", expression = "java(price.getDurationMinutes())")
+    @Mapping(target = "value", expression = "java(price.getValue())")
     PriceDto toDto(Price price);
 
     List<PriceDto> toDto(List<Price> prices);
 
-    @Mapping(target = "durationMinutes", expression = "java(game.durationMinutes())")
-    @Mapping(target = "value", expression = "java(game.value())")
+    @Mapping(target = "durationMinutes", expression = "java(addPriceDto.durationMinutes())")
+    @Mapping(target = "value", expression = "java(addPriceDto.value())")
     Price toEntity(AddPriceDto addPriceDto);
 }
