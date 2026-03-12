@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.profile;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
+@Tag(name = "Profile - сотрудник")
 @RestController
 @RequestMapping(ApiPaths.PROFILE_EMPLOYEE)
 @RequiredArgsConstructor

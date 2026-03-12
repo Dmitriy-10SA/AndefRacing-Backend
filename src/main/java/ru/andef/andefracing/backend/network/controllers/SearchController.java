@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 
 import java.util.List;
 
+@Tag(name = "Search")
 @RestController
 @RequestMapping(ApiPaths.SEARCH)
 @Validated

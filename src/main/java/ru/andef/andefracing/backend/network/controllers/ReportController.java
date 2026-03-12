@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 import java.time.LocalDate;
 
+@Tag(name = "Reports")
 @RestController
 @RequestMapping(ApiPaths.REPORTS)
 @Validated

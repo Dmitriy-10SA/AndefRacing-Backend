@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.booking;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 import java.time.LocalDate;
 import java.util.List;
 
+@Tag(name = "Booking - клиент")
 @RestController
 @RequestMapping(ApiPaths.BOOKINGS_CLIENT)
 @Validated

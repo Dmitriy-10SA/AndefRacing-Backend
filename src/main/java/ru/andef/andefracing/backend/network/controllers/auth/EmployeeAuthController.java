@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.auth;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -16,6 +17,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 import java.util.List;
 
+@Tag(name = "Auth - сотрудник")
 @RestController
 @RequestMapping(ApiPaths.AUTH_EMPLOYEE)
 @Validated

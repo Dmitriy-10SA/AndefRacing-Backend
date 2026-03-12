@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.auth;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswor
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 
+@Tag(name = "Auth - клиент")
 @RestController
 @RequestMapping(ApiPaths.AUTH_CLIENT)
 @RequiredArgsConstructor

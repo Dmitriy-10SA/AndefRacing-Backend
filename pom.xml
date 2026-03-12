@@ -32,6 +32,7 @@
         <lombok.version>1.18.42</lombok.version>
         <jackson.core.version>3.0.3</jackson.core.version>
         <jsonwebtoken.version>0.11.1</jsonwebtoken.version>
+        <swagger.version>3.0.2</swagger.version>
     </properties>
 
     <dependencies>
@@ -49,6 +50,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- Swagger -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${swagger.version}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- Test -->

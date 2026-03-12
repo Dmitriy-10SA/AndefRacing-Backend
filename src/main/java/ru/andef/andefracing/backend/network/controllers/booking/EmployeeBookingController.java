@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.booking;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Booking - сотрудник")
 @RestController
 @RequestMapping(ApiPaths.BOOKINGS_EMPLOYEE)
 @Validated

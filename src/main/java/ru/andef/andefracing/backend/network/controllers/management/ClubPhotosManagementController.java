@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.management;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 import java.util.List;
 
+@Tag(name = "Management - фотографии")
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT_PHOTOS)
 @Validated

@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.profile;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -17,6 +18,7 @@ import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalIn
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
+@Tag(name = "Profile - клиент")
 @RestController
 @RequestMapping(ApiPaths.PROFILE_CLIENT)
 @Validated

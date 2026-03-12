@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.management;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 import java.math.BigDecimal;
 
+@Tag(name = "Management - цены")
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT_PRICES)
 @Validated

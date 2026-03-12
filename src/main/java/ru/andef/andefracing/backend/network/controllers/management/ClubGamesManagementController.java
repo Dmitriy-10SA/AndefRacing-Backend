@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.management;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 import java.util.List;
 
+@Tag(name = "Management - игры")
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT_GAMES)
 @RequiredArgsConstructor

@@ -57,7 +57,15 @@ public class SecurityConfig {
                         // search
                         .requestMatchers(ApiPaths.SEARCH + "/**").permitAll()
 
-                        // other
+                        // swagger
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        //other
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(it ->

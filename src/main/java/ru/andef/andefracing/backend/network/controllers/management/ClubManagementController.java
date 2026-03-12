@@ -1,5 +1,6 @@
 package ru.andef.andefracing.backend.network.controllers.management;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
+@Tag(name = "Management - клубы")
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT)
 @Validated
