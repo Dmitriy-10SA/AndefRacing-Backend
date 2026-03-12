@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * DTO для создания бронирования
  */
@@ -14,6 +16,9 @@ import lombok.RequiredArgsConstructor;
 public abstract class MakeBookingDto {
     @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1")
     private final short cntEquipment;
+    @NotNull
+    @Min(1)
+    private final BigDecimal price;
     @NotNull(message = "Необходимо передать слот")
     @Valid
     private final FreeBookingSlotDto slot;

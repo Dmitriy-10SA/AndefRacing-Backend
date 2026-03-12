@@ -45,7 +45,7 @@ class EmployeeTest {
      * Получение бронирования, созданного сотрудником
      */
     private Booking getEmployeeBooking(Employee employee) {
-        return employee.addBooking(
+        return employee.makeBooking(
                 CLUB,
                 TEST_START_DATE_TIME,
                 TEST_END_DATE_TIME,
@@ -56,7 +56,7 @@ class EmployeeTest {
 
     @Test
     @DisplayName("Добавление бронирования сотрудником")
-    void testAddBooking() {
+    void testMakeBooking() {
         Employee employee = getNewEmployee();
         Booking booking = getEmployeeBooking(employee);
         assertEquals(0, booking.getId());

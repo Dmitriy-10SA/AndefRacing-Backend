@@ -12,6 +12,8 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswor
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
@@ -106,11 +108,33 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
+     * Обработка ошибки недостатка симуляторов для бронирования
+     */
+    @ExceptionHandler(BookingIntersectionException.class)
+    public ResponseEntity<ErrorDto> handleBookingIntersectionException(
+            BookingIntersectionException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
      * Обработка ошибки неверных данных расписания работы
      */
     @ExceptionHandler(InvalidWorkScheduleException.class)
     public ResponseEntity<ErrorDto> handleInvalidWorkScheduleException(
             InvalidWorkScheduleException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки неверных данных в слоте бронирования
+     */
+    @ExceptionHandler(InvalidBookingSlotException.class)
+    public ResponseEntity<ErrorDto> handleInvalidBookingSlotException(
+            InvalidBookingSlotException ex,
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);

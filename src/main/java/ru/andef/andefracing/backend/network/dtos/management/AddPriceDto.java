@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * DTO для добавления цены за количество минут
  */
 public record AddPriceDto(
-        @Min(value = 1, message = "Кол-во минут должно быть >= 1 минуты")
+        @Min(value = 15, message = "Кол-во минут должно быть >= 15 минут")
         short durationMinutes,
         @NotNull(message = "Необходимо указать стоимость")
         @Min(value = 1, message = "Стоимость должна быть >= 1")

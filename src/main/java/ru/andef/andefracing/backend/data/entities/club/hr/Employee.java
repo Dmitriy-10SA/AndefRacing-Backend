@@ -76,7 +76,7 @@ public class Employee {
     /**
      * Добавление бронирования, которое было создано сотрудником
      */
-    public Booking addBooking(
+    public Booking makeBooking(
             Club club,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime,

@@ -3,6 +3,7 @@ package ru.andef.andefracing.backend.data.repositories.club;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 import ru.andef.andefracing.backend.data.projections.BookingStatsAggregateProjection;
 import ru.andef.andefracing.backend.data.projections.BookingsPerDayProjection;
@@ -11,6 +12,7 @@ import ru.andef.andefracing.backend.data.projections.RevenuePerDayProjection;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     /**
@@ -92,7 +94,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT 
+                    SELECT
                         DATE(start_datetime) as date,
                         SUM(price_value) as revenue
                     FROM bookings.booking
@@ -122,4 +124,78 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                     b.status IN ('PAID', 'PENDING_PAYMENT')"""
     )
     long countUpcomingPaidOrPendingBookings(@Param(value = "clubId") int clubId);
+
+    /**
+     * Получение бронирований в клубе за диапазон дат
+     */
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM bookings.booking
+                    WHERE club_id = :clubId
+                    AND start_datetime < :end
+                    AND end_datetime > :start
+                    """
+    )
+    List<Booking> findAllByDateRangeAndClubId(
+            @Param(value = "clubId") int clubId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end
+    );
+
+    /**
+     * Получение бронирований в клубе за диапазон дат для клиента
+     */
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM bookings.booking b
+                    JOIN clients.client c ON b.client_id = c.id
+                    WHERE b.start_datetime < :end
+                    AND b.end_datetime > :start
+                    AND c.id = :clientId
+                    """
+    )
+    List<Booking> findAllByDateRangeAndClientId(
+            @Param(value = "clientId") long clientId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end
+    );
+
+    /**
+     * Получение бронирований в клубе за диапазон дат, а также с указанным номером телефона клиента
+     */
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT * FROM bookings.booking b
+                    JOIN clients.client c ON b.client_id = c.id
+                    WHERE b.club_id = :clubId
+                    AND b.start_datetime < :end
+                    AND b.end_datetime > :start
+                    AND c.phone = :clientPhone
+                    """
+    )
+    List<Booking> findAllByDateRangeAndClubIdAndClientPhone(
+            @Param(value = "clubId") int clubId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end,
+            @Param(value = "clientPhone") String clientPhone
+    );
+
+    /**
+     * Метод для проверки пересечений
+     */
+    @Query(
+            value = """
+                        SELECT COALESCE(SUM(b.cntEquipment),0)
+                        FROM Booking b
+                        WHERE b.club.id = :clubId
+                        AND b.status != 'CANCELLED'
+                        AND b.startDateTime < :end
+                        AND b.endDateTime > :start
+                    """)
+    int sumEquipmentInInterval(int clubId, OffsetDateTime start, OffsetDateTime end);
+
+    Optional<Booking> findByIdAndClub(long bookingId, Club club);
 }
