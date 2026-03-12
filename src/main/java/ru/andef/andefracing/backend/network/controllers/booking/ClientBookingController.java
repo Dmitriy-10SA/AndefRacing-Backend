@@ -31,15 +31,15 @@ public class ClientBookingController {
     private final BookingService bookingService;
 
     /**
-     * Получение доступных слотов для бронирования
+     * Получение доступных слотов для бронирования в клубе
      */
     @GetMapping(path = "/free-slots/{clubId}", version = ApiVersions.V1)
-    public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
+    public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlotsInClub(
             @PathVariable int clubId,
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
     ) {
         List<FreeBookingSlotDto> freeBookingSlots = bookingService
-                .getFreeBookingSlots(clubId, freeBookingSlotsRequestDto);
+                .getFreeBookingSlotsInClub(clubId, freeBookingSlotsRequestDto);
         return ResponseEntity.ok(freeBookingSlots);
     }
 

@@ -121,7 +121,7 @@ public class BookingService {
      * Получение доступных слотов для бронирования
      */
     @Transactional(readOnly = true)
-    public List<FreeBookingSlotDto> getFreeBookingSlots(
+    public List<FreeBookingSlotDto> getFreeBookingSlotsInClub(
             int clubId,
             FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
     ) {

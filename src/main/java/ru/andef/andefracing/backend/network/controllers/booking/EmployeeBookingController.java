@@ -34,10 +34,10 @@ public class EmployeeBookingController {
     private final BookingService bookingService;
 
     /**
-     * Получение доступных слотов для бронирования
+     * Получение доступных слотов для бронирования в клубе
      */
     @GetMapping(path = "/free-slots", version = ApiVersions.V1)
-    public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
+    public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlotsInClub(
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
             Authentication authentication
     ) {
@@ -46,7 +46,7 @@ public class EmployeeBookingController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<FreeBookingSlotDto> freeBookingSlots = bookingService
-                .getFreeBookingSlots(principal.clubId(), freeBookingSlotsRequestDto);
+                .getFreeBookingSlotsInClub(principal.clubId(), freeBookingSlotsRequestDto);
         return ResponseEntity.ok(freeBookingSlots);
     }
 
