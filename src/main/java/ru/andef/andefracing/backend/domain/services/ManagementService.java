@@ -10,22 +10,26 @@ import ru.andef.andefracing.backend.data.entities.club.Price;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
+import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkScheduleException;
 import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
-import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
-import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
-import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
-import ru.andef.andefracing.backend.domain.mappers.club.PriceMapper;
+import ru.andef.andefracing.backend.domain.mappers.club.*;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddExistingEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddNewEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.EmployeeAndRolesDto;
+import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
+import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
+import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,11 +44,31 @@ public class ManagementService {
     private final BookingRepository bookingRepository;
     private final PhotoRepository photoRepository;
     private final PriceRepository priceRepository;
+    private final WorkScheduleExceptionRepository workScheduleExceptionRepository;
 
     private final GameMapper gameMapper;
     private final EmployeeMapper employeeMapper;
     private final PhotoMapper photoMapper;
     private final PriceMapper priceMapper;
+    private final WorkScheduleExceptionMapper workScheduleExceptionMapper;
+
+    /**
+     * Валидация графика работы
+     */
+    private void validateWorkSchedule(boolean isWorkDay, LocalTime openTime, LocalTime closeTime) {
+        boolean isValidWorkDay = isWorkDay && openTime != null && closeTime != null;
+        boolean isValidWeekend = !isWorkDay && openTime == null && closeTime == null;
+        boolean isValidWorkSchedule = isValidWorkDay || isValidWeekend;
+        if (!isValidWorkSchedule) {
+            throw new InvalidWorkScheduleException(
+                    "Неверные данные, если это рабочий день, то нужно передать время открытия и закрытия," +
+                            " а если выходной - то время открытия и закрытия null"
+            );
+        }
+        if (isWorkDay && !openTime.isBefore(closeTime)) {
+            throw new InvalidWorkScheduleException("Неверные данные, время открытия позже времени закрытия");
+        }
+    }
 
     /**
      * Получение клуба по id или выброс исключения
@@ -435,5 +459,81 @@ public class ManagementService {
         } else {
             throw new EntityNotFoundException("Цена с id " + priceId + " не найдена в клубе");
         }
+    }
+
+    /**
+     * Добавление «дня-исключения» в график работы в выбранном текущим клубе
+     */
+    @Transactional
+    public void addWorkScheduleExceptionInClub(int clubId, AddWorkScheduleExceptionDto addWorkScheduleExceptionDto) {
+        boolean isWorkDay = addWorkScheduleExceptionDto.isWorkDay();
+        LocalDate date = addWorkScheduleExceptionDto.date();
+        LocalTime openTime = addWorkScheduleExceptionDto.openTime();
+        LocalTime closeTime = addWorkScheduleExceptionDto.closeTime();
+        String description = addWorkScheduleExceptionDto.description();
+        validateWorkSchedule(isWorkDay, openTime, closeTime);
+        Club club = findClubByIdOrThrow(clubId);
+        if (workScheduleExceptionRepository.findByClubIdAndDate(club.getId(), date).isPresent()) {
+            throw new DuplicateWorkScheduleExceptionInClubException(date);
+        }
+        WorkScheduleException workScheduleException;
+        if (isWorkDay) {
+            workScheduleException = new WorkScheduleException(date, openTime, closeTime, description);
+        } else {
+            workScheduleException = new WorkScheduleException(date, description);
+        }
+        club.addWorkScheduleException(workScheduleException);
+        clubRepository.save(club);
+    }
+
+    /**
+     * Получение исключений в расписании на диапазон дат в клубе
+     */
+    @Transactional(readOnly = true)
+    public List<WorkScheduleExceptionDto> getAllWorkSchedulesExceptionsInClub(
+            int clubId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        Club club = findClubByIdOrThrow(clubId);
+        List<WorkScheduleException> workScheduleExceptions = workScheduleExceptionRepository.
+                findAllByRangeOfDatesBetweenStartAndEnd(club.getId(), startDate, endDate);
+        return workScheduleExceptionMapper.toDto(workScheduleExceptions);
+    }
+
+    /**
+     * Удаление «дня-исключения» в графике работы в выбранном текущим клубе
+     */
+    @Transactional
+    public void deleteWorkScheduleExceptionInClub(int clubId, long workScheduleExceptionId) {
+        Club club = findClubByIdOrThrow(clubId);
+        WorkScheduleException workScheduleException = workScheduleExceptionRepository
+                .findByIdAndClubId(workScheduleExceptionId, club.getId())
+                .orElseThrow(() ->
+                        new EntityNotFoundException(
+                                "День-исключение с id " + workScheduleExceptionId + " не найден в клубе"
+                        )
+                );
+        club.deleteWorkScheduleException(workScheduleException);
+        clubRepository.save(club);
+    }
+
+    /**
+     * Изменение графика работы, а точнее времени открытия и/или закрытия в конкретный день недели
+     */
+    @Transactional
+    public void updateWorkScheduleInClub(int clubId, UpdateWorkScheduleDto updateWorkScheduleDto) {
+        boolean isWorkDay = updateWorkScheduleDto.isWorkDay();
+        DayOfWeek dayOfWeek = updateWorkScheduleDto.dayOfWeek();
+        LocalTime openTime = updateWorkScheduleDto.openTime();
+        LocalTime closeTime = updateWorkScheduleDto.closeTime();
+        validateWorkSchedule(isWorkDay, openTime, closeTime);
+        Club club = findClubByIdOrThrow(clubId);
+        if (isWorkDay) {
+            club.updateDayFromWorkScheduleToWorkingDay(dayOfWeek, openTime, closeTime);
+        } else {
+            club.updateDayFromWorkScheduleToNonWorkingDay(dayOfWeek);
+        }
+        clubRepository.save(club);
     }
 }

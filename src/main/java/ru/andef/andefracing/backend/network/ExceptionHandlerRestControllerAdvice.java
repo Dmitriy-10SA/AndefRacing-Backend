@@ -95,6 +95,28 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
+     * Обработка ошибки дубликат дня-исключения в клубе
+     */
+    @ExceptionHandler(DuplicateWorkScheduleExceptionInClubException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateWorkScheduleExceptionInClubException(
+            DuplicateWorkScheduleExceptionInClubException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибки неверных данных расписания работы
+     */
+    @ExceptionHandler(InvalidWorkScheduleException.class)
+    public ResponseEntity<ErrorDto> handleInvalidWorkScheduleException(
+            InvalidWorkScheduleException ex,
+            HttpServletRequest request
+    ) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
+    }
+
+    /**
      * Обработка ошибки дубликат цены за количество минут в клубе
      */
     @ExceptionHandler(DuplicatePriceInClubException.class)

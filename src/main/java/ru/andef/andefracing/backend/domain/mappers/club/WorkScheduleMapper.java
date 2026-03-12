@@ -11,11 +11,11 @@ import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, injectionStrategy = InjectionStrategy.CONSTRUCTOR)
 public interface WorkScheduleMapper {
-    @Mapping(target = "id", expression = "java(game.getId())")
-    @Mapping(target = "dayOfWeek", expression = "java(game.getDayOfWeek())")
-    @Mapping(target = "openTime", expression = "java(game.getOpenTime())")
-    @Mapping(target = "closeTime", expression = "java(game.getCloseTime())")
-    @Mapping(target = "isWorkDay", expression = "java(game.isWorkDay())")
+    @Mapping(target = "id", expression = "java(workSchedule.getId())")
+    @Mapping(target = "dayOfWeek", expression = "java(workSchedule.getDayOfWeek())")
+    @Mapping(target = "openTime", expression = "java(workSchedule.getOpenTime())")
+    @Mapping(target = "closeTime", expression = "java(workSchedule.getCloseTime())")
+    @Mapping(target = "isWorkDay", expression = "java(workSchedule.isWorkDay())")
     WorkScheduleDto toDto(WorkSchedule workSchedule);
 
     List<WorkScheduleDto> toDto(List<WorkSchedule> workSchedules);
