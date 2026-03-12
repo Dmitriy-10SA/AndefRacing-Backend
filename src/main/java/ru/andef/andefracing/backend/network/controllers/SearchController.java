@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.SearchService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
-import ru.andef.andefracing.backend.network.dtos.common.club.ClubInfoDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.RegionShortDto;
 import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
