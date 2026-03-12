@@ -44,6 +44,7 @@ public class SecurityConfig {
                         // bookings
                         .requestMatchers(ApiPaths.BOOKINGS_CLIENT + "/**").hasRole(jwtProperties.getClientRole())
                         .requestMatchers(ApiPaths.BOOKINGS_EMPLOYEE + "/**").hasAnyRole(allEmployeeRolesForBookings)
+
                         // management
                         .requestMatchers(ApiPaths.CLUB_MANAGEMENT + "/**").hasRole(EmployeeRole.MANAGER.getRole())
 
