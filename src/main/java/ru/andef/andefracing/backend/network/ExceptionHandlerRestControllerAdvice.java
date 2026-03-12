@@ -26,7 +26,7 @@ public class ExceptionHandlerRestControllerAdvice {
     private static final String AUTH_ERROR = "Auth error";
     private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
     private static final String DUPLICATE_ERROR = "Duplicate error";
-    private static final String CONDITIONS_NOT_MET_ERROR = "Сonditions not met error";
+    private static final String CONDITIONS_NOT_MET_ERROR = "Conditions not met error";
 
     /**
      * Создаёт стандартный ответ об ошибке
