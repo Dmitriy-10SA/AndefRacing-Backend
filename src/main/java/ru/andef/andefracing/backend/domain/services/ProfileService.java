@@ -14,8 +14,8 @@ import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
-import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
+import ru.andef.andefracing.backend.domain.exceptions.common.DuplicateException;
+import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
@@ -99,7 +99,7 @@ public class ProfileService {
         Client client = findClientByIdOrThrow(clientId);
         Club club = findClubByIdOrThrow(clubId);
         if (client.getFavoriteClubs().contains(club)) {
-            throw new DuplicateFavoriteClubException(clubId);
+            throw new DuplicateException("Клуб с id " + clubId + " уже добавлен в избранное");
         }
         client.addFavoriteClub(club);
         clientRepository.save(client);

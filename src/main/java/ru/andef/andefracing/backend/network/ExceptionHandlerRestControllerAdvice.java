@@ -7,15 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.exceptions.common.DuplicateException;
+import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
-import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 
 import java.time.Instant;
 import java.util.stream.Collectors;
@@ -42,22 +42,11 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
-     * Обработка ошибки дубликат игры в клубе
+     * Обработка ошибки дублирования
      */
-    @ExceptionHandler(DuplicateGameInClubException.class)
-    public ResponseEntity<ErrorDto> handleDuplicateGameInClubException(
-            DuplicateGameInClubException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки дубликат избранного клуба
-     */
-    @ExceptionHandler(DuplicateFavoriteClubException.class)
-    public ResponseEntity<ErrorDto> handleDuplicateFavoriteClubException(
-            DuplicateFavoriteClubException ex,
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<ErrorDto> handleDuplicateException(
+            DuplicateException ex,
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
@@ -83,28 +72,6 @@ public class ExceptionHandlerRestControllerAdvice {
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.CONFLICT, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки дубликат роли у сотрудника в клубе
-     */
-    @ExceptionHandler(DuplicateEmployeeRoleInClubException.class)
-    public ResponseEntity<ErrorDto> handleDuplicateEmployeeRoleInClubException(
-            DuplicateEmployeeRoleInClubException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки дубликат дня-исключения в клубе
-     */
-    @ExceptionHandler(DuplicateWorkScheduleExceptionInClubException.class)
-    public ResponseEntity<ErrorDto> handleDuplicateWorkScheduleExceptionInClubException(
-            DuplicateWorkScheduleExceptionInClubException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
     }
 
     /**
@@ -141,17 +108,6 @@ public class ExceptionHandlerRestControllerAdvice {
     }
 
     /**
-     * Обработка ошибки дубликат цены за количество минут в клубе
-     */
-    @ExceptionHandler(DuplicatePriceInClubException.class)
-    public ResponseEntity<ErrorDto> handleDuplicatePriceInClubException(
-            DuplicatePriceInClubException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
-    }
-
-    /**
      * Обработка ошибки при попытке изменить порядок фотографий
      */
     @ExceptionHandler(PhotoReorderMismatchException.class)
@@ -160,17 +116,6 @@ public class ExceptionHandlerRestControllerAdvice {
             HttpServletRequest request
     ) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, CONDITIONS_NOT_MET_ERROR, ex.getMessage(), request);
-    }
-
-    /**
-     * Обработка ошибки дубликат сотрудника в клубе
-     */
-    @ExceptionHandler(DuplicateEmployeeInClubException.class)
-    public ResponseEntity<ErrorDto> handleDuplicateEmployeeInClubException(
-            DuplicateEmployeeInClubException ex,
-            HttpServletRequest request
-    ) {
-        return buildErrorResponse(HttpStatus.CONFLICT, DUPLICATE_ERROR, ex.getMessage(), request);
     }
 
     /**

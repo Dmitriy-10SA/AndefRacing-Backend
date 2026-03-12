@@ -12,7 +12,8 @@ import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkScheduleException;
 import ru.andef.andefracing.backend.data.repositories.club.*;
-import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.common.DuplicateException;
+import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.mappers.club.*;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
@@ -153,7 +154,7 @@ public class ManagementService {
         Game game = findGameByIdOrThrow(gameId);
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
         if (gamesInClub.contains(game)) {
-            throw new DuplicateGameInClubException(game.getId());
+            throw new DuplicateException("Игра с id " + gameId + " уже есть в клубе");
         }
         club.addGame(game);
         clubRepository.save(club);
@@ -224,7 +225,7 @@ public class ManagementService {
         Employee employee = findEmployeeByPhoneOrThrow(addExistingEmployeeDto.getPhone());
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
             if (employeeClub.getEmployee().equals(employee)) {
-                throw new DuplicateEmployeeInClubException(employee.getId());
+                throw new DuplicateException("Сотрудник с id " + employee.getId() + " уже есть в клубе");
             }
         }
         club.addEmployee(employee, addExistingEmployeeDto.getRoles());
@@ -283,7 +284,7 @@ public class ManagementService {
         if (rolesInClub.isEmpty()) {
             throw new EntityNotFoundException("Сотрудник c id " + employeeId + " не найден в клубе");
         } else if (rolesInClub.contains(role)) {
-            throw new DuplicateEmployeeRoleInClubException(employeeId, role);
+            throw new DuplicateException("Сотрудник с id " + employeeId + " уже имеет роль " + role.getRu());
         }
         club.addRoleForEmployee(employee, role);
         clubRepository.save(club);
@@ -365,9 +366,11 @@ public class ManagementService {
         List<String> urls = photosInClub.stream().map(Photo::getUrl).toList();
         List<Short> sequenceNumbers = photosInClub.stream().map(Photo::getSequenceNumber).toList();
         if (urls.contains(addPhotoDto.url())) {
-            throw new DuplicatePhotoInClubException(addPhotoDto.url());
+            throw new DuplicateException("Фото с url" + addPhotoDto.url() + " уже существует в клубе");
         } else if (sequenceNumbers.contains(addPhotoDto.sequenceNumber())) {
-            throw new DuplicatePhotoInClubException(addPhotoDto.sequenceNumber());
+            throw new DuplicateException(
+                    "Фото с sequenceNumber" + addPhotoDto.sequenceNumber() + " уже существует в клубе"
+            );
         }
         Photo photo = photoMapper.toEntity(addPhotoDto);
         club.addPhoto(photo);
@@ -422,7 +425,9 @@ public class ManagementService {
         List<Price> pricesInClub = club.getPrices();
         List<Short> durationMinutes = pricesInClub.stream().map(Price::getDurationMinutes).toList();
         if (durationMinutes.contains(addPriceDto.durationMinutes())) {
-            throw new DuplicatePriceInClubException(clubId, addPriceDto.durationMinutes());
+            throw new DuplicateException(
+                    "В клубе с id " + clubId + " уже есть стоимость за " + addPriceDto.durationMinutes() + " минут"
+            );
         }
         Price price = priceMapper.toEntity(addPriceDto);
         price.setValue(price.getValue().setScale(2, RoundingMode.HALF_EVEN));
@@ -474,7 +479,7 @@ public class ManagementService {
         validateWorkSchedule(isWorkDay, openTime, closeTime);
         Club club = findClubByIdOrThrow(clubId);
         if (workScheduleExceptionRepository.findByClubIdAndDate(club.getId(), date).isPresent()) {
-            throw new DuplicateWorkScheduleExceptionInClubException(date);
+            throw new DuplicateException("День-исключение с датой " + date + " уже есть в клубе");
         }
         WorkScheduleException workScheduleException;
         if (isWorkDay) {

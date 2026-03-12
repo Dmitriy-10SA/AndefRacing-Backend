@@ -14,7 +14,7 @@ import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.GameRepository;
 import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
-import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.club.*;
 import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;

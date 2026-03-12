@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.domain.exceptions;
+package ru.andef.andefracing.backend.domain.exceptions.common;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

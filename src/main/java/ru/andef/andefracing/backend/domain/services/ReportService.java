@@ -10,7 +10,7 @@ import ru.andef.andefracing.backend.data.projections.FinancialStatsAggregateProj
 import ru.andef.andefracing.backend.data.projections.RevenuePerDayProjection;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
-import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.network.dtos.report.BookingStatisticsDto;
 import ru.andef.andefracing.backend.network.dtos.report.FinancialStatisticsDto;
 
