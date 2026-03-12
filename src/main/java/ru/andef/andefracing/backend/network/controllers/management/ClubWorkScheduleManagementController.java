@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
@@ -28,7 +29,7 @@ public class ClubWorkScheduleManagementController {
     /**
      * Добавление «дня-исключения» в график работы в выбранном текущим клубе
      */
-    @PostMapping("/exceptions")
+    @PostMapping(path = "/exceptions", version = ApiVersions.V1)
     public ResponseEntity<Void> addWorkScheduleExceptionInClub(
             @RequestBody @Valid AddWorkScheduleExceptionDto addWorkScheduleExceptionDto,
             Authentication authentication
@@ -44,7 +45,7 @@ public class ClubWorkScheduleManagementController {
     /**
      * Получение исключений в расписании на диапазон дат в клубе
      */
-    @GetMapping("/exceptions")
+    @GetMapping(path = "/exceptions", version = ApiVersions.V1)
     public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptionsInClub(
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate,
@@ -62,7 +63,7 @@ public class ClubWorkScheduleManagementController {
     /**
      * Удаление «дня-исключения» в графике работы в выбранном текущим клубе
      */
-    @DeleteMapping("/exceptions/{workScheduleExceptionId}")
+    @DeleteMapping(path = "/exceptions/{workScheduleExceptionId}", version = ApiVersions.V1)
     public ResponseEntity<Void> deleteWorkScheduleExceptionInClub(
             @PathVariable long workScheduleExceptionId,
             Authentication authentication
@@ -78,7 +79,7 @@ public class ClubWorkScheduleManagementController {
     /**
      * Изменение графика работы, а точнее времени открытия и/или закрытия в конкретный день недели
      */
-    @PutMapping
+    @PutMapping(version = ApiVersions.V1)
     public ResponseEntity<Void> updateWorkScheduleInClub(
             @RequestBody @Valid UpdateWorkScheduleDto updateWorkScheduleDto,
             Authentication authentication

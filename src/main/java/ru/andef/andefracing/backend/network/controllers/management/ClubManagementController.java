@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.domain.services.ManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
 @RestController
@@ -25,7 +26,7 @@ public class ClubManagementController {
     /**
      * Изменение количества симуляторов в выбранном текущим клубе
      */
-    @PatchMapping
+    @PatchMapping(version = ApiVersions.V1)
     public ResponseEntity<Void> updateCntEquipmentInClub(
             @RequestParam(name = "cntEquipment") @Min(1) @Max(10000) short cntEquipment,
             Authentication authentication
@@ -41,7 +42,7 @@ public class ClubManagementController {
     /**
      * Открыть клуб
      */
-    @PatchMapping("/open")
+    @PatchMapping(path = "/open", version = ApiVersions.V1)
     public ResponseEntity<Void> openClub(Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -54,7 +55,7 @@ public class ClubManagementController {
     /**
      * Закрыть клуб
      */
-    @PatchMapping("/close")
+    @PatchMapping(path = "/close", version = ApiVersions.V1)
     public ResponseEntity<Void> closeClub(Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {

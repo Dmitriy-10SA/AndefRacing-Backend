@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
@@ -21,7 +22,7 @@ public class ClientAuthController {
     /**
      * Регистрация в системе для клиента
      */
-    @PostMapping("/register")
+    @PostMapping(path = "/register", version = ApiVersions.V1)
     public ResponseEntity<ClientAuthResponseDto> register(@RequestBody @Valid ClientRegisterDto registerDto) {
         ClientAuthResponseDto clientAuthResponseDto = authService.registerClient(registerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(clientAuthResponseDto);
@@ -30,7 +31,7 @@ public class ClientAuthController {
     /**
      * Вход в систему для клиента
      */
-    @PostMapping("/login")
+    @PostMapping(path = "/login", version = ApiVersions.V1)
     public ResponseEntity<ClientAuthResponseDto> login(@RequestBody @Valid ClientLoginDto loginDto) {
         ClientAuthResponseDto clientAuthResponseDto = authService.loginClient(loginDto);
         return ResponseEntity.ok(clientAuthResponseDto);
@@ -39,7 +40,7 @@ public class ClientAuthController {
     /**
      * Изменение пароля у клиента по номеру телефона
      */
-    @PatchMapping("/change-password")
+    @PatchMapping(path = "/change-password", version = ApiVersions.V1)
     public ResponseEntity<ClientAuthResponseDto> changePassword(
             @RequestBody @Valid ClientChangePasswordDto changePasswordDto
     ) {

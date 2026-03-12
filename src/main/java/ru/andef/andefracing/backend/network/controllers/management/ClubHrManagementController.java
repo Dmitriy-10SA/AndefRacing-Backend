@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.domain.services.ManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddExistingEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddNewEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.EmployeeAndRolesDto;
@@ -30,7 +31,7 @@ public class ClubHrManagementController {
     /**
      * Проверка, что сотрудник есть в системе
      */
-    @GetMapping("is-employee-in-system")
+    @GetMapping(path = "is-employee-in-system", version = ApiVersions.V1)
     public ResponseEntity<Boolean> isEmployeeInSystem(
             @RequestParam(name = "employeePhone")
             @NotBlank(message = "Номер телефона должен быть заполнен")
@@ -48,7 +49,7 @@ public class ClubHrManagementController {
      * Добавление сотрудника, которого нет в системе, в выбранный текущим клуб
      * по номеру телефона сотрудника с заданием ролей
      */
-    @PostMapping("/add-new-employee-to-club")
+    @PostMapping(path = "/add-new-employee-to-club", version = ApiVersions.V1)
     public ResponseEntity<Void> addNewEmployeeToClub(
             @RequestBody @Valid AddNewEmployeeDto addNewEmployeeDto,
             Authentication authentication
@@ -65,7 +66,7 @@ public class ClubHrManagementController {
      * Добавление сотрудника, который уже есть в системе, в выбранный текущим клуб
      * по номеру телефона сотрудника с заданием ролей
      */
-    @PostMapping("/add-existing-employee-to-club")
+    @PostMapping(path = "/add-existing-employee-to-club", version = ApiVersions.V1)
     public ResponseEntity<Void> addExistingEmployeeToClub(
             @RequestBody @Valid AddExistingEmployeeDto addExistingEmployeeDto,
             Authentication authentication
@@ -81,7 +82,7 @@ public class ClubHrManagementController {
     /**
      * Получение списка сотрудников и их ролей в клубе
      */
-    @GetMapping
+    @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<EmployeeAndRolesDto>> getEmployeesAndRolesInClub(Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -94,7 +95,7 @@ public class ClubHrManagementController {
     /**
      * Удаление сотрудника из выбранного текущим клуба
      */
-    @DeleteMapping("/delete-employee-from-club/{employeeId}")
+    @DeleteMapping(path = "/delete-employee-from-club/{employeeId}", version = ApiVersions.V1)
     public ResponseEntity<Void> deleteEmployeeFromClub(@PathVariable long employeeId, Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -107,7 +108,7 @@ public class ClubHrManagementController {
     /**
      * Добавить роль сотруднику в выбранном текущим клубе
      */
-    @PostMapping("/add-role-to-employee-in-club/{employeeId}")
+    @PostMapping(path = "/add-role-to-employee-in-club/{employeeId}", version = ApiVersions.V1)
     public ResponseEntity<Void> addRoleToEmployeeInClub(
             @PathVariable long employeeId,
             @RequestParam(name = "role") @NotNull EmployeeRole role,
@@ -124,7 +125,7 @@ public class ClubHrManagementController {
     /**
      * Изменить роль сотрудника в выбранном текущем клубе
      */
-    @PatchMapping("/update-employee-role-in-club/{employeeId}")
+    @PatchMapping(path = "/update-employee-role-in-club/{employeeId}", version = ApiVersions.V1)
     public ResponseEntity<Void> updateEmployeeRoleInClub(
             @PathVariable long employeeId,
             @RequestParam(name = "oldRole") @NotNull EmployeeRole oldRole,
@@ -142,7 +143,7 @@ public class ClubHrManagementController {
     /**
      * Удалить роль сотрудника в выбранном текущим клубе
      */
-    @DeleteMapping("/delete-employee-role-in-club/{employeeId}")
+    @DeleteMapping(path = "/delete-employee-role-in-club/{employeeId}", version = ApiVersions.V1)
     public ResponseEntity<Void> deleteEmployeeRoleInClub(
             @PathVariable long employeeId,
             @RequestParam(name = "role") @NotNull EmployeeRole role,

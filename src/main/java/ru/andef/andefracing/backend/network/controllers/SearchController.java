@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.SearchService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.common.club.ClubInfoDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.RegionShortDto;
@@ -26,7 +27,7 @@ public class SearchController {
     /**
      * Получение всех регионов
      */
-    @GetMapping("/regions")
+    @GetMapping(path = "/regions", version = ApiVersions.V1)
     public ResponseEntity<List<RegionShortDto>> getAllRegions() {
         List<RegionShortDto> regions = searchService.getAllRegions();
         return ResponseEntity.ok(regions);
@@ -35,7 +36,7 @@ public class SearchController {
     /**
      * Получение всех городов в указанном регионе
      */
-    @GetMapping("/cities/{regionId}")
+    @GetMapping(path = "/cities/{regionId}", version = ApiVersions.V1)
     public ResponseEntity<List<CityShortDto>> getAllCitiesInRegion(@PathVariable short regionId) {
         List<CityShortDto> cities = searchService.getAllCitiesInRegion(regionId);
         return ResponseEntity.ok(cities);
@@ -44,7 +45,7 @@ public class SearchController {
     /**
      * Получение всех клубов (работающих) в указанном городе с пагинацией
      */
-    @GetMapping("/clubs/{cityId}")
+    @GetMapping(path = "/clubs/{cityId}", version = ApiVersions.V1)
     public ResponseEntity<PagedClubShortListDto> getAllClubsInCity(
             @PathVariable short cityId,
             @RequestParam @Min(value = 0) int pageNumber,
@@ -57,7 +58,7 @@ public class SearchController {
     /**
      * Получение подробной информации о клубе
      */
-    @GetMapping("/club-full-info/{clubId}")
+    @GetMapping(path = "/club-full-info/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<ClubFullInfoDto> getClubFullInfo(@PathVariable int clubId) {
         ClubFullInfoDto clubFullInfoDto = searchService.getClubFullInfo(clubId);
         return ResponseEntity.ok(clubFullInfoDto);

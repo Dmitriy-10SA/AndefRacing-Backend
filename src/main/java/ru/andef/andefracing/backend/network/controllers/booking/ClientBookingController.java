@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.BookingService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
@@ -30,7 +31,7 @@ public class ClientBookingController {
     /**
      * Получение доступных слотов для бронирования
      */
-    @GetMapping("/free-slots/{clubId}")
+    @GetMapping(path = "/free-slots/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
             @PathVariable int clubId,
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
@@ -43,7 +44,7 @@ public class ClientBookingController {
     /**
      * Сделать бронирование
      */
-    @PostMapping("/make-booking/{clubId}")
+    @PostMapping(path = "/make-booking/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<Void> makeBooking(
             @PathVariable int clubId,
             @RequestBody @Valid ClientMakeBookingDto makeBookingDto,
@@ -60,7 +61,7 @@ public class ClientBookingController {
     /**
      * Получение списка всех бронирований за диапазон дат
      */
-    @GetMapping
+    @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<ClientBookingShortDto>> getBookings(
             @RequestParam(name = "startDate") @NotNull LocalDate startDate,
             @RequestParam(name = "endDate") @NotNull LocalDate endDate,
@@ -78,7 +79,7 @@ public class ClientBookingController {
     /**
      * Просмотр полной информации о бронировании
      */
-    @GetMapping("/{clubId}/{bookingId}")
+    @GetMapping(path = "/{clubId}/{bookingId}", version = ApiVersions.V1)
     public ResponseEntity<ClientBookingFullInfoDto> getFullBookingInfo(
             @PathVariable int clubId,
             @PathVariable long bookingId,

@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
@@ -21,7 +22,7 @@ public class ClubGamesManagementController {
     /**
      * Добавить активную игру в клуб (из справочника)
      */
-    @PostMapping("{gameId}")
+    @PostMapping(path = "{gameId}", version = ApiVersions.V1)
     public ResponseEntity<Void> addGameToClub(@PathVariable short gameId, Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -34,7 +35,7 @@ public class ClubGamesManagementController {
     /**
      * Получение справочника игр (только активных)
      */
-    @GetMapping
+    @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<GameDto>> getAllActiveGames() {
         List<GameDto> games = managementService.getAllActiveGames();
         return ResponseEntity.ok(games);
@@ -43,7 +44,7 @@ public class ClubGamesManagementController {
     /**
      * Удалить игру из клуба
      */
-    @DeleteMapping("/{gameId}")
+    @DeleteMapping(path = "/{gameId}", version = ApiVersions.V1)
     public ResponseEntity<Void> removeGameFromClub(@PathVariable short gameId, Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {

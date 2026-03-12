@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
@@ -21,7 +22,7 @@ public class EmployeeProfileController {
     /**
      * Получение информации о сотруднике (фамилия, имя, отчество, номер телефона, роли в текущем клубе)
      */
-    @GetMapping("/personal-info")
+    @GetMapping(path = "/personal-info", version = ApiVersions.V1)
     public ResponseEntity<EmployeePersonalInfoDto> getPersonalInfo(Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {

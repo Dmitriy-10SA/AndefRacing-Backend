@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
@@ -25,7 +26,7 @@ public class EmployeeAuthController {
     /**
      * Проверка, первый ли вход для сотрудника в систему (нужно ли задать пароль)
      */
-    @GetMapping("/is-first-enter")
+    @GetMapping(path = "/is-first-enter", version = ApiVersions.V1)
     public ResponseEntity<Boolean> isFirstEnter(
             @RequestParam(name = "phone")
             @NotBlank(message = "Номер телефона должен быть заполнен")
@@ -42,7 +43,7 @@ public class EmployeeAuthController {
     /**
      * Подготовительный шаг для входа в систему для сотрудника
      */
-    @PostMapping("/pre-login")
+    @PostMapping(path = "/pre-login", version = ApiVersions.V1)
     public ResponseEntity<List<EmployeeClubDto>> preLogin(@RequestBody @Valid EmployeeLoginDto loginDto) {
         List<EmployeeClubDto> clubsWhenWork = authService.preLoginEmployee(loginDto);
         return ResponseEntity.ok().body(clubsWhenWork);
@@ -51,7 +52,7 @@ public class EmployeeAuthController {
     /**
      * Вход в систему для сотрудника
      */
-    @PostMapping("/login/{clubId}")
+    @PostMapping(path = "/login/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<EmployeeAuthResponseDto> login(
             @PathVariable int clubId,
             @RequestBody @Valid EmployeeLoginDto loginDto

@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.BookingService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
@@ -33,7 +34,7 @@ public class EmployeeBookingController {
     /**
      * Получение доступных слотов для бронирования
      */
-    @GetMapping("/free-slots")
+    @GetMapping(path = "/free-slots", version = ApiVersions.V1)
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlots(
             @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
             Authentication authentication
@@ -50,7 +51,7 @@ public class EmployeeBookingController {
     /**
      * Подтверждение оплаты бронирования
      */
-    @PatchMapping("/confirm-booking-payment/{bookingId}")
+    @PatchMapping(path = "/confirm-booking-payment/{bookingId}", version = ApiVersions.V1)
     public ResponseEntity<Void> confirmBookingPayment(@PathVariable long bookingId, Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -63,7 +64,7 @@ public class EmployeeBookingController {
     /**
      * Сделать бронирование
      */
-    @PostMapping("/make-booking")
+    @PostMapping(path = "/make-booking", version = ApiVersions.V1)
     public ResponseEntity<Void> makeBooking(
             @RequestBody @Valid EmployeeMakeBookingDto makeBookingDto,
             Authentication authentication
@@ -79,7 +80,7 @@ public class EmployeeBookingController {
     /**
      * Отмена бронирования
      */
-    @PatchMapping("/cancel/{bookingId}")
+    @PatchMapping(path = "/cancel/{bookingId}", version = ApiVersions.V1)
     public ResponseEntity<Void> cancelBooking(@PathVariable long bookingId, Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -92,7 +93,7 @@ public class EmployeeBookingController {
     /**
      * Получение списка всех бронирований за диапазон дат и по номеру телефона клиента (номер телефона опционален)
      */
-    @GetMapping
+    @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
             @RequestParam("startDate") @NotNull LocalDate startDate,
             @RequestParam("endDate") @NotNull LocalDate endDate,
@@ -122,7 +123,7 @@ public class EmployeeBookingController {
     /**
      * Просмотр полной информации о бронировании
      */
-    @GetMapping("/{bookingId}")
+    @GetMapping(path = "/{bookingId}", version = ApiVersions.V1)
     public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(
             @PathVariable long bookingId,
             Authentication authentication

@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
@@ -26,7 +27,7 @@ public class ClubPricesManagementController {
     /**
      * Добавление цены за кол-во минут игры в клубе
      */
-    @PostMapping
+    @PostMapping(version = ApiVersions.V1)
     public ResponseEntity<Void> addPriceForMinutesInClub(
             @RequestBody @Valid AddPriceDto addPriceDto,
             Authentication authentication
@@ -42,7 +43,7 @@ public class ClubPricesManagementController {
     /**
      * Изменение цены за кол-во минут игры в клубе
      */
-    @PatchMapping("/{priceId}")
+    @PatchMapping(path = "/{priceId}", version = ApiVersions.V1)
     public ResponseEntity<Void> updatePriceForMinutesInClub(
             @PathVariable long priceId,
             @RequestParam(name = "value") @NotNull @Min(1) BigDecimal value,
@@ -59,7 +60,7 @@ public class ClubPricesManagementController {
     /**
      * Удаление цены за кол-во минут игры в клубе
      */
-    @DeleteMapping("/{priceId}")
+    @DeleteMapping(path = "/{priceId}", version = ApiVersions.V1)
     public ResponseEntity<Void> deletePriceForMinutesInClub(
             @PathVariable long priceId,
             Authentication authentication

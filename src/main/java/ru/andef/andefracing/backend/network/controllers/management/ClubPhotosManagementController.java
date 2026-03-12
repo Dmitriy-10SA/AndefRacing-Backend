@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
 
@@ -25,7 +26,7 @@ public class ClubPhotosManagementController {
     /**
      * Добавление фотографии в клуб
      */
-    @PostMapping
+    @PostMapping(version = ApiVersions.V1)
     public ResponseEntity<Void> addPhotoInClub(
             @RequestBody @Valid AddPhotoDto addPhotoDto,
             Authentication authentication
@@ -41,7 +42,7 @@ public class ClubPhotosManagementController {
     /**
      * Удаление фотографии из клуба
      */
-    @DeleteMapping("/{photoId}")
+    @DeleteMapping(path = "/{photoId}", version = ApiVersions.V1)
     public ResponseEntity<Void> deletePhotoFromClub(@PathVariable long photoId, Authentication authentication) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -54,7 +55,7 @@ public class ClubPhotosManagementController {
     /**
      * Переупорядочивание фотографий в клубе
      */
-    @PatchMapping("/reorder")
+    @PatchMapping(path = "/reorder", version = ApiVersions.V1)
     public ResponseEntity<Void> reorderPhotosInClub(
             @RequestBody @Valid @NotNull List<@NotNull Long> orderedPhotoIds,
             Authentication authentication

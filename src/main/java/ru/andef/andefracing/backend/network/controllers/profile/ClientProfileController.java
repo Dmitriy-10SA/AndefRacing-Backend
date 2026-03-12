@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
@@ -26,7 +27,7 @@ public class ClientProfileController {
     /**
      * Получение информации о клиенте (имя, номер телефона)
      */
-    @GetMapping("/personal-info")
+    @GetMapping(path = "/personal-info", version = ApiVersions.V1)
     public ResponseEntity<ClientPersonalInfoDto> getPersonalInfo(Authentication authentication) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -39,7 +40,7 @@ public class ClientProfileController {
     /**
      * Редактирование личной информации клиента (имя, номер телефона)
      */
-    @PatchMapping("/change-personal-info")
+    @PatchMapping(path = "/change-personal-info", version = ApiVersions.V1)
     public ResponseEntity<Void> changePersonalInfo(
             @RequestBody @Valid ClientChangePersonalInfoDto changePersonalInfoDto,
             Authentication authentication
@@ -55,7 +56,7 @@ public class ClientProfileController {
     /**
      * Добавление клуба в список избранных клубов клиента
      */
-    @PostMapping("/favorite-clubs/{clubId}")
+    @PostMapping(path = "/favorite-clubs/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<Void> addFavoriteClub(@PathVariable int clubId, Authentication authentication) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
         if (principal == null) {
@@ -68,7 +69,7 @@ public class ClientProfileController {
     /**
      * Получение списка избранных клубов клиента с пагинацией
      */
-    @GetMapping("/favorite-clubs")
+    @GetMapping(path = "/favorite-clubs", version = ApiVersions.V1)
     public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs(
             @RequestParam @Min(value = 0) int pageNumber,
             @RequestParam @Min(value = 1) @Max(value = 100) int pageSize,
@@ -89,7 +90,7 @@ public class ClientProfileController {
     /**
      * Удаление клуба из списка избранных клубов клиента
      */
-    @DeleteMapping("/favorite-clubs/{clubId}")
+    @DeleteMapping(path = "/favorite-clubs/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<Void> deleteFavoriteClub(@PathVariable int clubId, Authentication authentication) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
         if (principal == null) {
