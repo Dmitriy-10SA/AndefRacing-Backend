@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
- * Проекция для дохода по дням.
+ * Проекция для дохода по дням
  */
 public interface RevenuePerDayProjection {
     LocalDate getDate();
