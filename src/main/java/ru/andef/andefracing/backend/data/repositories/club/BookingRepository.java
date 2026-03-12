@@ -183,19 +183,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param(value = "clientPhone") String clientPhone
     );
 
-    /**
-     * Метод для проверки пересечений
-     */
-    @Query(
-            value = """
-                        SELECT COALESCE(SUM(b.cntEquipment),0)
-                        FROM Booking b
-                        WHERE b.club.id = :clubId
-                        AND b.status != 'CANCELLED'
-                        AND b.startDateTime < :end
-                        AND b.endDateTime > :start
-                    """)
-    int sumEquipmentInInterval(int clubId, OffsetDateTime start, OffsetDateTime end);
-
     Optional<Booking> findByIdAndClub(long bookingId, Club club);
 }
