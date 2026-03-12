@@ -12,9 +12,6 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Класс для генерации JWT токенов клиента и сотрудника, а также получения из токена Claims
- */
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
