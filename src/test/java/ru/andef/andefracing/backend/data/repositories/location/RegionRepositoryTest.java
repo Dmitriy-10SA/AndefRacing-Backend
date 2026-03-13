@@ -12,7 +12,8 @@ import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DataJpaTest
 @Sql(scripts = "classpath:scripts/db/create-test-schema.sql")

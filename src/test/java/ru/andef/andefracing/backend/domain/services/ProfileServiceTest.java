@@ -10,7 +10,6 @@ import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.Photo;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
-
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.entities.location.City;
 import ru.andef.andefracing.backend.data.entities.location.Region;

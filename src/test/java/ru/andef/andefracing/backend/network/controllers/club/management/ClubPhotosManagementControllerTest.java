@@ -8,10 +8,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 

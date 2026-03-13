@@ -6,12 +6,12 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
-import tools.jackson.databind.ObjectMapper;
 import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
