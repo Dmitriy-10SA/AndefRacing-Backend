@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 @Service
 @RequiredArgsConstructor
 public class BookingService {
-    private final SearchService searchService;
+    private final SService searchService;
 
     private final BookingRepository bookingRepository;
     private final WorkScheduleExceptionRepository workScheduleExceptionRepository;

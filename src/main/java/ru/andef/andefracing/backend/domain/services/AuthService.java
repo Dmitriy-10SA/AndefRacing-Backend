@@ -32,7 +32,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final SearchService searchService;
+    private final SService searchService;
 
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;

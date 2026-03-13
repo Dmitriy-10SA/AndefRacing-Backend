@@ -35,7 +35,7 @@ import java.util.List;
 public class ProfileService {
     private static final String NAME = "name";
 
-    private final SearchService searchService;
+    private final SService searchService;
 
     private final ClientRepository clientRepository;
     private final ClubRepository clubRepository;

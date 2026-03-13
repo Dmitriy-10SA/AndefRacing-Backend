@@ -39,7 +39,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class ManagementService {
-    private final SearchService searchService;
+    private final SService searchService;
 
     private final ClubRepository clubRepository;
     private final GameRepository gameRepository;

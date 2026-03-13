@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
-    private final SearchService searchService;
+    private final SService searchService;
 
     private final BookingRepository bookingRepository;
 
