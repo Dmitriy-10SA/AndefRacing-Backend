@@ -12,9 +12,9 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAl
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
-import ru.andef.andefracing.backend.domain.exceptions.common.BlockedException;
-import ru.andef.andefracing.backend.domain.exceptions.common.DuplicateException;
-import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
+import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
+import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
 
 import java.time.Instant;

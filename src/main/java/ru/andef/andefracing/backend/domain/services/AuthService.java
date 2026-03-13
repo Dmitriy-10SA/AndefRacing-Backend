@@ -13,7 +13,7 @@ import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
-import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;

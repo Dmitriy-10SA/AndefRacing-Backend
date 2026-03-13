@@ -15,7 +15,7 @@ import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.data.repositories.club.WorkScheduleExceptionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
-import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.BookingMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
