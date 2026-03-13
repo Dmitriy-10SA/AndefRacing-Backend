@@ -53,7 +53,7 @@ public class Client {
     private Set<Club> favoriteClubs = new HashSet<>();
 
     @Getter(AccessLevel.NONE)
-    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "client", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Booking> bookings = new ArrayList<>();
 
     /**

@@ -13,15 +13,16 @@ import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
-import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
+import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.profile.client.DuplicateFavoriteClubException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
+import ru.andef.andefracing.backend.domain.services.search.ClientSearchService;
+import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
@@ -36,8 +37,10 @@ import java.util.List;
 public class ProfileService {
     private static final String NAME = "name";
 
+    private final ClientSearchService clientSearchService;
+    private final ClubSearchService clubSearchService;
+
     private final ClientRepository clientRepository;
-    private final EmployeeRepository employeeRepository;
     private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
@@ -48,35 +51,11 @@ public class ProfileService {
     private final PhotoMapper photoMapper;
 
     /**
-     * Получение клуба по id или выброс исключения
-     */
-    private Club findClubByIdOrThrow(int clubId) {
-        return clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
-    }
-
-    /**
-     * Получение клиента по id или выброс исключения
-     */
-    private Client findClientByIdOrThrow(long clientId) {
-        return clientRepository.findById(clientId)
-                .orElseThrow(() -> new EntityNotFoundException("Клиент с id " + clientId + " не найден"));
-    }
-
-    /**
-     * Получение сотрудника по id или выброс исключения
-     */
-    private Employee findEmployeeByIdOrThrow(long employeeId) {
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + employeeId + " не найден"));
-    }
-
-    /**
      * Получение информации о клиенте
      */
     @Transactional(readOnly = true)
     public ClientPersonalInfoDto getClientPersonalInfo(long clientId) {
-        Client client = findClientByIdOrThrow(clientId);
+        Client client = clientSearchService.findClientById(clientId);
         return clientMapper.toPersonalInfoDto(client);
     }
 
@@ -85,7 +64,7 @@ public class ProfileService {
      */
     @Transactional
     public void changeClientPersonalInfo(long clientId, ClientChangePersonalInfoDto changePersonalInfoDto) {
-        Client client = findClientByIdOrThrow(clientId);
+        Client client = clientSearchService.findClientById(clientId);
         client.setName(changePersonalInfoDto.name());
         client.setPhone(changePersonalInfoDto.phone());
         clientRepository.save(client);
@@ -96,10 +75,10 @@ public class ProfileService {
      */
     @Transactional
     public void addClubToClientFavoriteClubs(long clientId, int clubId) {
-        Client client = findClientByIdOrThrow(clientId);
-        Club club = findClubByIdOrThrow(clubId);
+        Client client = clientSearchService.findClientById(clientId);
+        Club club = clubSearchService.findClubById(clubId);
         if (client.getFavoriteClubs().contains(club)) {
-            throw new DuplicateFavoriteClubException(clubId);
+            throw new DuplicateException("Клуб с id " + clubId + " уже добавлен в избранное");
         }
         client.addFavoriteClub(club);
         clientRepository.save(client);
@@ -110,7 +89,7 @@ public class ProfileService {
      */
     @Transactional(readOnly = true)
     public PagedFavoriteClubShortListDto getClientFavoriteClubs(long clientId, int pageNumber, int pageSize) {
-        Client client = findClientByIdOrThrow(clientId);
+        Client client = clientSearchService.findClientById(clientId);
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(NAME));
         Page<Club> clubsPage = clubRepository.getClientFavoriteClubs(client.getId(), pageRequest);
         List<FavoriteClubShortDto> content = clubMapper
@@ -127,8 +106,8 @@ public class ProfileService {
      */
     @Transactional
     public void deleteClubFromClientFavoriteClubs(long clientId, int clubId) {
-        Client client = findClientByIdOrThrow(clientId);
-        Club club = findClubByIdOrThrow(clubId);
+        Client client = clientSearchService.findClientById(clientId);
+        Club club = clubSearchService.findClubById(clubId);
         if (!client.getFavoriteClubs().contains(club)) {
             throw new EntityNotFoundException("У клиента нет избранного клуба с id " + clubId);
         }
@@ -141,8 +120,8 @@ public class ProfileService {
      */
     @Transactional(readOnly = true)
     public EmployeePersonalInfoDto getEmployeePersonalInfo(long employeeId, int clubId) {
-        Employee employee = findEmployeeByIdOrThrow(employeeId);
-        Club club = findClubByIdOrThrow(clubId);
+        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Club club = clubSearchService.findClubById(clubId);
         List<EmployeeRole> roles = club.getEmployeesAndRoles().stream()
                 .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
                 .map(EmployeeClub::getEmployeeRole)

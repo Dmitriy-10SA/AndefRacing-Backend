@@ -10,17 +10,16 @@ import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
-import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
+import ru.andef.andefracing.backend.domain.services.search.ClientSearchService;
+import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
@@ -28,19 +27,21 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
-import ru.andef.andefracing.backend.network.security.JwtUtil;
+import ru.andef.andefracing.backend.network.security.jwt.JwtUtils;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final JwtUtil jwtUtil;
+    private final ClientSearchService clientSearchService;
+    private final ClubSearchService clubSearchService;
+
+    private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
 
     private final ClientRepository clientRepository;
     private final EmployeeRepository employeeRepository;
-    private final ClubRepository clubRepository;
 
     private final ClientMapper clientMapper;
     private final ClubMapper clubMapper;
@@ -57,19 +58,18 @@ public class AuthService {
                 .map(EmployeeRole::getRole)
                 .toList();
         if (roles.isEmpty()) {
-            throw new EntityNotFoundException(
-                    "Сотрудник с номером телефона " + employee.getPhone() + " не найден в клубе с id " + club.getId()
-            );
+            throw new EntityNotFoundException("Сотрудник не найден в клубе");
         }
         return roles;
     }
 
     /**
-     * Получение клуба по id или выброс исключения
+     * Проверка верности пароля или выброс исключения
      */
-    private Club findClubByIdOrThrow(int clubId) {
-        return clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
+    private void checkPassword(String password, String passwordHash) {
+        if (!passwordEncoder.matches(password, passwordHash)) {
+            throw new InvalidPhoneOrPasswordException();
+        }
     }
 
     /**
@@ -84,7 +84,7 @@ public class AuthService {
         registerDto = new ClientRegisterDto(registerDto.name(), registerDto.phone(), passwordHash);
         Client client = clientMapper.toEntity(registerDto);
         client = clientRepository.save(client);
-        String jwt = jwtUtil.generateClientToken(client.getId());
+        String jwt = jwtUtils.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
 
@@ -93,12 +93,10 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public ClientAuthResponseDto loginClient(ClientLoginDto loginDto) {
-        Client client = clientRepository.findByPhone(loginDto.getPhone())
-                .orElseThrow(InvalidPhoneOrPasswordException::new);
-        if (!passwordEncoder.matches(loginDto.getPassword(), client.getPassword())) {
-            throw new InvalidPhoneOrPasswordException();
-        }
-        String jwt = jwtUtil.generateClientToken(client.getId());
+        Client client = clientSearchService
+                .findClientByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
+        checkPassword(loginDto.getPassword(), client.getPassword());
+        String jwt = jwtUtils.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
 
@@ -107,12 +105,11 @@ public class AuthService {
      */
     @Transactional
     public ClientAuthResponseDto changeClientPassword(ClientChangePasswordDto changePasswordDto) {
-        Client client = clientRepository.findByPhone(changePasswordDto.getPhone())
-                .orElseThrow(() -> new ClientWithThisPhoneNotFoundException(changePasswordDto.getPhone()));
+        Client client = clientSearchService.findClientByPhone(changePasswordDto.getPhone());
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         client.setPassword(passwordHash);
         client = clientRepository.save(client);
-        String jwt = jwtUtil.generateClientToken(client.getId());
+        String jwt = jwtUtils.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
 
@@ -121,8 +118,7 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public boolean isEmployeeFirstEnter(String phone) {
-        Employee employee = employeeRepository.findByPhone(phone)
-                .orElseThrow(() -> new EmployeeWithThisPhoneNotFoundException(phone));
+        Employee employee = clubSearchService.findEmployeeByPhone(phone);
         return employee.isNeedPassword();
     }
 
@@ -131,14 +127,14 @@ public class AuthService {
      */
     @Transactional
     public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
-        Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
-                .orElseThrow(InvalidPhoneOrPasswordException::new);
+        Employee employee = clubSearchService
+                .findEmployeeByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
         if (employee.isNeedPassword()) {
             String passwordHash = passwordEncoder.encode(loginDto.getPassword());
             employee.setPassword(passwordHash);
             employeeRepository.save(employee);
-        } else if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
-            throw new InvalidPhoneOrPasswordException();
+        } else {
+            checkPassword(loginDto.getPassword(), employee.getPassword());
         }
         List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
         return clubMapper.toEmployeeClubDto(clubs, cityMapper, regionMapper);
@@ -149,14 +145,15 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public EmployeeAuthResponseDto loginEmployee(int clubId, EmployeeLoginDto loginDto) {
-        Employee employee = employeeRepository.findByPhone(loginDto.getPhone())
-                .orElseThrow(InvalidPhoneOrPasswordException::new);
-        if (!passwordEncoder.matches(loginDto.getPassword(), employee.getPassword())) {
-            throw new InvalidPhoneOrPasswordException();
-        }
-        Club club = findClubByIdOrThrow(clubId);
+        Employee employee = clubSearchService
+                .findEmployeeByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
+        checkPassword(loginDto.getPassword(), employee.getPassword());
+        Club club = clubSearchService.findClubById(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
+        if (roles.isEmpty()) {
+            throw new EntityNotFoundException("Сотрудник не найден в клубе");
+        }
+        String jwt = jwtUtils.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
     }
 }

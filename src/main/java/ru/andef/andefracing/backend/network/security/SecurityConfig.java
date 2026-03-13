@@ -12,6 +12,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeRole;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtProperties;
 
 import java.util.Arrays;
 
@@ -44,6 +46,7 @@ public class SecurityConfig {
                         // bookings
                         .requestMatchers(ApiPaths.BOOKINGS_CLIENT + "/**").hasRole(jwtProperties.getClientRole())
                         .requestMatchers(ApiPaths.BOOKINGS_EMPLOYEE + "/**").hasAnyRole(allEmployeeRolesForBookings)
+
                         // management
                         .requestMatchers(ApiPaths.CLUB_MANAGEMENT + "/**").hasRole(EmployeeRole.MANAGER.getRole())
 
@@ -55,9 +58,19 @@ public class SecurityConfig {
                         .requestMatchers(ApiPaths.REPORTS + "/**").hasRole(EmployeeRole.MANAGER.getRole())
 
                         // search
-                        .requestMatchers(ApiPaths.SEARCH + "/**").permitAll()
+                        .requestMatchers(ApiPaths.REGIONS_SEARCH + "/**").permitAll()
+                        .requestMatchers(ApiPaths.CITIES_SEARCH + "/**").permitAll()
+                        .requestMatchers(ApiPaths.CLUBS_SEARCH + "/**").permitAll()
 
-                        // other
+                        // swagger
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
+                        ).permitAll()
+
+                        //other
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(it ->
