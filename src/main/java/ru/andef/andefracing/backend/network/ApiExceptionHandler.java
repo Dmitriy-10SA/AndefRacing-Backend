@@ -8,13 +8,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
-import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
-import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
 import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.NotEnoughSimulatorsException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
 
 import java.time.Instant;
@@ -53,7 +53,7 @@ public class ApiExceptionHandler {
     /**
      * Обработка ошибок, связанных с дублированием
      */
-    @ExceptionHandler(value = {DuplicateException.class, BookingIntersectionException.class})
+    @ExceptionHandler(value = DuplicateException.class)
     public ResponseEntity<ErrorDto> handleDuplicateExceptions(RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(getHttpStatus(ex), DUPLICATE_ERROR, ex.getMessage(), request);
     }
@@ -75,7 +75,8 @@ public class ApiExceptionHandler {
                     ClubCloseConditionsNotMetException.class,
                     InvalidWorkScheduleException.class,
                     InvalidBookingSlotException.class,
-                    PhotoReorderMismatchException.class
+                    PhotoReorderMismatchException.class,
+                    NotEnoughSimulatorsException.class
             }
     )
     public ResponseEntity<ErrorDto> handleConditionsNotMetExceptions(RuntimeException ex, HttpServletRequest request) {

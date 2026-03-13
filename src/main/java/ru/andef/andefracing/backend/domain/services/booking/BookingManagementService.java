@@ -10,8 +10,8 @@ import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.exceptions.booking.NotEnoughSimulatorsException;
 import ru.andef.andefracing.backend.domain.services.search.ClientSearchService;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.booking.MakeBookingDto;
@@ -89,7 +89,7 @@ public class BookingManagementService {
         try {
             bookingRepository.save(booking);
         } catch (Exception e) {
-            throw new BookingIntersectionException();
+            throw new NotEnoughSimulatorsException();
         }
     }
 

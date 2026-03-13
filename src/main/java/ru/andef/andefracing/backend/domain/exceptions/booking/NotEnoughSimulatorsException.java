@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Ошибка - недостаток симуляторов для бронирования
  */
 @ResponseStatus(HttpStatus.CONFLICT)
-public class BookingIntersectionException extends RuntimeException {
-    public BookingIntersectionException() {
+public class NotEnoughSimulatorsException extends RuntimeException {
+    public NotEnoughSimulatorsException() {
         super("Недостаточно симуляторов для бронирования");
     }
 }
