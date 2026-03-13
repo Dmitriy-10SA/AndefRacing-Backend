@@ -166,11 +166,11 @@ class ClubSearchServiceTest {
         clubRepository.save(club);
 
         // Act
-        Price result = clubSearchService.findPriceById(1);
+        Price result = clubSearchService.findPriceById(club.getPrices().get(0).getId());
 
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(club.getPrices().get(0).getId(), result.getId());
         assertEquals(new BigDecimal("1000.00"), result.getValue());
     }
 

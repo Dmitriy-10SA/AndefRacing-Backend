@@ -86,7 +86,7 @@ public class Club {
     private List<WorkSchedule> workSchedules = new ArrayList<>();
 
     @Getter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "club_id", nullable = false)
     private List<WorkScheduleException> workScheduleExceptions = new ArrayList<>();
 
@@ -94,14 +94,16 @@ public class Club {
      * Добавление сотрудника в клуб
      */
     public void addEmployee(Employee employee, List<EmployeeRole> roles) {
-        roles.forEach(role -> employeesAndRoles.add(new EmployeeClub(this, employee, role)));
+        roles.forEach(role -> addRoleForEmployee(employee, role));
     }
 
     /**
      * Добавление роли сотруднику в клубе
      */
     public void addRoleForEmployee(Employee employee, EmployeeRole role) {
-        employeesAndRoles.add(new EmployeeClub(this, employee, role));
+        EmployeeClub employeeClub = new EmployeeClub(this, employee, role);
+        employeesAndRoles.add(employeeClub);
+        employee.getClubAndRoles().add(employeeClub);
     }
 
     /**
