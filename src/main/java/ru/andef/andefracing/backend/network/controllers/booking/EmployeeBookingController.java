@@ -11,7 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.domain.services.BookingService;
+import ru.andef.andefracing.backend.domain.services.booking.BookingManagementService;
+import ru.andef.andefracing.backend.domain.services.booking.BookingSearchService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
@@ -31,7 +32,8 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 public class EmployeeBookingController {
-    private final BookingService bookingService;
+    private final BookingSearchService bookingSearchService;
+    private final BookingManagementService bookingManagementService;
 
     /**
      * Получение доступных слотов для бронирования в клубе
@@ -45,7 +47,7 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        List<FreeBookingSlotDto> freeBookingSlots = bookingService
+        List<FreeBookingSlotDto> freeBookingSlots = bookingSearchService
                 .getFreeBookingSlotsInClub(principal.clubId(), freeBookingSlotsRequestDto);
         return ResponseEntity.ok(freeBookingSlots);
     }
@@ -59,7 +61,7 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        bookingService.confirmBookingPaymentByEmployee(principal.id(), principal.clubId(), bookingId);
+        bookingManagementService.confirmBookingPaymentByEmployee(principal.id(), principal.clubId(), bookingId);
         return ResponseEntity.ok().build();
     }
 
@@ -75,7 +77,7 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        bookingService.makeEmployeeBooking(principal.id(), principal.clubId(), makeBookingDto);
+        bookingManagementService.makeEmployeeBooking(principal.id(), principal.clubId(), makeBookingDto);
         return ResponseEntity.ok().build();
     }
 
@@ -88,7 +90,7 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        bookingService.cancelBookingByEmployee(principal.id(), principal.clubId(), bookingId);
+        bookingManagementService.cancelBookingByEmployee(principal.id(), principal.clubId(), bookingId);
         return ResponseEntity.ok().build();
     }
 
@@ -112,7 +114,7 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        List<EmployeeBookingShortDto> bookings = bookingService.getBookingsForEmployee(
+        List<EmployeeBookingShortDto> bookings = bookingSearchService.getBookingsForEmployee(
                 principal.id(),
                 principal.clubId(),
                 startDate,
@@ -134,7 +136,7 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        EmployeeBookingFullInfoDto employeeBookingFullInfoDto = bookingService
+        EmployeeBookingFullInfoDto employeeBookingFullInfoDto = bookingSearchService
                 .getBookingFullInfoForEmployee(principal.id(), principal.clubId(), bookingId);
         return ResponseEntity.ok(employeeBookingFullInfoDto);
     }
