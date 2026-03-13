@@ -132,8 +132,8 @@ public class Club {
     /**
      * Удаление дня-исключения из графика работы клуба
      */
-    public boolean deleteWorkScheduleException(WorkScheduleException workScheduleException) {
-        return workScheduleExceptions.remove(workScheduleException);
+    public void deleteWorkScheduleException(WorkScheduleException workScheduleException) {
+        workScheduleExceptions.remove(workScheduleException);
     }
 
     /**
@@ -183,8 +183,8 @@ public class Club {
     /**
      * Удаление игры из клуба
      */
-    public boolean deleteGame(Game game) {
-        return games.remove(game);
+    public void deleteGame(Game game) {
+        games.remove(game);
     }
 
     /**

@@ -14,7 +14,6 @@ import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlot
 import ru.andef.andefracing.backend.domain.exceptions.booking.NotEnoughSimulatorsException;
 import ru.andef.andefracing.backend.domain.services.search.ClientSearchService;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
-import ru.andef.andefracing.backend.network.dtos.booking.MakeBookingDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBookingDto;
 

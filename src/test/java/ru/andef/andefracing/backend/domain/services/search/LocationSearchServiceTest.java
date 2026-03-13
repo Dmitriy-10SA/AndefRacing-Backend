@@ -54,7 +54,7 @@ class LocationSearchServiceTest {
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name, boolean isOpen) {
+    private void createClub(City city, String name, boolean isOpen) {
         Club club = new Club(
                 0,
                 city,
@@ -71,7 +71,7 @@ class LocationSearchServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-        return clubRepository.save(club);
+        clubRepository.save(club);
     }
 
     @Test
@@ -133,7 +133,6 @@ class LocationSearchServiceTest {
         // Arrange
         Region regionWithOpenClub = createRegion("Region with Open Club");
         Region regionWithClosedClub = createRegion("Region with Closed Club");
-        Region regionWithoutClubs = createRegion("Region without Clubs");
 
         City cityWithOpenClub = createCity(regionWithOpenClub, "City with Open Club");
         City cityWithClosedClub = createCity(regionWithClosedClub, "City with Closed Club");
@@ -192,7 +191,6 @@ class LocationSearchServiceTest {
         Region region = createRegion("Test Region");
         City cityWithOpenClub = createCity(region, "City with Open Club");
         City cityWithClosedClub = createCity(region, "City with Closed Club");
-        City cityWithoutClubs = createCity(region, "City without Clubs");
 
         createClub(cityWithOpenClub, "Open Club", true);
         createClub(cityWithClosedClub, "Closed Club", false);

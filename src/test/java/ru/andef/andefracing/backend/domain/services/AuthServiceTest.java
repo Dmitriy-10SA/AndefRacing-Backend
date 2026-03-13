@@ -97,33 +97,33 @@ class AuthServiceTest {
         return clubRepository.save(club);
     }
 
-    private Client createClient(String name, String phone, String password) {
+    private Client createClient(String name, String password) {
         String passwordHash = passwordEncoder.encode(password);
-        Client client = new Client(name, phone, passwordHash);
+        Client client = new Client(name, "+7-111-111-11-11", passwordHash);
         return clientRepository.save(client);
     }
 
-    private Client createBlockedClient(String name, String phone, String password) {
-        String passwordHash = passwordEncoder.encode(password);
-        Client client = new Client(name, phone, passwordHash);
+    private void createBlockedClient() {
+        String passwordHash = passwordEncoder.encode("password123");
+        Client client = new Client("Blocked Client", "+7-111-111-11-11", passwordHash);
         client.setBlocked(true);
-        return clientRepository.save(client);
+        clientRepository.save(client);
     }
 
-    private Employee createEmployee(String phone) {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+    private Employee createEmployee() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         return employeeRepository.save(employee);
     }
 
-    private Employee createEmployeeWithPassword(String phone, String password) {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
-        String passwordHash = passwordEncoder.encode(password);
+    private Employee createEmployeeWithPassword() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        String passwordHash = passwordEncoder.encode("password123");
         employee.setPassword(passwordHash);
         return employeeRepository.save(employee);
     }
 
-    private Employee createBlockedEmployee(String phone) {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+    private Employee createBlockedEmployee() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         employee.setBlocked(true);
         return employeeRepository.save(employee);
     }
@@ -154,7 +154,7 @@ class AuthServiceTest {
     @Test
     void registerClientThrowsExceptionWhenPhoneAlreadyExists() {
         // Arrange
-        createClient("Existing Client", "+7-111-111-11-11", "password");
+        createClient("Existing Client", "password");
         ClientRegisterDto registerDto = new ClientRegisterDto(
                 "New Client",
                 "+7-111-111-11-11",
@@ -170,7 +170,7 @@ class AuthServiceTest {
     @Test
     void loginClientReturnsJwtWhenCredentialsAreValid() {
         // Arrange
-        createClient("Test Client", "+7-111-111-11-11", "password123");
+        createClient("Test Client", "password123");
         ClientLoginDto loginDto = new ClientLoginDto("+7-111-111-11-11", "password123");
 
         // Act
@@ -196,7 +196,7 @@ class AuthServiceTest {
     @Test
     void loginClientThrowsExceptionWhenPasswordIsInvalid() {
         // Arrange
-        createClient("Test Client", "+7-111-111-11-11", "password123");
+        createClient("Test Client", "password123");
         ClientLoginDto loginDto = new ClientLoginDto("+7-111-111-11-11", "wrongpassword");
 
         // Act & Assert
@@ -208,7 +208,7 @@ class AuthServiceTest {
     @Test
     void loginClientThrowsExceptionWhenClientIsBlocked() {
         // Arrange
-        createBlockedClient("Blocked Client", "+7-111-111-11-11", "password123");
+        createBlockedClient();
         ClientLoginDto loginDto = new ClientLoginDto("+7-111-111-11-11", "password123");
 
         // Act & Assert
@@ -220,7 +220,7 @@ class AuthServiceTest {
     @Test
     void changeClientPasswordUpdatesPasswordAndReturnsJwt() {
         // Arrange
-        Client client = createClient("Test Client", "+7-111-111-11-11", "oldpassword");
+        Client client = createClient("Test Client", "oldpassword");
         ClientChangePasswordDto changePasswordDto = new ClientChangePasswordDto(
                 "+7-111-111-11-11",
                 "newpassword123"
@@ -257,7 +257,7 @@ class AuthServiceTest {
     @Test
     void isEmployeeFirstEnterReturnsTrueWhenEmployeeNeedsPassword() {
         // Arrange
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         // Act
         boolean result = authService.isEmployeeFirstEnter("+7-222-222-22-22");
@@ -270,7 +270,7 @@ class AuthServiceTest {
     @Test
     void isEmployeeFirstEnterReturnsFalseWhenEmployeeHasPassword() {
         // Arrange
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
 
         // Act
         boolean result = authService.isEmployeeFirstEnter("+7-222-222-22-22");
@@ -299,7 +299,7 @@ class AuthServiceTest {
         Club club1 = createClub(city, "Club 1");
         Club club2 = createClub(city, "Club 2");
 
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
         club1.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         club2.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club1);
@@ -327,7 +327,7 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
         club.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         clubRepository.save(club);
 
@@ -350,7 +350,7 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
         club.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         clubRepository.save(club);
 
@@ -376,7 +376,7 @@ class AuthServiceTest {
     @Test
     void preLoginEmployeeThrowsExceptionWhenEmployeeIsBlocked() {
         // Arrange
-        createBlockedEmployee("+7-222-222-22-22");
+        createBlockedEmployee();
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 
         // Act & Assert
@@ -392,7 +392,7 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
         club.addEmployee(employee, List.of(EmployeeRole.ADMIN, EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
 
@@ -429,7 +429,7 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
         club.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         clubRepository.save(club);
 
@@ -444,7 +444,7 @@ class AuthServiceTest {
     @Test
     void loginEmployeeThrowsExceptionWhenClubNotFound() {
         // Arrange
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 
         // Act & Assert
@@ -460,7 +460,7 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createEmployeeWithPassword("+7-222-222-22-22", "password123");
+        Employee employee = createEmployeeWithPassword();
         // Employee не добавлен в клуб
 
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
@@ -478,7 +478,7 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createBlockedEmployee("+7-222-222-22-22");
+        Employee employee = createBlockedEmployee();
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 
         // Act & Assert

@@ -46,7 +46,6 @@ class ClubManagementServiceTest {
     private final ClubManagementService clubManagementService;
     private final ClubRepository clubRepository;
     private final GameRepository gameRepository;
-    private final PhotoRepository photoRepository;
     private final PriceRepository priceRepository;
     private final WorkScheduleExceptionRepository workScheduleExceptionRepository;
     private final BookingRepository bookingRepository;
@@ -60,7 +59,6 @@ class ClubManagementServiceTest {
             ClubManagementService clubManagementService,
             ClubRepository clubRepository,
             GameRepository gameRepository,
-            PhotoRepository photoRepository,
             PriceRepository priceRepository,
             WorkScheduleExceptionRepository workScheduleExceptionRepository,
             BookingRepository bookingRepository,
@@ -72,7 +70,6 @@ class ClubManagementServiceTest {
         this.clubManagementService = clubManagementService;
         this.clubRepository = clubRepository;
         this.gameRepository = gameRepository;
-        this.photoRepository = photoRepository;
         this.priceRepository = priceRepository;
         this.workScheduleExceptionRepository = workScheduleExceptionRepository;
         this.bookingRepository = bookingRepository;
@@ -92,11 +89,11 @@ class ClubManagementServiceTest {
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name) {
+    private Club createClub(City city) {
         Club club = new Club(
                 0,
                 city,
-                name,
+                "Test Club",
                 "+7-000-000-00-00",
                 "test@example.com",
                 "Test address",
@@ -127,8 +124,8 @@ class ClubManagementServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime atUtc(int year, int month, int day, int hour) {
-        return OffsetDateTime.of(LocalDateTime.of(year, month, day, hour, 0), ZoneOffset.UTC);
+    private OffsetDateTime atUtc(int hour) {
+        return OffsetDateTime.of(LocalDateTime.of(2026, 12, 31, hour, 0), ZoneOffset.UTC);
     }
 
     @Test
@@ -136,7 +133,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Game game = createGame("Test Game", true);
 
         // Act
@@ -153,7 +150,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Game game = createGame("Test Game", true);
         club.addGame(game);
         clubRepository.save(club);
@@ -184,7 +181,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Game game = createGame("Test Game", true);
         club.addGame(game);
         clubRepository.save(club);
@@ -202,7 +199,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Game game = createGame("Test Game", true);
 
         // Act & Assert
@@ -216,7 +213,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         short newCount = 20;
 
         // Act
@@ -232,7 +229,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Добавляем фото
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
@@ -264,7 +261,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Act & Assert
         assertThrows(ClubOpenConditionsNotMetException.class, () ->
@@ -277,7 +274,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.setOpen(true);
         clubRepository.save(club);
 
@@ -294,7 +291,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.setOpen(true);
         clubRepository.save(club);
 
@@ -305,8 +302,8 @@ class ClubManagementServiceTest {
         Booking booking = new Booking(
                 club,
                 client,
-                atUtc(2026, 12, 31, 10),
-                atUtc(2026, 12, 31, 12),
+                atUtc(10),
+                atUtc(12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -324,7 +321,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         AddPhotoDto dto = new AddPhotoDto("http://example.com/photo.jpg", (short) 1);
 
         // Act
@@ -341,7 +338,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         String url = "http://example.com/photo.jpg";
         club.addPhoto(new Photo(url, (short) 1));
         clubRepository.save(club);
@@ -358,7 +355,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
         clubRepository.save(club);
         AddPhotoDto dto = new AddPhotoDto("http://example.com/photo2.jpg", (short) 1);
@@ -374,7 +371,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Photo photo = new Photo("http://example.com/photo.jpg", (short) 1);
         club.addPhoto(photo);
         club = clubRepository.save(club);
@@ -393,7 +390,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         long nonExistentPhotoId = 999L;
 
         // Act & Assert
@@ -407,7 +404,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
         club.addPhoto(new Photo("http://example.com/photo2.jpg", (short) 2));
         club.addPhoto(new Photo("http://example.com/photo3.jpg", (short) 3));
@@ -429,7 +426,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
         club.addPhoto(new Photo("http://example.com/photo2.jpg", (short) 2));
         clubRepository.save(club);
@@ -447,7 +444,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1000.00"));
 
         // Act
@@ -465,7 +462,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         clubRepository.save(club);
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1500.00"));
@@ -481,7 +478,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         club = clubRepository.save(club);
         long priceId = club.getPrices().get(0).getId();
@@ -500,7 +497,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         long nonExistentPriceId = 999L;
 
         // Act & Assert
@@ -514,7 +511,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         club = clubRepository.save(club);
         long priceId = club.getPrices().get(0).getId();
@@ -532,7 +529,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         long nonExistentPriceId = 999L;
 
         // Act & Assert
@@ -546,7 +543,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         LocalDate date = LocalDate.of(2026, 12, 31);
         AddWorkScheduleExceptionDto dto = new AddWorkScheduleExceptionDto(
                 date,
@@ -571,7 +568,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         LocalDate date = LocalDate.of(2026, 12, 31);
         club.addWorkScheduleException(new WorkScheduleException(date, "Holiday"));
         clubRepository.save(club);
@@ -595,7 +592,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         LocalDate date = LocalDate.of(2026, 12, 31);
 
         // isWorkDay = true, но время не указано
@@ -618,7 +615,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         clubRepository.save(club);
 
         Client client = createClient();
@@ -627,8 +624,8 @@ class ClubManagementServiceTest {
         Booking booking = new Booking(
                 club,
                 client,
-                atUtc(2026, 12, 31, 10),
-                atUtc(2026, 12, 31, 12),
+                atUtc(10),
+                atUtc(12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -653,7 +650,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addWorkScheduleException(new WorkScheduleException(LocalDate.of(2026, 1, 1), "New Year"));
         club.addWorkScheduleException(new WorkScheduleException(LocalDate.of(2026, 1, 7), "Christmas"));
         club.addWorkScheduleException(new WorkScheduleException(LocalDate.of(2026, 2, 23), "Defender's Day"));
@@ -676,7 +673,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addWorkScheduleException(new WorkScheduleException(LocalDate.of(2027, 12, 31), "Holiday"));
         club = clubRepository.save(club);
         List<WorkScheduleException> savedExceptions = workScheduleExceptionRepository.findAllByRangeOfDatesBetweenStartAndEnd(
@@ -699,7 +696,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         long nonExistentExceptionId = 999L;
 
         // Act & Assert
@@ -713,7 +710,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.MONDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(20, 0), true));
         clubRepository.save(club);
 
@@ -742,7 +739,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.SUNDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(20, 0), true));
         clubRepository.save(club);
 
@@ -771,7 +768,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // isWorkDay = true, но время не указано
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
@@ -804,7 +801,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         short nonExistentGameId = 999;
 
         // Act & Assert
@@ -900,7 +897,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
         club.addPhoto(new Photo("http://example.com/photo2.jpg", (short) 2));
         Club savedClub = clubRepository.save(club);
@@ -1016,7 +1013,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
                 DayOfWeek.MONDAY,
@@ -1036,7 +1033,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         LocalDate date = LocalDate.of(2026, 12, 31);
 
         AddWorkScheduleExceptionDto dto = new AddWorkScheduleExceptionDto(
@@ -1072,7 +1069,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Добавляем цену
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
@@ -1099,7 +1096,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Добавляем фото
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
@@ -1126,7 +1123,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Добавляем фото
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
@@ -1152,7 +1149,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Добавляем фото
         club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
@@ -1184,7 +1181,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Act
         List<WorkScheduleExceptionDto> result = clubManagementService.getAllWorkSchedulesExceptionsInClub(
@@ -1203,7 +1200,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1000.555"));
 
         // Act
@@ -1219,7 +1216,7 @@ class ClubManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         club = clubRepository.save(club);
         long priceId = club.getPrices().get(0).getId();

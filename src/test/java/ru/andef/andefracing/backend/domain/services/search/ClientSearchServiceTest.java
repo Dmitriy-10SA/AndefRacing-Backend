@@ -30,13 +30,13 @@ class ClientSearchServiceTest {
         this.clientRepository = clientRepository;
     }
 
-    private Client createClient(String name, String phone) {
-        Client client = new Client(name, phone, "password");
+    private Client createClient(String phone) {
+        Client client = new Client("Test Client", phone, "password");
         return clientRepository.save(client);
     }
 
-    private Client createBlockedClient(String name, String phone) {
-        Client client = new Client(name, phone, "password");
+    private Client createBlockedClient(String phone) {
+        Client client = new Client("Blocked Client", phone, "password");
         client.setBlocked(true);
         return clientRepository.save(client);
     }
@@ -44,7 +44,7 @@ class ClientSearchServiceTest {
     @Test
     void findClientByPhoneReturnsClientWhenExists() {
         // Arrange
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient("+7-111-111-11-11");
 
         // Act
         Client result = clientSearchService.findClientByPhone("+7-111-111-11-11");
@@ -71,7 +71,7 @@ class ClientSearchServiceTest {
     @Test
     void findClientByPhoneThrowsExceptionWhenClientIsBlocked() {
         // Arrange
-        Client blockedClient = createBlockedClient("Blocked Client", "+7-222-222-22-22");
+        Client blockedClient = createBlockedClient("+7-222-222-22-22");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
@@ -95,7 +95,7 @@ class ClientSearchServiceTest {
     @Test
     void findClientByPhoneWithCustomExceptionReturnsClientWhenExists() {
         // Arrange
-        Client client = createClient("Test Client", "+7-333-333-33-33");
+        Client client = createClient("+7-333-333-33-33");
         RuntimeException customException = new IllegalArgumentException("Should not be thrown");
 
         // Act
@@ -109,7 +109,7 @@ class ClientSearchServiceTest {
     @Test
     void findClientByPhoneWithCustomExceptionThrowsBlockedExceptionWhenClientIsBlocked() {
         // Arrange
-        Client blockedClient = createBlockedClient("Blocked Client", "+7-444-444-44-44");
+        Client blockedClient = createBlockedClient("+7-444-444-44-44");
         RuntimeException customException = new IllegalArgumentException("Custom error");
 
         // Act & Assert
@@ -121,7 +121,7 @@ class ClientSearchServiceTest {
     @Test
     void findClientByIdReturnsClientWhenExists() {
         // Arrange
-        Client client = createClient("Test Client", "+7-555-555-55-55");
+        Client client = createClient("+7-555-555-55-55");
 
         // Act
         Client result = clientSearchService.findClientById(client.getId());
@@ -148,7 +148,7 @@ class ClientSearchServiceTest {
     @Test
     void findClientByIdThrowsExceptionWhenClientIsBlocked() {
         // Arrange
-        Client blockedClient = createBlockedClient("Blocked Client", "+7-666-666-66-66");
+        Client blockedClient = createBlockedClient("+7-666-666-66-66");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->

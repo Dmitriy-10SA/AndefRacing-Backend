@@ -18,7 +18,6 @@ import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
-import ru.andef.andefracing.backend.data.repositories.club.WorkScheduleExceptionRepository;
 import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
@@ -50,7 +49,6 @@ class BookingSearchServiceTest {
     private final EmployeeRepository employeeRepository;
     private final ClubRepository clubRepository;
     private final BookingRepository bookingRepository;
-    private final WorkScheduleExceptionRepository workScheduleExceptionRepository;
     private final RegionRepository regionRepository;
     private final CityRepository cityRepository;
 
@@ -61,7 +59,6 @@ class BookingSearchServiceTest {
             EmployeeRepository employeeRepository,
             ClubRepository clubRepository,
             BookingRepository bookingRepository,
-            WorkScheduleExceptionRepository workScheduleExceptionRepository,
             RegionRepository regionRepository,
             CityRepository cityRepository
     ) {
@@ -70,7 +67,6 @@ class BookingSearchServiceTest {
         this.employeeRepository = employeeRepository;
         this.clubRepository = clubRepository;
         this.bookingRepository = bookingRepository;
-        this.workScheduleExceptionRepository = workScheduleExceptionRepository;
         this.regionRepository = regionRepository;
         this.cityRepository = cityRepository;
     }
@@ -113,13 +109,13 @@ class BookingSearchServiceTest {
         return clientRepository.save(client);
     }
 
-    private Employee createEmployee(String phone) {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+    private Employee createEmployee() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-333-333-33-33");
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime atUtc(int year, int month, int day, int hour, int minute) {
-        return OffsetDateTime.of(year, month, day, hour, minute, 0, 0, ZoneOffset.UTC);
+    private OffsetDateTime atUtc(int day, int hour) {
+        return OffsetDateTime.of(2026, 6, day, hour, 0, 0, 0, ZoneOffset.UTC);
     }
 
     @Test
@@ -151,8 +147,8 @@ class BookingSearchServiceTest {
         Client client = createClient("Test Client", "+7-111-111-11-11");
 
         LocalDate date = LocalDate.of(2026, 6, 15);
-        OffsetDateTime bookingStart = atUtc(2026, 6, 15, 10, 0);
-        OffsetDateTime bookingEnd = atUtc(2026, 6, 15, 11, 0);
+        OffsetDateTime bookingStart = atUtc(15, 10);
+        OffsetDateTime bookingEnd = atUtc(15, 11);
 
         // Create existing booking
         Booking booking = new Booking(club, client, bookingStart, bookingEnd, (short) 10, new BigDecimal("10000.00"));
@@ -281,8 +277,8 @@ class BookingSearchServiceTest {
         assertFalse(result.isEmpty());
         // All slots should be between 10:00 and 11:00 (only one 60-minute slot fits)
         assertTrue(result.stream().allMatch(slot ->
-                !slot.startDateTime().isBefore(atUtc(2026, 6, 15, 10, 0)) &&
-                        !slot.endDateTime().isAfter(atUtc(2026, 6, 15, 12, 0))
+                !slot.startDateTime().isBefore(atUtc(15, 10)) &&
+                        !slot.endDateTime().isAfter(atUtc(15, 12))
         ));
     }
 
@@ -296,22 +292,22 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client,
-                atUtc(2026, 6, 15, 10, 0),
-                atUtc(2026, 6, 15, 11, 0),
+                atUtc(15, 10),
+                atUtc(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client,
-                atUtc(2026, 6, 16, 14, 0),
-                atUtc(2026, 6, 16, 15, 0),
+                atUtc(16, 14),
+                atUtc(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
         Booking booking3 = new Booking(
                 club, client,
-                atUtc(2026, 6, 20, 10, 0),
-                atUtc(2026, 6, 20, 11, 0),
+                atUtc(20, 10),
+                atUtc(20, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -370,8 +366,8 @@ class BookingSearchServiceTest {
 
         Booking booking = new Booking(
                 club, client,
-                atUtc(2026, 6, 15, 10, 0),
-                atUtc(2026, 6, 15, 11, 0),
+                atUtc(15, 10),
+                atUtc(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -411,19 +407,19 @@ class BookingSearchServiceTest {
         Club club = createClub(city, "Test Club", true);
         Client client1 = createClient("Client 1", "+7-111-111-11-11");
         Client client2 = createClient("Client 2", "+7-222-222-22-22");
-        Employee employee = createEmployee("+7-333-333-33-33");
+        Employee employee = createEmployee();
 
         Booking booking1 = new Booking(
                 club, client1,
-                atUtc(2026, 6, 15, 10, 0),
-                atUtc(2026, 6, 15, 11, 0),
+                atUtc(15, 10),
+                atUtc(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client2,
-                atUtc(2026, 6, 16, 14, 0),
-                atUtc(2026, 6, 16, 15, 0),
+                atUtc(16, 14),
+                atUtc(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
@@ -450,19 +446,19 @@ class BookingSearchServiceTest {
         Club club = createClub(city, "Test Club", true);
         Client client1 = createClient("Client 1", "+7-111-111-11-11");
         Client client2 = createClient("Client 2", "+7-222-222-22-22");
-        Employee employee = createEmployee("+7-333-333-33-33");
+        Employee employee = createEmployee();
 
         Booking booking1 = new Booking(
                 club, client1,
-                atUtc(2026, 6, 15, 10, 0),
-                atUtc(2026, 6, 15, 11, 0),
+                atUtc(15, 10),
+                atUtc(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client2,
-                atUtc(2026, 6, 16, 14, 0),
-                atUtc(2026, 6, 16, 15, 0),
+                atUtc(16, 14),
+                atUtc(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
@@ -487,7 +483,7 @@ class BookingSearchServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Employee employee = createEmployee("+7-333-333-33-33");
+        Employee employee = createEmployee();
 
         LocalDate startDate = LocalDate.of(2026, 6, 15);
         LocalDate endDate = LocalDate.of(2026, 6, 17);
@@ -509,12 +505,12 @@ class BookingSearchServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
         Client client = createClient("Test Client", "+7-111-111-11-11");
-        Employee employee = createEmployee("+7-333-333-33-33");
+        Employee employee = createEmployee();
 
         Booking booking = new Booking(
                 club, client,
-                atUtc(2026, 6, 15, 10, 0),
-                atUtc(2026, 6, 15, 11, 0),
+                atUtc(15, 10),
+                atUtc(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -538,7 +534,7 @@ class BookingSearchServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Employee employee = createEmployee("+7-333-333-33-33");
+        Employee employee = createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->

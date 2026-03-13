@@ -13,12 +13,13 @@ import ru.andef.andefracing.backend.data.entities.club.Price;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.location.City;
 import ru.andef.andefracing.backend.data.entities.location.Region;
-import ru.andef.andefracing.backend.data.repositories.club.*;
+import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
+import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
+import ru.andef.andefracing.backend.data.repositories.club.GameRepository;
 import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.network.dtos.common.club.ClubInfoDto;
 import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 
@@ -34,8 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ClubSearchServiceTest {
     private final ClubSearchService clubSearchService;
     private final ClubRepository clubRepository;
-    private final PhotoRepository photoRepository;
-    private final PriceRepository priceRepository;
     private final GameRepository gameRepository;
     private final EmployeeRepository employeeRepository;
     private final RegionRepository regionRepository;
@@ -45,8 +44,6 @@ class ClubSearchServiceTest {
     public ClubSearchServiceTest(
             ClubSearchService clubSearchService,
             ClubRepository clubRepository,
-            PhotoRepository photoRepository,
-            PriceRepository priceRepository,
             GameRepository gameRepository,
             EmployeeRepository employeeRepository,
             RegionRepository regionRepository,
@@ -54,21 +51,19 @@ class ClubSearchServiceTest {
     ) {
         this.clubSearchService = clubSearchService;
         this.clubRepository = clubRepository;
-        this.photoRepository = photoRepository;
-        this.priceRepository = priceRepository;
         this.gameRepository = gameRepository;
         this.employeeRepository = employeeRepository;
         this.regionRepository = regionRepository;
         this.cityRepository = cityRepository;
     }
 
-    private Region createRegion(String name) {
-        Region region = new Region((short) 0, name, new ArrayList<>());
+    private Region createRegion() {
+        Region region = new Region((short) 0, "Test Region", new ArrayList<>());
         return regionRepository.save(region);
     }
 
-    private City createCity(Region region, String name) {
-        City city = new City((short) 0, region, name);
+    private City createCity(Region region) {
+        City city = new City((short) 0, region, "Test City");
         return cityRepository.save(city);
     }
 
@@ -103,31 +98,29 @@ class ClubSearchServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private Photo createPhoto(Club club, String url, short order) {
+    private void createPhoto(Club club, String url, short order) {
         Photo photo = new Photo(url, order);
         club.addPhoto(photo);
         clubRepository.save(club);
-        return photo;
     }
 
-    private Price createPrice(Club club, BigDecimal price) {
+    private void createPrice(Club club, BigDecimal price) {
         Price priceEntity = new Price((short) 60, price);
         club.addPrice(priceEntity);
         clubRepository.save(club);
-        return priceEntity;
     }
 
-    private Game createGame(String name) {
-        Game game = new Game((short) 0, name, "Description", true);
+    private Game createGame() {
+        Game game = new Game((short) 0, "Test Game", "Description", true);
         return gameRepository.save(game);
     }
 
     @Test
     void findPhotoByIdReturnsPhotoWhenExists() {
         // Arrange
-        Region region = createRegion("Test Region");
+        Region region = createRegion();
         regionRepository.save(region);
-        City city = createCity(region, "Test City");
+        City city = createCity(region);
         cityRepository.save(city);
         Club club = createClub(city, "Test Club", true);
         club.addPhoto(new Photo("http://example.com/photo.jpg", (short) 1));
@@ -157,9 +150,9 @@ class ClubSearchServiceTest {
     @Test
     void findPriceByIdReturnsPriceWhenExists() {
         // Arrange
-        Region region = createRegion("Test Region");
+        Region region = createRegion();
         regionRepository.save(region);
-        City city = createCity(region, "Test City");
+        City city = createCity(region);
         cityRepository.save(city);
         Club club = createClub(city, "Test Club", true);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
@@ -189,7 +182,7 @@ class ClubSearchServiceTest {
     @Test
     void findGameByIdReturnsGameWhenExists() {
         // Arrange
-        Game game = createGame("Test Game");
+        Game game = createGame();
 
         // Act
         Game result = clubSearchService.findGameById(game.getId());
@@ -328,8 +321,8 @@ class ClubSearchServiceTest {
     @Test
     void findClubByIdReturnsClubWhenExists() {
         // Arrange
-        Region region = createRegion("Test Region");
-        City city = createCity(region, "Test City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
 
         // Act
@@ -356,8 +349,8 @@ class ClubSearchServiceTest {
     @Test
     void getAllOpenClubsInCityReturnsOnlyOpenClubs() {
         // Arrange
-        Region region = createRegion("Test Region");
-        City city = createCity(region, "Test City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club openClub1 = createClub(city, "Open Club 1", true);
         Club openClub2 = createClub(city, "Open Club 2", true);
         Club closedClub = createClub(city, "Closed Club", false);
@@ -379,8 +372,8 @@ class ClubSearchServiceTest {
     @Test
     void getAllOpenClubsInCityReturnsPaginatedResults() {
         // Arrange
-        Region region = createRegion("Test Region");
-        City city = createCity(region, "Test City");
+        Region region = createRegion();
+        City city = createCity(region);
 
         for (int i = 1; i <= 5; i++) {
             Club club = createClub(city, "Club " + i, true);
@@ -401,8 +394,8 @@ class ClubSearchServiceTest {
     @Test
     void getAllOpenClubsInCityReturnsEmptyListWhenNoOpenClubs() {
         // Arrange
-        Region region = createRegion("Test Region");
-        City city = createCity(region, "Test City");
+        Region region = createRegion();
+        City city = createCity(region);
         createClub(city, "Closed Club", false);
 
         // Act
@@ -428,15 +421,15 @@ class ClubSearchServiceTest {
     @Test
     void getClubFullInfoReturnsCompleteClubInformation() {
         // Arrange
-        Region region = createRegion("Test Region");
-        City city = createCity(region, "Test City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
 
         createPhoto(club, "http://example.com/photo1.jpg", (short) 1);
         createPhoto(club, "http://example.com/photo2.jpg", (short) 2);
         createPrice(club, new BigDecimal("1000.00"));
 
-        Game game = createGame("Test Game");
+        Game game = createGame();
         club.addGame(game);
         clubRepository.save(club);
 

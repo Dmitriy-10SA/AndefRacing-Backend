@@ -98,18 +98,18 @@ class BookingManagementServiceTest {
         return clubRepository.save(club);
     }
 
-    private Client createClient(String name, String phone) {
-        Client client = new Client(name, phone, "password");
+    private Client createClient() {
+        Client client = new Client("Test Client", "+7-111-111-11-11", "password");
         return clientRepository.save(client);
     }
 
-    private Employee createEmployee(String phone) {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+    private Employee createEmployee() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime futureDateTime(int daysFromNow, int hour) {
-        return OffsetDateTime.now(ZoneOffset.UTC).plusDays(daysFromNow).withHour(hour).withMinute(0).withSecond(0).withNano(0);
+    private OffsetDateTime futureDateTime() {
+        return OffsetDateTime.now(ZoneOffset.UTC).plusDays(1).withHour(10).withMinute(0).withSecond(0).withNano(0);
     }
 
     @Test
@@ -118,9 +118,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 2, new BigDecimal("2000.00"), slot, null);
@@ -146,9 +146,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.minusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
@@ -165,9 +165,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Closed Club", false);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
@@ -184,9 +184,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("500.00"), slot, null); // Wrong price
@@ -203,9 +203,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(90); // 90 minutes not in price list
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1500.00"), slot, null);
@@ -222,7 +222,7 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusDays(1);
         OffsetDateTime end = start.plusMinutes(60);
@@ -245,10 +245,10 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         club.setCntEquipment((short) 10);
         clubRepository.save(club);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
         clientRepository.save(client);
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 15, new BigDecimal("15000.00"), slot, null); // More than available
@@ -265,9 +265,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(120);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, new BigDecimal("1800.00"), slot, null);
@@ -292,9 +292,9 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.minusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
@@ -311,10 +311,10 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Client client = createClient();
+        Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         Booking booking = new Booking(club, client, start, end, (short) 1, new BigDecimal("1000.00"));
         booking = bookingRepository.save(booking);
@@ -334,7 +334,7 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
@@ -348,10 +348,10 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Client client = createClient("Test Client", "+7-111-111-11-11");
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Client client = createClient();
+        Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         Booking booking = new Booking(club, client, start, end, (short) 1, new BigDecimal("1000.00"));
         booking = bookingRepository.save(booking);
@@ -370,7 +370,7 @@ class BookingManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
@@ -385,7 +385,7 @@ class BookingManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
@@ -399,9 +399,9 @@ class BookingManagementServiceTest {
     @Test
     void makeClientBookingThrowsExceptionWhenClubNotFound() {
         // Arrange
-        Client client = createClient("Test Client", "+7-111-111-11-11");
+        Client client = createClient();
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
@@ -419,7 +419,7 @@ class BookingManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
 
-        OffsetDateTime start = futureDateTime(1, 10);
+        OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);

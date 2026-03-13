@@ -63,11 +63,11 @@ class ClubHrManagementServiceTest {
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name) {
+    private Club createClub(City city) {
         Club club = new Club(
                 0,
                 city,
-                name,
+                "Test Club",
                 "+7-000-000-00-00",
                 "test@example.com",
                 "Test address",
@@ -118,7 +118,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
                 "+7-111-111-11-11",
                 List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN),
@@ -144,7 +144,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         String phone = "+7-111-111-11-11";
         createEmployee(phone);
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
@@ -166,7 +166,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         String phone = "+7-111-111-11-11";
         Employee employee = createEmployee(phone);
         AddExistingEmployeeDto dto = new AddExistingEmployeeDto(
@@ -188,7 +188,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         String phone = "+7-111-111-11-11";
         Employee employee = createEmployee(phone);
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
@@ -209,7 +209,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee1 = createEmployee("+7-111-111-11-11");
         Employee employee2 = createEmployee("+7-222-222-22-22");
         club.addEmployee(employee1, List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN));
@@ -229,7 +229,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
 
         // Act
         List<EmployeeAndRolesDto> result = clubHrManagementService.getEmployeesAndRolesInClub(club.getId());
@@ -244,7 +244,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -262,7 +262,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
@@ -276,7 +276,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -294,7 +294,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
@@ -308,7 +308,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -324,7 +324,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -348,7 +348,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -369,7 +369,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN));
         clubRepository.save(club);
@@ -388,7 +388,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -404,7 +404,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
@@ -436,7 +436,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         AddExistingEmployeeDto dto = new AddExistingEmployeeDto(
                 "+7-999-999-99-99",
                 List.of(EmployeeRole.MANAGER)
@@ -505,7 +505,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
@@ -536,7 +536,7 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
                 "+7-111-111-11-11",
                 List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN, EmployeeRole.MANAGER),
@@ -558,9 +558,8 @@ class ClubHrManagementServiceTest {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
-        Club club = createClub(city, "Test Club");
+        Club club = createClub(city);
         String phone = "+7-111-111-11-11";
-        Employee employee = createEmployee(phone);
         AddExistingEmployeeDto dto = new AddExistingEmployeeDto(
                 phone,
                 List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN, EmployeeRole.MANAGER)
