@@ -560,6 +560,8 @@ class ClubHrManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         String phone = "+7-111-111-11-11";
+        createEmployee(phone);
+        clubRepository.save(club);
         AddExistingEmployeeDto dto = new AddExistingEmployeeDto(
                 phone,
                 List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN, EmployeeRole.MANAGER)

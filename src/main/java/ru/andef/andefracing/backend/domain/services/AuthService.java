@@ -150,6 +150,9 @@ public class AuthService {
         checkPassword(loginDto.getPassword(), employee.getPassword());
         Club club = clubSearchService.findClubById(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
+        if (roles.isEmpty()) {
+            throw new EntityNotFoundException("Сотрудник не найден в клубе");
+        }
         String jwt = jwtUtils.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
     }

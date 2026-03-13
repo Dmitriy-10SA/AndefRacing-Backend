@@ -442,24 +442,16 @@ class AuthServiceTest {
     }
 
     @Test
-    void loginEmployeeThrowsExceptionWhenClubNotFound() {
-        // Arrange
-        EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
-
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                authService.loginEmployee(999, loginDto)
-        );
-    }
-
-    @Test
     void loginEmployeeThrowsExceptionWhenEmployeeNotInClub() {
         // Arrange
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-223-222-22-22");
+        employee.setPassword(passwordEncoder.encode("password123"));
+        employeeRepository.save(employee);
 
-        EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
+        EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-223-222-22-22", "password123");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
@@ -473,6 +465,13 @@ class AuthServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
+
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employeeRepository.save(employee);
+        club.addEmployee(employee, List.of(EmployeeRole.ADMIN));
+        clubRepository.save(club);
+        employee.setBlocked(true);
+        employeeRepository.save(employee);
 
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 

@@ -13,10 +13,7 @@ import ru.andef.andefracing.backend.data.entities.location.City;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,12 +54,12 @@ public class Club {
     @Setter
     private boolean isOpen;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "club_id", nullable = false)
     @OrderBy(value = "sequenceNumber ASC")
     private List<Photo> photos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EmployeeClub> employeesAndRoles = new ArrayList<>();
 
     @Getter(AccessLevel.NONE)
@@ -75,7 +72,7 @@ public class Club {
     )
     private List<Game> games = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "club_id", nullable = false)
     @OrderBy(value = "durationMinutes ASC")
     private List<Price> prices = new ArrayList<>();
@@ -110,16 +107,33 @@ public class Club {
      * Удаление роли у сотрудника в клубе
      */
     public boolean deleteRoleForEmployee(Employee employee, EmployeeRole role) {
-        return employeesAndRoles.removeIf(employeeClub ->
-                employeeClub.getEmployee().equals(employee) && employeeClub.getEmployeeRole().equals(role)
-        );
+        Iterator<EmployeeClub> iterator = employeesAndRoles.iterator();
+        while (iterator.hasNext()) {
+            EmployeeClub employeeClub = iterator.next();
+            if (employeeClub.getEmployee().equals(employee) && employeeClub.getEmployeeRole().equals(role)) {
+                iterator.remove();
+                employee.getClubAndRoles().remove(employeeClub);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * Удаление сотрудника из клуба
      */
     public boolean deleteEmployee(Employee employee) {
-        return employeesAndRoles.removeIf(employeeClub -> employeeClub.getEmployee().equals(employee));
+        boolean deleted = false;
+        Iterator<EmployeeClub> iterator = employeesAndRoles.iterator();
+        while (iterator.hasNext()) {
+            EmployeeClub employeeClub = iterator.next();
+            if (employeeClub.getEmployee().equals(employee)) {
+                iterator.remove();
+                employee.getClubAndRoles().remove(employeeClub);
+                deleted = true;
+            }
+        }
+        return deleted;
     }
 
     /**
