@@ -133,6 +133,7 @@ public class Booking {
      */
     public void cancel() {
         this.status = BookingStatus.CANCELLED;
+        this.payConfirmedByEmployee = null;
     }
 
     @Override
