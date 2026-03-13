@@ -122,10 +122,10 @@ class AuthServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private Employee createBlockedEmployee() {
+    private void createBlockedEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         employee.setBlocked(true);
-        return employeeRepository.save(employee);
+        employeeRepository.save(employee);
     }
 
     @Test
