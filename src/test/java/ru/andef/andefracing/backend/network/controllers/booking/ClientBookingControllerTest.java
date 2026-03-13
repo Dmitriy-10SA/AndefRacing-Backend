@@ -1,0 +1,113 @@
+package ru.andef.andefracing.backend.network.controllers.booking;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import ru.andef.andefracing.backend.domain.services.booking.BookingManagementService;
+import ru.andef.andefracing.backend.domain.services.booking.BookingSearchService;
+import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
+import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
+import tools.jackson.databind.ObjectMapper;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.Collections;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = ClientBookingController.class)
+class ClientBookingControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockitoBean
+    private BookingSearchService bookingSearchService;
+
+    @MockitoBean
+    private BookingManagementService bookingManagementService;
+
+    @MockitoBean
+    private JwtFilter jwtFilter;
+
+    private Authentication clientAuth(long clientId) {
+        JwtFilter.ClientPrincipal principal = new JwtFilter.ClientPrincipal(clientId);
+        return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
+    }
+
+    @Test
+    void getFreeBookingSlotsInClubReturnsOkWhenValid() throws Exception {
+        FreeBookingSlotsRequestDto dto = new FreeBookingSlotsRequestDto(
+                (short) 60,
+                (short) 1,
+                LocalDate.of(2026, 1, 1)
+        );
+
+        mockMvc.perform(get("/api/v1/bookings/client/free-slots/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void makeBookingReturnsOkWhenValidAndAuthenticated() throws Exception {
+        ClientMakeBookingDto dto = new ClientMakeBookingDto(
+                (short) 1,
+                java.math.BigDecimal.TEN,
+                new ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto(
+                        OffsetDateTime.of(
+                                LocalDateTime.of(2026, 1, 1, 10, 0),
+                                ZoneOffset.UTC
+                        ),
+                        OffsetDateTime.of(
+                                LocalDateTime.of(2026, 1, 1, 11, 0),
+                                ZoneOffset.UTC
+                        )
+                ),
+                "note"
+        );
+
+        mockMvc.perform(post("/api/v1/bookings/client/make-booking/1")
+                        .with(authentication(clientAuth(1L)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBookingsReturnsOkWhenValidAndAuthenticated() throws Exception {
+        when(bookingSearchService.getAllClientBookings(anyLong(), any(LocalDate.class), any(LocalDate.class)))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/api/v1/bookings/client")
+                        .with(authentication(clientAuth(1L)))
+                        .param("startDate", "2026-01-01")
+                        .param("endDate", "2026-01-31"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getFullBookingInfoReturnsOkWhenAuthenticated() throws Exception {
+        mockMvc.perform(get("/api/v1/bookings/client/1/1")
+                        .with(authentication(clientAuth(1L))))
+                .andExpect(status().isOk());
+    }
+}
+
