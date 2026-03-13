@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.security;
+package ru.andef.andefracing.backend.network.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JwtUtil {
+public class JwtUtils {
     private final JwtProperties jwtProperties;
 
     private Date getExpirationDate() {

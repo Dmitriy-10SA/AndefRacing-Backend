@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.security;
+package ru.andef.andefracing.backend.network.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -25,7 +25,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static final String AUTHORIZATION = "Authorization";
     private static final String BEARER = "Bearer ";
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtils;
     private final JwtProperties jwtProperties;
 
     /**
@@ -41,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
         if (Objects.nonNull(authHeader) && authHeader.startsWith(BEARER)) {
             String token = authHeader.substring(7);
             try {
-                Claims claims = jwtUtil.extractClaims(token);
+                Claims claims = jwtUtils.extractClaims(token);
                 String subject = claims.getSubject();
                 UsernamePasswordAuthenticationToken authToken;
                 if (subject.equals(jwtProperties.getClientSubject())) {

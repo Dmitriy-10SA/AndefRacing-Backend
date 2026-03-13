@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 @Tag(name = "Management - клубы")
 @RestController

@@ -16,7 +16,7 @@ import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.report.BookingStatisticsDto;
 import ru.andef.andefracing.backend.network.dtos.report.FinancialStatisticsDto;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
 

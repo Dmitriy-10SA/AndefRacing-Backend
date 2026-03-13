@@ -10,7 +10,7 @@ import ru.andef.andefracing.backend.domain.services.club.management.ClubManageme
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.util.List;
 

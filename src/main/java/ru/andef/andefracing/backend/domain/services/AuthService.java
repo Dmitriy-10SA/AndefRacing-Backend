@@ -27,7 +27,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
-import ru.andef.andefracing.backend.network.security.JwtUtil;
+import ru.andef.andefracing.backend.network.security.jwt.JwtUtils;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class AuthService {
     private final ClientSearchService clientSearchService;
     private final ClubSearchService clubSearchService;
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
 
     private final ClientRepository clientRepository;
@@ -84,7 +84,7 @@ public class AuthService {
         registerDto = new ClientRegisterDto(registerDto.name(), registerDto.phone(), passwordHash);
         Client client = clientMapper.toEntity(registerDto);
         client = clientRepository.save(client);
-        String jwt = jwtUtil.generateClientToken(client.getId());
+        String jwt = jwtUtils.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
 
@@ -96,7 +96,7 @@ public class AuthService {
         Client client = clientSearchService
                 .findClientByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
         checkPassword(loginDto.getPassword(), client.getPassword());
-        String jwt = jwtUtil.generateClientToken(client.getId());
+        String jwt = jwtUtils.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
 
@@ -109,7 +109,7 @@ public class AuthService {
         String passwordHash = passwordEncoder.encode(changePasswordDto.getPassword());
         client.setPassword(passwordHash);
         client = clientRepository.save(client);
-        String jwt = jwtUtil.generateClientToken(client.getId());
+        String jwt = jwtUtils.generateClientToken(client.getId());
         return new ClientAuthResponseDto(jwt);
     }
 
@@ -150,7 +150,7 @@ public class AuthService {
         checkPassword(loginDto.getPassword(), employee.getPassword());
         Club club = clubSearchService.findClubById(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);
-        String jwt = jwtUtil.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
+        String jwt = jwtUtils.generateEmployeeToken(employee.getId(), club.getId(), club.getName(), roles);
         return new EmployeeAuthResponseDto(jwt);
     }
 }

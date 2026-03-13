@@ -15,7 +15,7 @@ import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -18,7 +18,7 @@ import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddExistingEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddNewEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.EmployeeAndRolesDto;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.util.List;
 

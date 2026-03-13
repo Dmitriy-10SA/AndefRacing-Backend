@@ -18,7 +18,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequest
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
 import java.util.List;

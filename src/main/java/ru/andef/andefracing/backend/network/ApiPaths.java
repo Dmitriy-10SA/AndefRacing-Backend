@@ -28,7 +28,7 @@ public class ApiPaths {
     public static final String REPORTS = "/reports";
 
     // search
-    public static final String REGIONS_SEARCH = "/regions/search";
-    public static final String CITIES_SEARCH = "/cities/search";
-    public static final String CLUBS_SEARCH = "/clubs/search";
+    public static final String REGIONS_SEARCH = "/search/regions";
+    public static final String CITIES_SEARCH = "/search/cities";
+    public static final String CLUBS_SEARCH = "/search/clubs";
 }

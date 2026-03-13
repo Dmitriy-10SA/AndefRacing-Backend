@@ -12,7 +12,7 @@ import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
-import ru.andef.andefracing.backend.network.security.JwtFilter;
+import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 @Tag(name = "Profile - сотрудник")
 @RestController
