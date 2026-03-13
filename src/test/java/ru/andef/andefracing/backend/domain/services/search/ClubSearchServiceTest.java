@@ -353,7 +353,6 @@ class ClubSearchServiceTest {
         City city = createCity(region);
         Club openClub1 = createClub(city, "Open Club 1", true);
         Club openClub2 = createClub(city, "Open Club 2", true);
-        Club closedClub = createClub(city, "Closed Club", false);
 
         createPhoto(openClub1, "http://example.com/photo1.jpg", (short) 1);
         createPhoto(openClub2, "http://example.com/photo2.jpg", (short) 1);

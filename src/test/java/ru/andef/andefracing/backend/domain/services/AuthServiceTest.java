@@ -444,7 +444,6 @@ class AuthServiceTest {
     @Test
     void loginEmployeeThrowsExceptionWhenClubNotFound() {
         // Arrange
-        Employee employee = createEmployeeWithPassword();
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 
         // Act & Assert
@@ -459,9 +458,6 @@ class AuthServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
-
-        Employee employee = createEmployeeWithPassword();
-        // Employee не добавлен в клуб
 
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 
@@ -478,7 +474,6 @@ class AuthServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
 
-        Employee employee = createBlockedEmployee();
         EmployeeLoginDto loginDto = new EmployeeLoginDto("+7-222-222-22-22", "password123");
 
         // Act & Assert
