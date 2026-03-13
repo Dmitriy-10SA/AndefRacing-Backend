@@ -1,10 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.club.hr;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
@@ -51,6 +48,7 @@ public class Employee {
     private boolean needPassword;
 
     @Column(name = "is_blocked", nullable = false)
+    @Setter
     private boolean isBlocked;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)

@@ -28,7 +28,7 @@ public class Price {
     @Setter
     private short durationMinutes;
 
-    @Column(name = "value", nullable = false, precision = 8, scale = 2)
+    @Column(name = "price_value", nullable = false, precision = 8, scale = 2)
     @Setter
     private BigDecimal value;
 
