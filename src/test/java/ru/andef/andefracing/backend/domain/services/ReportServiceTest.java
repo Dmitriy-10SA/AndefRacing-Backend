@@ -46,7 +46,7 @@ class ReportServiceTest {
     private final CityRepository cityRepository;
 
     @Autowired
-    ReportServiceTest(
+    public ReportServiceTest(
             ReportService reportService,
             BookingRepository bookingRepository,
             ClubRepository clubRepository,

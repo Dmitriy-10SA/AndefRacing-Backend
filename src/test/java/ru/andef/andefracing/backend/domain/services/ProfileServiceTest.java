@@ -44,7 +44,7 @@ class ProfileServiceTest {
     private final CityRepository cityRepository;
 
     @Autowired
-    ProfileServiceTest(
+    public ProfileServiceTest(
             ProfileService profileService,
             ClientRepository clientRepository,
             ClubRepository clubRepository,
