@@ -30,8 +30,8 @@ class EmployeeProfileControllerTest {
     @MockitoBean
     private ProfileService profileService;
 
-    private Authentication employeeAuth(long employeeId, int clubId) {
-        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(employeeId, clubId, "Club");
+    private Authentication employeeAuth() {
+        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(1L, 2, "Club");
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
@@ -42,7 +42,7 @@ class EmployeeProfileControllerTest {
         );
 
         mockMvc.perform(get("/api/v1/profile/employee/personal-info")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 }

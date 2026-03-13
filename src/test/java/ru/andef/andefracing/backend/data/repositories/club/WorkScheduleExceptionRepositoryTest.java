@@ -40,13 +40,13 @@ class WorkScheduleExceptionRepositoryTest {
         this.cityRepository = cityRepository;
     }
 
-    private Region createRegion(String name) {
-        Region region = new Region((short) 0, name, new ArrayList<>());
+    private Region createRegion() {
+        Region region = new Region((short) 0, "Region", new ArrayList<>());
         return regionRepository.save(region);
     }
 
-    private City createCity(Region region, String name) {
-        City city = new City((short) 0, region, name);
+    private City createCity(Region region) {
+        City city = new City((short) 0, region, "City");
         return cityRepository.save(city);
     }
 
@@ -72,8 +72,8 @@ class WorkScheduleExceptionRepositoryTest {
 
     @Test
     void findByClubIdAndDateReturnsSingleExceptionForClubAndDate() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         WorkScheduleException exception = new WorkScheduleException(LocalDate.of(2026, 1, 1), "Holiday");
@@ -90,8 +90,8 @@ class WorkScheduleExceptionRepositoryTest {
 
     @Test
     void findAllByRangeOfDatesBetweenStartAndEndReturnsAllExceptionsInRangeForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         WorkScheduleException exception1 = new WorkScheduleException(LocalDate.of(2026, 1, 1), "Holiday1");
@@ -119,8 +119,8 @@ class WorkScheduleExceptionRepositoryTest {
 
     @Test
     void findByIdAndClubIdReturnsExceptionOnlyForGivenClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club1 = createClub(city, "Club1");
         Club club2 = createClub(city, "Club2");
 

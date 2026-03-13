@@ -44,7 +44,7 @@ class CityRepositoryTest {
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name, boolean isOpen) {
+    private void createClub(City city, String name, boolean isOpen) {
         Club club = new Club(
                 0,
                 city,
@@ -61,7 +61,7 @@ class CityRepositoryTest {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-        return clubRepository.save(club);
+        clubRepository.save(club);
     }
 
     @Test

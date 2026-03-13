@@ -29,15 +29,15 @@ class ClubGamesManagementControllerTest {
     @MockitoBean
     private ClubManagementService clubManagementService;
 
-    private Authentication employeeAuth(long employeeId, int clubId) {
-        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(employeeId, clubId, "Club");
+    private Authentication employeeAuth() {
+        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(1L, 2, "Club");
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
     @Test
     void addGameToClubReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(post("/api/v1/management/club/games/1")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 
@@ -52,7 +52,7 @@ class ClubGamesManagementControllerTest {
     @Test
     void removeGameFromClubReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(delete("/api/v1/management/club/games/1")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 }

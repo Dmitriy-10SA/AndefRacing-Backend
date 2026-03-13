@@ -35,8 +35,8 @@ class ReportControllerTest {
     @MockitoBean
     private JwtFilter jwtFilter;
 
-    private Authentication employeeAuth(long employeeId, int clubId) {
-        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(employeeId, clubId, "Club");
+    private Authentication employeeAuth() {
+        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(1L, 2, "Club");
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
@@ -54,7 +54,7 @@ class ReportControllerTest {
                 .thenReturn(dto);
 
         mockMvc.perform(get("/api/v1/reports/booking-statistics")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .param("startDate", "2026-01-01")
                         .param("endDate", "2026-01-31"))
                 .andExpect(status().isOk());
@@ -74,7 +74,7 @@ class ReportControllerTest {
                 .thenReturn(dto);
 
         mockMvc.perform(get("/api/v1/reports/financial-statistics")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .param("startDate", "2026-01-01")
                         .param("endDate", "2026-01-31"))
                 .andExpect(status().isOk());

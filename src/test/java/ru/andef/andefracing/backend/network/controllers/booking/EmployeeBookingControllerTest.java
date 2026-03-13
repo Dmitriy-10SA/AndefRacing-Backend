@@ -45,8 +45,8 @@ class EmployeeBookingControllerTest {
     @MockitoBean
     private JwtFilter jwtFilter;
 
-    private Authentication employeeAuth(long employeeId, int clubId) {
-        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(employeeId, clubId, "Club");
+    private Authentication employeeAuth() {
+        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(1L, 2, "Club");
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
@@ -59,7 +59,7 @@ class EmployeeBookingControllerTest {
         );
 
         mockMvc.perform(get("/api/v1/bookings/employee/free-slots")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
@@ -68,7 +68,7 @@ class EmployeeBookingControllerTest {
     @Test
     void confirmBookingPaymentReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(patch("/api/v1/bookings/employee/confirm-booking-payment/1")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 
@@ -91,7 +91,7 @@ class EmployeeBookingControllerTest {
         );
 
         mockMvc.perform(post("/api/v1/bookings/employee/make-booking")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
@@ -100,7 +100,7 @@ class EmployeeBookingControllerTest {
     @Test
     void cancelBookingReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(patch("/api/v1/bookings/employee/cancel/1")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 
@@ -110,7 +110,7 @@ class EmployeeBookingControllerTest {
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/v1/bookings/employee")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .param("startDate", "2026-01-01")
                         .param("endDate", "2026-01-31"))
                 .andExpect(status().isOk());
@@ -119,7 +119,7 @@ class EmployeeBookingControllerTest {
     @Test
     void getFullBookingInfoReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(get("/api/v1/bookings/employee/1")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 }

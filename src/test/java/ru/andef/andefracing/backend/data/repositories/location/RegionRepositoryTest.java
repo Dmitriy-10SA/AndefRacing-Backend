@@ -12,8 +12,7 @@ import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
@@ -44,7 +43,7 @@ class RegionRepositoryTest {
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name, boolean isOpen) {
+    private void createClub(City city, String name, boolean isOpen) {
         Club club = new Club(
                 0,
                 city,
@@ -61,7 +60,7 @@ class RegionRepositoryTest {
                 new ArrayList<>(),
                 new ArrayList<>()
         );
-        return clubRepository.save(club);
+        clubRepository.save(club);
     }
 
     @Test
@@ -84,7 +83,7 @@ class RegionRepositoryTest {
         assertEquals(region1.getId(), result.get(0).getId());
         assertEquals(region3.getId(), result.get(1).getId());
         List<Short> ids = result.stream().map(Region::getId).toList();
-        assertTrue(!ids.contains(region2.getId()));
+        assertFalse(ids.contains(region2.getId()));
     }
 }
 

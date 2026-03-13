@@ -39,26 +39,26 @@ class GameRepositoryTest {
         this.cityRepository = cityRepository;
     }
 
-    private Region createRegion(String name) {
-        Region region = new Region((short) 0, name, new ArrayList<>());
+    private Region createRegion() {
+        Region region = new Region((short) 0, "Region", new ArrayList<>());
         return regionRepository.save(region);
     }
 
-    private City createCity(Region region, String name) {
-        City city = new City((short) 0, region, name);
+    private City createCity(Region region) {
+        City city = new City((short) 0, region, "City");
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name, boolean isOpen) {
+    private Club createClub(City city) {
         Club club = new Club(
                 0,
                 city,
-                name,
+                "Club",
                 "+7-000-000-00-00",
                 "test@example.com",
                 "Test address",
                 (short) 10,
-                isOpen,
+                true,
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -71,9 +71,9 @@ class GameRepositoryTest {
 
     @Test
     void findAllActiveGamesInClubReturnsOnlyActiveGamesForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
-        Club club = createClub(city, "Club", true);
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
 
         Game activeGame1 = new Game((short) 0, "Active1", "url1", true);
         Game activeGame2 = new Game((short) 0, "Active2", "url2", true);

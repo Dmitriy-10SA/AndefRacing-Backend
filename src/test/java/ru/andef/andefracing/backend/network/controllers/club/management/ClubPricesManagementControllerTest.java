@@ -35,8 +35,8 @@ class ClubPricesManagementControllerTest {
     @MockitoBean
     private ClubManagementService clubManagementService;
 
-    private Authentication employeeAuth(long employeeId, int clubId) {
-        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(employeeId, clubId, "Club");
+    private Authentication employeeAuth() {
+        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(1L, 2, "Club");
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
@@ -45,7 +45,7 @@ class ClubPricesManagementControllerTest {
         AddPriceDto dto = new AddPriceDto((short) 60, BigDecimal.TEN);
 
         mockMvc.perform(post("/api/v1/management/club/prices")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
@@ -54,7 +54,7 @@ class ClubPricesManagementControllerTest {
     @Test
     void updatePriceForMinutesInClubReturnsOkWhenValidAndAuthenticated() throws Exception {
         mockMvc.perform(patch("/api/v1/management/club/prices/1")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .param("value", "100"))
                 .andExpect(status().isOk());
     }
@@ -62,7 +62,7 @@ class ClubPricesManagementControllerTest {
     @Test
     void deletePriceForMinutesInClubReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(delete("/api/v1/management/club/prices/1")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 }

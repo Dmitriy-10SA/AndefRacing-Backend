@@ -8,16 +8,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import tools.jackson.databind.ObjectMapper;
 import ru.andef.andefracing.backend.domain.services.ProfileService;
+import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
-import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
+import tools.jackson.databind.ObjectMapper;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
@@ -39,8 +38,8 @@ class ClientProfileControllerTest {
     @MockitoBean
     private ProfileService profileService;
 
-    private Authentication clientAuth(long clientId) {
-        JwtFilter.ClientPrincipal principal = new JwtFilter.ClientPrincipal(clientId);
+    private Authentication clientAuth() {
+        JwtFilter.ClientPrincipal principal = new JwtFilter.ClientPrincipal(1L);
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
@@ -51,7 +50,7 @@ class ClientProfileControllerTest {
         );
 
         mockMvc.perform(get("/api/v1/profile/client/personal-info")
-                        .with(authentication(clientAuth(1L))))
+                        .with(authentication(clientAuth())))
                 .andExpect(status().isOk());
     }
 
@@ -60,7 +59,7 @@ class ClientProfileControllerTest {
         ClientChangePersonalInfoDto dto = new ClientChangePersonalInfoDto("Name", "+7-999-999-99-99");
 
         mockMvc.perform(patch("/api/v1/profile/client/change-personal-info")
-                        .with(authentication(clientAuth(1L)))
+                        .with(authentication(clientAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
@@ -69,7 +68,7 @@ class ClientProfileControllerTest {
     @Test
     void addFavoriteClubReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(post("/api/v1/profile/client/favorite-clubs/1")
-                        .with(authentication(clientAuth(1L))))
+                        .with(authentication(clientAuth())))
                 .andExpect(status().isOk());
     }
 
@@ -83,7 +82,7 @@ class ClientProfileControllerTest {
         );
 
         mockMvc.perform(get("/api/v1/profile/client/favorite-clubs")
-                        .with(authentication(clientAuth(1L)))
+                        .with(authentication(clientAuth()))
                         .param("pageNumber", "0")
                         .param("pageSize", "10"))
                 .andExpect(status().isOk());

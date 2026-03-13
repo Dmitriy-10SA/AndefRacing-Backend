@@ -34,14 +34,6 @@ class ClientAuthControllerTest {
     @MockitoBean
     private JwtFilter jwtFilter;
 
-    private ClientRegisterDto getValidRegisterDto() {
-        return new ClientRegisterDto(
-                "Client Name",
-                "+7-999-999-99-99",
-                "password"
-        );
-    }
-
     private ClientLoginDto getValidLoginDto() {
         return new ClientLoginDto(
                 "+7-999-999-99-99",

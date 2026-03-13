@@ -57,13 +57,13 @@ class BookingRepositoryTest {
         this.cityRepository = cityRepository;
     }
 
-    private Region createRegion(String name) {
-        Region region = new Region((short) 0, name, new ArrayList<>());
+    private Region createRegion() {
+        Region region = new Region((short) 0, "Region", new ArrayList<>());
         return regionRepository.save(region);
     }
 
-    private City createCity(Region region, String name) {
-        City city = new City((short) 0, region, name);
+    private City createCity(Region region) {
+        City city = new City((short) 0, region, "City");
         return cityRepository.save(city);
     }
 
@@ -92,8 +92,8 @@ class BookingRepositoryTest {
         return clientRepository.save(client);
     }
 
-    private Employee createEmployee(String surname, String name, String patronymic, String phone) {
-        Employee employee = new Employee(surname, name, patronymic, phone);
+    private Employee createEmployee() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         return employeeRepository.save(employee);
     }
 
@@ -103,8 +103,8 @@ class BookingRepositoryTest {
 
     @Test
     void getBookingStatsAggregateCountsBookingsAndCancellationsInRangeForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club1");
         Club otherClub = createClub(city, "Club2");
 
@@ -160,8 +160,8 @@ class BookingRepositoryTest {
 
     @Test
     void getBookingsPerDayReturnsCountsPerDayInRangeForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client = createClient("Client", "+7-111-111-11-11");
@@ -208,12 +208,12 @@ class BookingRepositoryTest {
 
     @Test
     void getFinancialStatAggregateSumsAndAveragesPaidBookingsInRangeForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client = createClient("Client", "+7-111-111-11-11");
-        Employee employee = createEmployee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         Booking paid1 = new Booking(
                 club,
@@ -258,12 +258,12 @@ class BookingRepositoryTest {
 
     @Test
     void getRevenuePerDayReturnsDailyRevenueForPaidBookingsInRangeForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client = createClient("Client", "+7-111-111-11-11");
-        Employee employee = createEmployee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         Booking paidDay1 = new Booking(
                 club,
@@ -312,12 +312,12 @@ class BookingRepositoryTest {
 
     @Test
     void countUpcomingPaidOrPendingBookingsCountsOnlyFuturePaidAndPendingForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client = createClient("Client", "+7-111-111-11-11");
-        Employee employee = createEmployee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
@@ -369,8 +369,8 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByDateRangeAndClubIdReturnsOverlappingBookingsForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
         Club otherClub = createClub(city, "OtherClub");
 
@@ -426,8 +426,8 @@ class BookingRepositoryTest {
 
     @Test
     void existsByDateRangeAndClubIdReturnsTrueIfAnyBookingOverlapsRangeForClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client = createClient("Client", "+7-111-111-11-11");
@@ -462,8 +462,8 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByDateRangeAndClientIdReturnsBookingsForGivenClientOnly() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client1 = createClient("Client1", "+7-111-111-11-11");
@@ -500,8 +500,8 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByDateRangeAndClubIdAndClientPhoneReturnsBookingsForClientPhoneInClub() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
         Club club = createClub(city, "Club");
 
         Client client1 = createClient("Client1", "+7-111-111-11-11");

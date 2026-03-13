@@ -28,15 +28,15 @@ class ClubManagementControllerTest {
     @MockitoBean
     private ClubManagementService clubManagementService;
 
-    private Authentication employeeAuth(long employeeId, int clubId) {
-        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(employeeId, clubId, "Club");
+    private Authentication employeeAuth() {
+        JwtFilter.EmployeePrincipal principal = new JwtFilter.EmployeePrincipal(1L, 2, "Club");
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
     @Test
     void updateCntEquipmentInClubReturnsOkWhenValidAndAuthenticated() throws Exception {
         mockMvc.perform(patch("/api/v1/management/club")
-                        .with(authentication(employeeAuth(1L, 2)))
+                        .with(authentication(employeeAuth()))
                         .param("cntEquipment", "10"))
                 .andExpect(status().isOk());
     }
@@ -44,14 +44,14 @@ class ClubManagementControllerTest {
     @Test
     void openClubReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(patch("/api/v1/management/club/open")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 
     @Test
     void closeClubReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(patch("/api/v1/management/club/close")
-                        .with(authentication(employeeAuth(1L, 2))))
+                        .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
 }

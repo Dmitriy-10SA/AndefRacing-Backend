@@ -42,17 +42,17 @@ class ClubRepositoryTest {
         this.cityRepository = cityRepository;
     }
 
-    private Region createRegion(String name) {
-        Region region = new Region((short) 0, name, new ArrayList<>());
+    private Region createRegion() {
+        Region region = new Region((short) 0, "Region", new ArrayList<>());
         return regionRepository.save(region);
     }
 
-    private City createCity(Region region, String name) {
-        City city = new City((short) 0, region, name);
+    private City createCity(Region region) {
+        City city = new City((short) 0, region, "City");
         return cityRepository.save(city);
     }
 
-    private Club createClub(City city, String name, boolean isOpen) {
+    private Club createClub(City city, String name) {
         Club club = new Club(
                 0,
                 city,
@@ -61,7 +61,7 @@ class ClubRepositoryTest {
                 "test@example.com",
                 "Test address",
                 (short) 10,
-                isOpen,
+                true,
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -79,12 +79,12 @@ class ClubRepositoryTest {
 
     @Test
     void getClientFavoriteClubsReturnsOnlyFavoritesOfClientOrderedByName() {
-        Region region = createRegion("Region");
-        City city = createCity(region, "City");
+        Region region = createRegion();
+        City city = createCity(region);
 
-        Club clubA = createClub(city, "Alpha Club", true);
-        Club clubB = createClub(city, "Beta Club", true);
-        Club clubC = createClub(city, "Gamma Club", true);
+        Club clubA = createClub(city, "Alpha Club");
+        Club clubB = createClub(city, "Beta Club");
+        Club clubC = createClub(city, "Gamma Club");
 
         Client client1 = createClient("Client1", "+7-111-111-11-11");
         Client client2 = createClient("Client2", "+7-222-222-22-22");

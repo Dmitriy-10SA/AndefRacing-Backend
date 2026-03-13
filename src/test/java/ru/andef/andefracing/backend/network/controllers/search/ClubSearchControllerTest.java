@@ -29,9 +29,6 @@ class ClubSearchControllerTest {
     @MockitoBean
     private JwtFilter jwtFilter;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @MockitoBean
     private ClubSearchService clubSearchService;
 

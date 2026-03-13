@@ -47,8 +47,8 @@ class ClientBookingControllerTest {
     @MockitoBean
     private JwtFilter jwtFilter;
 
-    private Authentication clientAuth(long clientId) {
-        JwtFilter.ClientPrincipal principal = new JwtFilter.ClientPrincipal(clientId);
+    private Authentication clientAuth() {
+        JwtFilter.ClientPrincipal principal = new JwtFilter.ClientPrincipal(1L);
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 
@@ -85,7 +85,7 @@ class ClientBookingControllerTest {
         );
 
         mockMvc.perform(post("/api/v1/bookings/client/make-booking/1")
-                        .with(authentication(clientAuth(1L)))
+                        .with(authentication(clientAuth()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk());
@@ -97,7 +97,7 @@ class ClientBookingControllerTest {
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/v1/bookings/client")
-                        .with(authentication(clientAuth(1L)))
+                        .with(authentication(clientAuth()))
                         .param("startDate", "2026-01-01")
                         .param("endDate", "2026-01-31"))
                 .andExpect(status().isOk());
@@ -106,7 +106,7 @@ class ClientBookingControllerTest {
     @Test
     void getFullBookingInfoReturnsOkWhenAuthenticated() throws Exception {
         mockMvc.perform(get("/api/v1/bookings/client/1/1")
-                        .with(authentication(clientAuth(1L))))
+                        .with(authentication(clientAuth())))
                 .andExpect(status().isOk());
     }
 }
