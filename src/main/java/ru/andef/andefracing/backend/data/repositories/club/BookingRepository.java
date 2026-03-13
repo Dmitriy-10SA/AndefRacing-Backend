@@ -146,6 +146,24 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     );
 
     /**
+     * Проверка существования бронирований в клубе за диапазон дат
+     */
+    @Query(
+            nativeQuery = true,
+            value = """
+                    SELECT (COALESCE(COUNT(*), 0) > 0) FROM bookings.booking
+                    WHERE club_id = :clubId
+                    AND start_datetime < :end
+                    AND end_datetime > :start
+                    """
+    )
+    boolean existsByDateRangeAndClubId(
+            @Param(value = "clubId") int clubId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end
+    );
+
+    /**
      * Получение бронирований в клубе за диапазон дат для клиента
      */
     @Query(

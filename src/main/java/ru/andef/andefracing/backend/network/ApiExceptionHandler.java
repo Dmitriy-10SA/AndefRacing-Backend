@@ -76,7 +76,8 @@ public class ApiExceptionHandler {
                     InvalidWorkScheduleException.class,
                     InvalidBookingSlotException.class,
                     PhotoReorderMismatchException.class,
-                    NotEnoughSimulatorsException.class
+                    NotEnoughSimulatorsException.class,
+                    CannotAddExceptionDayDueToExistingBookingsException.class
             }
     )
     public ResponseEntity<ErrorDto> handleConditionsNotMetExceptions(RuntimeException ex, HttpServletRequest request) {

@@ -11,10 +11,7 @@ import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedul
 import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.management.ClubCloseConditionsNotMetException;
-import ru.andef.andefracing.backend.domain.exceptions.management.ClubOpenConditionsNotMetException;
-import ru.andef.andefracing.backend.domain.exceptions.management.InvalidWorkScheduleException;
-import ru.andef.andefracing.backend.domain.exceptions.management.PhotoReorderMismatchException;
+import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PriceMapper;
@@ -29,9 +26,7 @@ import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkSc
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.List;
 
 @Service
@@ -275,12 +270,14 @@ public class ClubManagementService {
         if (workScheduleExceptionRepository.findByClubIdAndDate(club.getId(), date).isPresent()) {
             throw new DuplicateException("День-исключение с датой " + date + " уже есть в клубе");
         }
-        WorkScheduleException workScheduleException;
-        if (isWorkDay) {
-            workScheduleException = new WorkScheduleException(date, openTime, closeTime, description);
-        } else {
-            workScheduleException = new WorkScheduleException(date, description);
+        OffsetDateTime start = date.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime end = date.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        if (bookingRepository.existsByDateRangeAndClubId(clubId, start, end)) {
+            throw new CannotAddExceptionDayDueToExistingBookingsException();
         }
+        WorkScheduleException workScheduleException = isWorkDay
+                ? new WorkScheduleException(date, openTime, closeTime, description)
+                : new WorkScheduleException(date, description);
         club.addWorkScheduleException(workScheduleException);
         clubRepository.save(club);
     }
