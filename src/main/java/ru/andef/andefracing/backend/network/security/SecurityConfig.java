@@ -56,7 +56,9 @@ public class SecurityConfig {
                         .requestMatchers(ApiPaths.REPORTS + "/**").hasRole(EmployeeRole.MANAGER.getRole())
 
                         // search
-                        .requestMatchers(ApiPaths.SEARCH + "/**").permitAll()
+                        .requestMatchers(ApiPaths.REGIONS_SEARCH + "/**").permitAll()
+                        .requestMatchers(ApiPaths.CITIES_SEARCH + "/**").permitAll()
+                        .requestMatchers(ApiPaths.CLUBS_SEARCH + "/**").permitAll()
 
                         // swagger
                         .requestMatchers(
