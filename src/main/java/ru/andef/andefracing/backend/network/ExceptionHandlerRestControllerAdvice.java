@@ -8,10 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneAlreadyExistsException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThisPhoneNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
 import ru.andef.andefracing.backend.domain.exceptions.common.BlockedException;
@@ -90,8 +88,6 @@ public class ExceptionHandlerRestControllerAdvice {
     @ExceptionHandler(
             value = {
                     InvalidPhoneOrPasswordException.class,
-                    ClientWithThisPhoneNotFoundException.class,
-                    EmployeeWithThisPhoneNotFoundException.class,
                     ClientWithThisPhoneAlreadyExistsException.class,
                     EmployeeWithThisPhoneAlreadyExistsException.class
             }
