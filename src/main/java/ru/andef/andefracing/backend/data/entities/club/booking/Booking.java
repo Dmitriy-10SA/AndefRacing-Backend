@@ -66,6 +66,11 @@ public class Booking {
     @Setter
     private Employee createdByEmployee;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_confirmed_by_employee_id")
+    @Setter
+    private Employee payConfirmedByEmployee;
+
     @Column(name = "note")
     private String note;
 
@@ -89,6 +94,7 @@ public class Booking {
         this.status = BookingStatus.PENDING_PAYMENT;
         this.isWalkIn = false;
         this.createdByEmployee = null;
+        this.payConfirmedByEmployee = null;
     }
 
     /**
@@ -111,13 +117,15 @@ public class Booking {
         this.status = BookingStatus.PENDING_PAYMENT;
         this.isWalkIn = true;
         this.createdByEmployee = employee;
+        this.payConfirmedByEmployee = null;
     }
 
     /**
-     * Оплата бронирования
+     * Подтверждение оплаты бронирования
      */
-    public void pay() {
+    public void confirmPay(Employee employee) {
         this.status = BookingStatus.PAID;
+        this.payConfirmedByEmployee = employee;
     }
 
     /**

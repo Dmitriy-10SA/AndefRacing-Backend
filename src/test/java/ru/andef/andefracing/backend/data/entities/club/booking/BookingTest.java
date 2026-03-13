@@ -83,8 +83,10 @@ class BookingTest {
         Client client = new Client();
         Booking booking = getBookingByClient(client);
         assertEquals(BookingStatus.PENDING_PAYMENT, booking.getStatus());
-        booking.pay();
+        Employee employee = new Employee();
+        booking.confirmPay(employee);
         assertEquals(BookingStatus.PAID, booking.getStatus());
+        assertEquals(employee, booking.getPayConfirmedByEmployee());
     }
 
     @Test

@@ -93,7 +93,7 @@ public class Employee {
      * Подтверждение оплаты бронирования
      */
     public void confirmBookingPayment(Booking booking) {
-        booking.pay();
+        booking.confirmPay(this);
     }
 
     /**
