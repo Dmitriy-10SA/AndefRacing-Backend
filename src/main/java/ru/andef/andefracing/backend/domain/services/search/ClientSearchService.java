@@ -10,7 +10,7 @@ import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 
 @Service
 @RequiredArgsConstructor
-public class ClientSearchService extends SearchService {
+public class ClientSearchService {
     private final ClientRepository clientRepository;
 
     /**

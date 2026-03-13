@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LocationSearchService extends SearchService {
+public class LocationSearchService {
     private final RegionRepository regionRepository;
     private final CityRepository cityRepository;
 

@@ -25,7 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ClubSearchService extends SearchService {
+public class ClubSearchService {
     private static final String NAME = "name";
 
     private final LocationSearchService locationSearchService;

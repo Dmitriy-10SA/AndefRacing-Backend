@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
-public class BookingManagementService extends BookingService {
+public class BookingManagementService {
     private final ClientSearchService clientSearchService;
     private final ClubSearchService clubSearchService;
 

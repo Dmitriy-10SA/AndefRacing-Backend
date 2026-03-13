@@ -35,7 +35,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BookingSearchService extends BookingService {
+public class BookingSearchService {
     private final ClientSearchService clientSearchService;
     private final ClubSearchService clubSearchService;
 
