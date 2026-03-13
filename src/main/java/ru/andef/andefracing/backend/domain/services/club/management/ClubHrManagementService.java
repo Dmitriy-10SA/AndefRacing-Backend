@@ -113,7 +113,7 @@ public class ClubHrManagementService {
         Club club = clubSearchService.findClubById(clubId);
         Map<Employee, List<EmployeeRole>> employeeAndRolesMap = new HashMap<>();
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
-            if (employeeAndRolesMap.containsKey(employeeClub.getEmployee())) {
+            if (!employeeAndRolesMap.containsKey(employeeClub.getEmployee())) {
                 employeeAndRolesMap.put(employeeClub.getEmployee(), new ArrayList<>());
             }
             employeeAndRolesMap.get(employeeClub.getEmployee()).add(employeeClub.getEmployeeRole());

@@ -223,3 +223,8 @@ CREATE TABLE IF NOT EXISTS favorite.client_favorite_club
     PRIMARY KEY (client_id, club_id)
 );
 
+-- H2 trigger for equipment availability check
+CREATE TRIGGER IF NOT EXISTS trg_check_equipment
+    BEFORE INSERT ON bookings.booking
+    FOR EACH ROW
+    CALL "ru.andef.andefracing.backend.data.triggers.CheckEquipmentAvailabilityTrigger";

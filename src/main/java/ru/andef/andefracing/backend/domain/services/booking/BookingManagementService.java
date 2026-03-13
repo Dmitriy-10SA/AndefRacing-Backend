@@ -73,11 +73,10 @@ public class BookingManagementService {
             Club club,
             OffsetDateTime start,
             OffsetDateTime end,
-            MakeBookingDto makeBookingDto,
+            short cntEquipment,
+            BigDecimal price,
             Supplier<Booking> makeBookingCallback
     ) {
-        short cntEquipment = makeBookingDto.getCntEquipment();
-        BigDecimal price = makeBookingDto.getPrice().setScale(2, RoundingMode.HALF_EVEN);
         checkPrice(club, start, end, cntEquipment, price);
         if (!club.isOpen()) {
             throw new EntityNotFoundException("Клуб закрыт");
@@ -109,7 +108,8 @@ public class BookingManagementService {
                 club,
                 start,
                 end,
-                clientMakeBookingDto,
+                cntEquipment,
+                price,
                 () -> client.makeBooking(club, start, end, cntEquipment, price)
         );
     }
@@ -130,7 +130,8 @@ public class BookingManagementService {
                 club,
                 start,
                 end,
-                employeeMakeBookingDto,
+                cntEquipment,
+                price,
                 () -> employee.makeBooking(club, start, end, cntEquipment, price)
         );
     }

@@ -126,17 +126,19 @@ class ClubSearchServiceTest {
     void findPhotoByIdReturnsPhotoWhenExists() {
         // Arrange
         Region region = createRegion("Test Region");
+        regionRepository.save(region);
         City city = createCity(region, "Test City");
+        cityRepository.save(city);
         Club club = createClub(city, "Test Club", true);
         club.addPhoto(new Photo("http://example.com/photo.jpg", (short) 1));
         clubRepository.save(club);
 
         // Act
-        Photo result = clubSearchService.findPhotoById(1);
+        Photo result = clubSearchService.findPhotoById(club.getPhotos().get(0).getId());
 
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.getId());
+        assertEquals(club.getPhotos().get(0).getId(), result.getId());
         assertEquals("http://example.com/photo.jpg", result.getUrl());
     }
 
