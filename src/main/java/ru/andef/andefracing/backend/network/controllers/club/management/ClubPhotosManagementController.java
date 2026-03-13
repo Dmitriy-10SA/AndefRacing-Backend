@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.controllers.management;
+package ru.andef.andefracing.backend.network.controllers.club.management;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.domain.services.ManagementService;
+import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
@@ -23,7 +23,7 @@ import java.util.List;
 @Validated
 @RequiredArgsConstructor
 public class ClubPhotosManagementController {
-    private final ManagementService managementService;
+    private final ClubManagementService clubManagementService;
 
     /**
      * Добавление фотографии в клуб
@@ -37,7 +37,7 @@ public class ClubPhotosManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.addPhotoInClub(principal.clubId(), addPhotoDto);
+        clubManagementService.addPhotoInClub(principal.clubId(), addPhotoDto);
         return ResponseEntity.ok().build();
     }
 
@@ -50,7 +50,7 @@ public class ClubPhotosManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.deletePhotoFromClub(principal.clubId(), photoId);
+        clubManagementService.deletePhotoFromClub(principal.clubId(), photoId);
         return ResponseEntity.ok().build();
     }
 
@@ -66,7 +66,7 @@ public class ClubPhotosManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.reorderPhotosInClub(principal.clubId(), orderedPhotoIds);
+        clubManagementService.reorderPhotosInClub(principal.clubId(), orderedPhotoIds);
         return ResponseEntity.ok().build();
     }
 }

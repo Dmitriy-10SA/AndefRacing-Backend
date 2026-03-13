@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.controllers.management;
+package ru.andef.andefracing.backend.network.controllers.club.management;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ru.andef.andefracing.backend.domain.services.ManagementService;
+import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.security.JwtFilter;
@@ -23,7 +23,7 @@ import ru.andef.andefracing.backend.network.security.JwtFilter;
 @Validated
 @RequiredArgsConstructor
 public class ClubManagementController {
-    private final ManagementService managementService;
+    private final ClubManagementService clubManagementService;
 
     /**
      * Изменение количества симуляторов в выбранном текущим клубе
@@ -37,7 +37,7 @@ public class ClubManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.updateCntEquipmentInClub(principal.clubId(), cntEquipment);
+        clubManagementService.updateCntEquipmentInClub(principal.clubId(), cntEquipment);
         return ResponseEntity.ok().build();
     }
 
@@ -50,7 +50,7 @@ public class ClubManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.openClub(principal.clubId());
+        clubManagementService.openClub(principal.clubId());
         return ResponseEntity.ok().build();
     }
 
@@ -63,7 +63,7 @@ public class ClubManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.closeClub(principal.clubId());
+        clubManagementService.closeClub(principal.clubId());
         return ResponseEntity.ok().build();
     }
 }

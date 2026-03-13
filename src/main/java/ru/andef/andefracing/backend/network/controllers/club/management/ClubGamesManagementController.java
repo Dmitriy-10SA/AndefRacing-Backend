@@ -1,4 +1,4 @@
-package ru.andef.andefracing.backend.network.controllers.management;
+package ru.andef.andefracing.backend.network.controllers.club.management;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import ru.andef.andefracing.backend.domain.services.ManagementService;
+import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT_GAMES)
 @RequiredArgsConstructor
 public class ClubGamesManagementController {
-    private final ManagementService managementService;
+    private final ClubManagementService clubManagementService;
 
     /**
      * Добавить активную игру в клуб (из справочника)
@@ -30,7 +30,7 @@ public class ClubGamesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.addGameToClub(principal.clubId(), gameId);
+        clubManagementService.addGameToClub(principal.clubId(), gameId);
         return ResponseEntity.ok().build();
     }
 
@@ -39,7 +39,7 @@ public class ClubGamesManagementController {
      */
     @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<GameDto>> getAllActiveGames() {
-        List<GameDto> games = managementService.getAllActiveGames();
+        List<GameDto> games = clubManagementService.getAllActiveGames();
         return ResponseEntity.ok(games);
     }
 
@@ -52,7 +52,7 @@ public class ClubGamesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        managementService.deleteGameInClub(principal.clubId(), gameId);
+        clubManagementService.deleteGameInClub(principal.clubId(), gameId);
         return ResponseEntity.ok().build();
     }
 }
