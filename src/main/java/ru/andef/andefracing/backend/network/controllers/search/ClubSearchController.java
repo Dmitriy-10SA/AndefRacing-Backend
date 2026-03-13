@@ -24,7 +24,7 @@ public class ClubSearchController {
     /**
      * Получение всех клубов (работающих) в указанном городе с пагинацией
      */
-    @GetMapping(path = "/clubs/{cityId}", version = ApiVersions.V1)
+    @GetMapping(path = "/{cityId}", version = ApiVersions.V1)
     public ResponseEntity<PagedClubShortListDto> getAllOpenClubsInCity(
             @PathVariable short cityId,
             @RequestParam @Min(value = 0) int pageNumber,
@@ -38,7 +38,7 @@ public class ClubSearchController {
     /**
      * Получение подробной информации о клубе
      */
-    @GetMapping(path = "/club-full-info/{clubId}", version = ApiVersions.V1)
+    @GetMapping(path = "/{clubId}/full-info", version = ApiVersions.V1)
     public ResponseEntity<ClubFullInfoDto> getClubFullInfo(@PathVariable int clubId) {
         ClubFullInfoDto clubFullInfoDto = clubSearchService.getClubFullInfo(clubId);
         return ResponseEntity.ok(clubFullInfoDto);

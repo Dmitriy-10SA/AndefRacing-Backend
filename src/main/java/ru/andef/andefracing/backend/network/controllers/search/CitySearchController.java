@@ -24,7 +24,7 @@ public class CitySearchController {
     /**
      * Получение всех городов в указанном регионе, где есть открытые клубы
      */
-    @GetMapping(path = "/cities/{regionId}", version = ApiVersions.V1)
+    @GetMapping(path = "/{regionId}", version = ApiVersions.V1)
     public ResponseEntity<List<CityShortDto>> getAllCitiesInRegionWithOpenClubs(@PathVariable short regionId) {
         List<CityShortDto> cities = locationSearchService.getAllCitiesInRegionWithOpenClubs(regionId);
         return ResponseEntity.ok(cities);
