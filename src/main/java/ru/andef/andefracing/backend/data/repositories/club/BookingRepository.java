@@ -50,14 +50,14 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             nativeQuery = true,
             value = """
                     SELECT
-                        DATE(start_datetime) as date,
+                        CAST(start_datetime AS DATE) as date,
                         COUNT(*) as bookingsCount
                     FROM bookings.booking
                     WHERE club_id = :clubId
                     AND start_datetime < :end
                     AND end_datetime > :start
-                    GROUP BY DATE(start_datetime)
-                    ORDER BY DATE(start_datetime)
+                    GROUP BY CAST(start_datetime AS DATE)
+                    ORDER BY CAST(start_datetime AS DATE)
                     """
     )
     List<BookingsPerDayProjection> getBookingsPerDay(
@@ -97,15 +97,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             nativeQuery = true,
             value = """
                     SELECT
-                        DATE(start_datetime) as date,
+                    CAST(start_datetime AS DATE) as date,
                         SUM(price_value) as revenue
                     FROM bookings.booking
                     WHERE club_id = :clubId
                     AND start_datetime < :end
                     AND end_datetime > :start
                     AND status = 'PAID'
-                    GROUP BY DATE(start_datetime)
-                    ORDER BY DATE(start_datetime)
+                    GROUP BY CAST(start_datetime AS DATE)
+                    ORDER BY CAST(start_datetime AS DATE)
                     """
     )
     List<RevenuePerDayProjection> getRevenuePerDay(
@@ -133,10 +133,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT * FROM bookings.booking
+                    SELECT b.*
+                    FROM bookings.booking b
                     WHERE club_id = :clubId
-                    AND start_datetime < :end
-                    AND end_datetime > :start
+                    AND b.start_datetime < :end
+                    AND b.end_datetime > :start
                     """
     )
     List<Booking> findAllByDateRangeAndClubId(
@@ -169,7 +170,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT * FROM bookings.booking b
+                    SELECT b.*
+                    FROM bookings.booking b
                     JOIN clients.client c ON b.client_id = c.id
                     WHERE b.start_datetime < :end
                     AND b.end_datetime > :start
@@ -188,7 +190,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT * FROM bookings.booking b
+                    SELECT b.*
+                    FROM bookings.booking b
                     JOIN clients.client c ON b.client_id = c.id
                     WHERE b.club_id = :clubId
                     AND b.start_datetime < :end

@@ -12,7 +12,7 @@ public interface GameRepository extends JpaRepository<Game, Short> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT * FROM games.game g
+                    SELECT g.* FROM games.game g
                     JOIN info.game_club gc ON g.id = gc.game_id
                     JOIN info.club c ON gc.club_id = c.id
                     WHERE c.id = :clubId AND g.is_active = TRUE

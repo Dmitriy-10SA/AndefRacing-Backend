@@ -16,7 +16,7 @@ public interface CityRepository extends JpaRepository<City, Short> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT * FROM location.city
+                    SELECT city.* FROM location.city
                     JOIN location.region r ON city.region_id = r.id
                     JOIN info.club c on city.id = c.city_id
                     WHERE c.is_open = TRUE AND r.id = :regionId
