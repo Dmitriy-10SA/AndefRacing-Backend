@@ -26,20 +26,20 @@ public class SearchController {
     private final SearchService searchService;
 
     /**
-     * Получение всех регионов
+     * Получение всех регионов, где есть открытые клубы
      */
     @GetMapping(path = "/regions", version = ApiVersions.V1)
-    public ResponseEntity<List<RegionShortDto>> getAllRegions() {
-        List<RegionShortDto> regions = searchService.getAllRegions();
+    public ResponseEntity<List<RegionShortDto>> getAllRegionsWithOpenClubs() {
+        List<RegionShortDto> regions = searchService.getAllRegionsWithOpenClubs();
         return ResponseEntity.ok(regions);
     }
 
     /**
-     * Получение всех городов в указанном регионе
+     * Получение всех городов в указанном регионе, где есть открытые клубы
      */
     @GetMapping(path = "/cities/{regionId}", version = ApiVersions.V1)
-    public ResponseEntity<List<CityShortDto>> getAllCitiesInRegion(@PathVariable short regionId) {
-        List<CityShortDto> cities = searchService.getAllCitiesInRegion(regionId);
+    public ResponseEntity<List<CityShortDto>> getAllCitiesInRegionWithOpenClubs(@PathVariable short regionId) {
+        List<CityShortDto> cities = searchService.getAllCitiesInRegionWithOpenClubs(regionId);
         return ResponseEntity.ok(cities);
     }
 
@@ -47,12 +47,12 @@ public class SearchController {
      * Получение всех клубов (работающих) в указанном городе с пагинацией
      */
     @GetMapping(path = "/clubs/{cityId}", version = ApiVersions.V1)
-    public ResponseEntity<PagedClubShortListDto> getAllClubsInCity(
+    public ResponseEntity<PagedClubShortListDto> getAllOpenClubsInCity(
             @PathVariable short cityId,
             @RequestParam @Min(value = 0) int pageNumber,
             @RequestParam @Min(value = 1) @Max(value = 100) int pageSize
     ) {
-        PagedClubShortListDto pagedClubShortListDto = searchService.getAllClubsInCity(cityId, pageNumber, pageSize);
+        PagedClubShortListDto pagedClubShortListDto = searchService.getAllOpenClubsInCity(cityId, pageNumber, pageSize);
         return ResponseEntity.ok(pagedClubShortListDto);
     }
 

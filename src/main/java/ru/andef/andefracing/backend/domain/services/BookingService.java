@@ -11,14 +11,11 @@ import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedule;
 import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkScheduleException;
-import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
-import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
-import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.data.repositories.club.WorkScheduleExceptionRepository;
-import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.BookingMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
@@ -26,6 +23,7 @@ import ru.andef.andefracing.backend.domain.mappers.location.CityMapper;
 import ru.andef.andefracing.backend.domain.mappers.location.RegionMapper;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
+import ru.andef.andefracing.backend.network.dtos.booking.MakeBookingDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
@@ -39,13 +37,13 @@ import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor
 public class BookingService {
-    private final ClientRepository clientRepository;
-    private final ClubRepository clubRepository;
-    private final EmployeeRepository employeeRepository;
+    private final SearchService searchService;
+
     private final BookingRepository bookingRepository;
     private final WorkScheduleExceptionRepository workScheduleExceptionRepository;
 
@@ -54,30 +52,6 @@ public class BookingService {
     private final CityMapper cityMapper;
     private final ClientMapper clientMapper;
     private final RegionMapper regionMapper;
-
-    /**
-     * Получение клуба по id или выброс исключения
-     */
-    private Club findClubByIdOrThrow(int clubId) {
-        return clubRepository.findById(clubId)
-                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + clubId + " не найден"));
-    }
-
-    /**
-     * Получение клиента по id или выброс исключения
-     */
-    private Client findClientByIdOrThrow(long clientId) {
-        return clientRepository.findById(clientId)
-                .orElseThrow(() -> new EntityNotFoundException("Клиент с id " + clientId + " не найден"));
-    }
-
-    /**
-     * Получение сотрудника по id или выброс исключения
-     */
-    private Employee findEmployeeByIdOrThrow(long employeeId) {
-        return employeeRepository.findById(employeeId)
-                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + employeeId + " не найден"));
-    }
 
     /**
      * Проверка, что клуб открыт
@@ -89,13 +63,14 @@ public class BookingService {
     }
 
     /**
-     * Проверка, что бронирование не в прошлом
+     * Проверка, что дата окончания позже даты начала
      */
-    private void checkBookingNotInPast(OffsetDateTime start) {
-        if (start.isBefore(OffsetDateTime.now())) {
-            throw new InvalidBookingSlotException("Нельзя создать бронирование в прошлом");
+    private void checkStartAndEndDateTime(OffsetDateTime start, OffsetDateTime end) {
+        if (!start.isBefore(end)) {
+            throw new InvalidBookingSlotException("Время начала должно быть раньше времени окончания");
         }
     }
+
 
     /**
      * Подсчет числа занятого оборудования на слот
@@ -118,6 +93,56 @@ public class BookingService {
     }
 
     /**
+     * Проверка верности указанной стоимости
+     */
+    private void checkPrice(
+            Club club,
+            OffsetDateTime start,
+            OffsetDateTime end,
+            short cntEquipment,
+            BigDecimal price
+    ) {
+        short durationMinutes = (short) Duration.between(start, end).toMinutes();
+        BigDecimal expectedPrice = null;
+        for (Price priceInClub : club.getPrices()) {
+            if (priceInClub.getDurationMinutes() == durationMinutes) {
+                expectedPrice = priceInClub.getValue().multiply(BigDecimal.valueOf(cntEquipment));
+                expectedPrice = expectedPrice.setScale(2, RoundingMode.HALF_EVEN);
+            }
+        }
+        if (expectedPrice == null) {
+            throw new EntityNotFoundException("Цены для кол-ва минут: " + durationMinutes + " нет в клубе");
+        } else if (expectedPrice.compareTo(price) != 0) {
+            throw new InvalidBookingSlotException("Указана некорректная цена");
+        }
+    }
+
+    /**
+     * Сделать бронирование (общий метод для сотрудников и клиентов)
+     */
+    private void makeBooking(
+            Club club,
+            OffsetDateTime start,
+            OffsetDateTime end,
+            MakeBookingDto makeBookingDto,
+            Supplier<Booking> makeBookingCallback
+    ) {
+        short cntEquipment = makeBookingDto.getCntEquipment();
+        BigDecimal price = makeBookingDto.getPrice().setScale(2, RoundingMode.HALF_EVEN);
+        checkPrice(club, start, end, cntEquipment, price);
+        checkClubOpen(club);
+        if (start.isBefore(OffsetDateTime.now())) {
+            throw new InvalidBookingSlotException("Нельзя создать бронирование в прошлом");
+        }
+        Booking booking = makeBookingCallback.get();
+        try {
+            bookingRepository.save(booking);
+        } catch (Exception e) {
+            throw new BookingIntersectionException();
+        }
+    }
+
+    /**
      * Получение доступных слотов для бронирования
      */
     @Transactional(readOnly = true)
@@ -125,7 +150,7 @@ public class BookingService {
             int clubId,
             FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
     ) {
-        Club club = findClubByIdOrThrow(clubId);
+        Club club = searchService.findClubById(clubId);
         checkClubOpen(club);
         LocalDate date = freeBookingSlotsRequestDto.date();
         short durationMinutes = freeBookingSlotsRequestDto.durationMinutes();
@@ -133,7 +158,7 @@ public class BookingService {
         OffsetDateTime dayStart = date.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime dayEnd = date.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         List<Booking> bookings = bookingRepository.findAllByDateRangeAndClubId(clubId, dayStart, dayEnd);
-        // учесть график работы
+        // учет графика работы
         for (WorkSchedule workSchedule : club.getWorkSchedules()) {
             if (workSchedule.getDayOfWeek() == date.getDayOfWeek().getValue()) {
                 if (!workSchedule.isWorkDay()) {
@@ -143,7 +168,7 @@ public class BookingService {
                 dayEnd = OffsetDateTime.of(date, workSchedule.getCloseTime(), ZoneOffset.UTC);
             }
         }
-        // учесть дни-исключения
+        // учет дней-исключений
         Optional<WorkScheduleException> workScheduleException = workScheduleExceptionRepository
                 .findByClubIdAndDate(clubId, date);
         if (workScheduleException.isPresent()) {
@@ -176,34 +201,18 @@ public class BookingService {
     public void makeClientBooking(long clientId, int clubId, ClientMakeBookingDto clientMakeBookingDto) {
         OffsetDateTime start = clientMakeBookingDto.getSlot().startDateTime();
         OffsetDateTime end = clientMakeBookingDto.getSlot().endDateTime();
-        if (!start.isBefore(end)) {
-            throw new InvalidBookingSlotException("Время начала должно быть раньше времени окончания");
-        }
-        Client client = findClientByIdOrThrow(clientId);
-        Club club = findClubByIdOrThrow(clubId);
+        checkStartAndEndDateTime(start, end);
+        Client client = searchService.findClientById(clientId);
+        Club club = searchService.findClubById(clubId);
         short cntEquipment = clientMakeBookingDto.getCntEquipment();
         BigDecimal price = clientMakeBookingDto.getPrice().setScale(2, RoundingMode.HALF_EVEN);
-        short durationMinutes = (short) Duration.between(start, end).toMinutes();
-        BigDecimal expectedPrice = null;
-        for (Price priceInClub : club.getPrices()) {
-            if (priceInClub.getDurationMinutes() == durationMinutes) {
-                expectedPrice = priceInClub.getValue().multiply(BigDecimal.valueOf(cntEquipment));
-                expectedPrice = expectedPrice.setScale(2, RoundingMode.HALF_EVEN);
-            }
-        }
-        if (expectedPrice == null) {
-            throw new EntityNotFoundException("Цены для кол-ва минут: " + durationMinutes + " нет в клубе");
-        } else if (expectedPrice.compareTo(price) != 0) {
-            throw new InvalidBookingSlotException("Указана некорректная цена");
-        }
-        checkClubOpen(club);
-        checkBookingNotInPast(start);
-        Booking booking = client.makeBooking(club, start, end, cntEquipment, price);
-        try {
-            bookingRepository.save(booking);
-        } catch (Exception e) {
-            throw new BookingIntersectionException();
-        }
+        makeBooking(
+                club,
+                start,
+                end,
+                clientMakeBookingDto,
+                () -> client.makeBooking(club, start, end, cntEquipment, price)
+        );
     }
 
     /**
@@ -211,7 +220,7 @@ public class BookingService {
      */
     @Transactional(readOnly = true)
     public List<ClientBookingShortDto> getAllClientBookings(long clientId, LocalDate startDate, LocalDate endDate) {
-        findClientByIdOrThrow(clientId);
+        searchService.findClientById(clientId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         List<Booking> bookings = bookingRepository.findAllByDateRangeAndClientId(clientId, start, end);
@@ -223,8 +232,8 @@ public class BookingService {
      */
     @Transactional(readOnly = true)
     public ClientBookingFullInfoDto getBookingFullInfoForClient(long clientId, int clubId, long bookingId) {
-        findClientByIdOrThrow(clientId);
-        Club club = findClubByIdOrThrow(clubId);
+        searchService.findClientById(clientId);
+        Club club = searchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
@@ -237,8 +246,8 @@ public class BookingService {
      */
     @Transactional
     public void confirmBookingPaymentByEmployee(long employeeId, int clubId, long bookingId) {
-        Employee employee = findEmployeeByIdOrThrow(employeeId);
-        Club club = findClubByIdOrThrow(clubId);
+        Employee employee = searchService.findEmployeeById(employeeId);
+        Club club = searchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
@@ -254,34 +263,18 @@ public class BookingService {
     public void makeEmployeeBooking(long employeeId, int clubId, EmployeeMakeBookingDto employeeMakeBookingDto) {
         OffsetDateTime start = employeeMakeBookingDto.getSlot().startDateTime();
         OffsetDateTime end = employeeMakeBookingDto.getSlot().endDateTime();
-        if (!start.isBefore(end)) {
-            throw new InvalidBookingSlotException("Время начала должно быть раньше времени окончания");
-        }
-        Employee employee = findEmployeeByIdOrThrow(employeeId);
-        Club club = findClubByIdOrThrow(clubId);
+        checkStartAndEndDateTime(start, end);
+        Employee employee = searchService.findEmployeeById(employeeId);
+        Club club = searchService.findClubById(clubId);
         short cntEquipment = employeeMakeBookingDto.getCntEquipment();
         BigDecimal price = employeeMakeBookingDto.getPrice().setScale(2, RoundingMode.HALF_EVEN);
-        short durationMinutes = (short) Duration.between(start, end).toMinutes();
-        BigDecimal expectedPrice = null;
-        for (Price priceInClub : club.getPrices()) {
-            if (priceInClub.getDurationMinutes() == durationMinutes) {
-                expectedPrice = priceInClub.getValue().multiply(BigDecimal.valueOf(cntEquipment));
-                expectedPrice = expectedPrice.setScale(2, RoundingMode.HALF_EVEN);
-            }
-        }
-        if (expectedPrice == null) {
-            throw new EntityNotFoundException("Цены для кол-ва минут: " + durationMinutes + " нет в клубе");
-        } else if (expectedPrice.compareTo(price) != 0) {
-            throw new InvalidBookingSlotException("Указана некорректная цена");
-        }
-        checkClubOpen(club);
-        checkBookingNotInPast(start);
-        Booking booking = employee.makeBooking(club, start, end, cntEquipment, price);
-        try {
-            bookingRepository.save(booking);
-        } catch (Exception e) {
-            throw new BookingIntersectionException();
-        }
+        makeBooking(
+                club,
+                start,
+                end,
+                employeeMakeBookingDto,
+                () -> employee.makeBooking(club, start, end, cntEquipment, price)
+        );
     }
 
     /**
@@ -289,8 +282,8 @@ public class BookingService {
      */
     @Transactional
     public void cancelBookingByEmployee(long employeeId, int clubId, long bookingId) {
-        Employee employee = findEmployeeByIdOrThrow(employeeId);
-        Club club = findClubByIdOrThrow(clubId);
+        Employee employee = searchService.findEmployeeById(employeeId);
+        Club club = searchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
@@ -311,8 +304,8 @@ public class BookingService {
             LocalDate endDate,
             Optional<String> clientPhone
     ) {
-        findEmployeeByIdOrThrow(employeeId);
-        Club club = findClubByIdOrThrow(clubId);
+        searchService.findEmployeeById(employeeId);
+        Club club = searchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         List<Booking> bookings;
@@ -330,8 +323,8 @@ public class BookingService {
      */
     @Transactional(readOnly = true)
     public EmployeeBookingFullInfoDto getBookingFullInfoForEmployee(long employeeId, int clubId, long bookingId) {
-        findEmployeeByIdOrThrow(employeeId);
-        Club club = findClubByIdOrThrow(clubId);
+        searchService.findEmployeeById(employeeId);
+        Club club = searchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
