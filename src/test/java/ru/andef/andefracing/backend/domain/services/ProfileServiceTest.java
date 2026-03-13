@@ -94,8 +94,8 @@ class ProfileServiceTest {
         return clientRepository.save(client);
     }
 
-    private Employee createEmployee(String phone) {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+    private Employee createEmployee() {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         return employeeRepository.save(employee);
     }
 
@@ -268,7 +268,7 @@ class ProfileServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         club.addEmployee(employee, List.of(EmployeeRole.ADMIN, EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -296,7 +296,7 @@ class ProfileServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city, "Test Club");
-        Employee employee = createEmployee("+7-222-222-22-22");
+        Employee employee = createEmployee();
 
         // Act
         EmployeePersonalInfoDto result = profileService.getEmployeePersonalInfo(
