@@ -21,7 +21,7 @@ import java.time.Instant;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ExceptionHandlerRestControllerAdvice {
+public class ApiExceptionHandler {
     private static final String VALIDATION_ERROR = "Validation error";
     private static final String AUTH_ERROR = "Auth error";
     private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
