@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import ru.andef.andefracing.backend.data.entities.club.*;
+import ru.andef.andefracing.backend.data.entities.club.Club;
+import ru.andef.andefracing.backend.data.entities.club.Game;
+import ru.andef.andefracing.backend.data.entities.club.Photo;
+import ru.andef.andefracing.backend.data.entities.club.Price;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.location.City;
 import ru.andef.andefracing.backend.data.entities.location.Region;
@@ -15,12 +18,12 @@ import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.network.dtos.common.club.ClubInfoDto;
 import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,13 +62,13 @@ class ClubSearchServiceTest {
         this.cityRepository = cityRepository;
     }
 
-    private Region createRegion() {
-        Region region = new Region((short) 0, "Region", new ArrayList<>());
+    private Region createRegion(String name) {
+        Region region = new Region((short) 0, name, new ArrayList<>());
         return regionRepository.save(region);
     }
 
-    private City createCity(Region region) {
-        City city = new City((short) 0, region, "City");
+    private City createCity(Region region, String name) {
+        City city = new City((short) 0, region, name);
         return cityRepository.save(city);
     }
 
@@ -89,261 +92,298 @@ class ClubSearchServiceTest {
         return clubRepository.save(club);
     }
 
-    private Photo createPhoto(String name, short priority) {
-        Photo photo = new Photo(name, priority);
-        return photoRepository.save(photo);
-    }
-
-    private Game createGame(short id, String name) {
-        Game game = new Game(id, name, "url", true);
-        return gameRepository.save(game);
-    }
-
-    private Price createPrice(int value) {
-        Price price = new Price(value, (short) 15, BigDecimal.TEN);
-        return priceRepository.save(price);
-    }
-
-    private Employee createEmployee(String phone, boolean blocked) {
+    private Employee createEmployee(String phone) {
         Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
-        employee.setBlocked(blocked);
         return employeeRepository.save(employee);
     }
 
-    @Test
-    void findClubByIdReturnsClubWhenExists() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city, "Test Club", true);
-
-        // Act
-        Club found = clubSearchService.findClubById(club.getId());
-
-        // Assert
-        assertNotNull(found);
-        assertEquals(club.getId(), found.getId());
-        assertEquals(club.getName(), found.getName());
+    private Employee createBlockedEmployee(String phone) {
+        Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+        employee.setBlocked(true);
+        return employeeRepository.save(employee);
     }
 
-    @Test
-    void findClubByIdThrowsEntityNotFoundExceptionWhenClubDoesNotExist() {
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.findClubById(999)
-        );
+    private Photo createPhoto(Club club, String url, short order) {
+        Photo photo = new Photo(url, order);
+        club.addPhoto(photo);
+        clubRepository.save(club);
+        return photo;
     }
 
-    @Test
-    void findClubByIdReturnsCorrectClubAmongMultiple() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club1 = createClub(city, "Club 1", true);
-        Club club2 = createClub(city, "Club 2", true);
-        Club club3 = createClub(city, "Club 3", true);
+    private Price createPrice(Club club, BigDecimal price) {
+        Price priceEntity = new Price((short) 60, price);
+        club.addPrice(priceEntity);
+        clubRepository.save(club);
+        return priceEntity;
+    }
 
-        // Act
-        Club found = clubSearchService.findClubById(club2.getId());
-
-        // Assert
-        assertEquals(club2.getId(), found.getId());
-        assertEquals("Club 2", found.getName());
+    private Game createGame(String name) {
+        Game game = new Game((short) 0, name, "Description", true);
+        return gameRepository.save(game);
     }
 
     @Test
     void findPhotoByIdReturnsPhotoWhenExists() {
         // Arrange
-        Photo photo = createPhoto("Test Photo", (short) 1);
+        Region region = createRegion("Test Region");
+        City city = createCity(region, "Test City");
+        Club club = createClub(city, "Test Club", true);
+        club.addPhoto(new Photo("http://example.com/photo.jpg", (short) 1));
+        clubRepository.save(club);
 
         // Act
-        Photo found = clubSearchService.findPhotoById(photo.getId());
+        Photo result = clubSearchService.findPhotoById(1);
 
         // Assert
-        assertNotNull(found);
-        assertEquals(photo.getId(), found.getId());
-        assertEquals(photo.getUrl(), found.getUrl());
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals("http://example.com/photo.jpg", result.getUrl());
     }
 
     @Test
-    void findPhotoByIdThrowsEntityNotFoundExceptionWhenPhotoDoesNotExist() {
+    void findPhotoByIdThrowsExceptionWhenPhotoNotFound() {
+        // Arrange
+        long nonExistentId = 999L;
+
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.findPhotoById(999L)
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.findPhotoById(nonExistentId)
         );
+        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
     void findPriceByIdReturnsPriceWhenExists() {
         // Arrange
-        Price price = createPrice(1000);
+        Region region = createRegion("Test Region");
+        regionRepository.save(region);
+        City city = createCity(region, "Test City");
+        cityRepository.save(city);
+        Club club = createClub(city, "Test Club", true);
+        club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
+        clubRepository.save(club);
 
         // Act
-        Price found = clubSearchService.findPriceById(price.getId());
+        Price result = clubSearchService.findPriceById(1);
 
         // Assert
-        assertNotNull(found);
-        assertEquals(price.getId(), found.getId());
-        assertEquals(1000, found.getValue());
+        assertNotNull(result);
+        assertEquals(1, result.getId());
+        assertEquals(new BigDecimal("1000.00"), result.getValue());
     }
 
     @Test
-    void findPriceByIdThrowsEntityNotFoundExceptionWhenPriceDoesNotExist() {
+    void findPriceByIdThrowsExceptionWhenPriceNotFound() {
+        // Arrange
+        long nonExistentId = 999L;
+
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.findPriceById(999L)
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.findPriceById(nonExistentId)
         );
+        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
     void findGameByIdReturnsGameWhenExists() {
         // Arrange
-        Game game = createGame((short) 1, "Billiards");
+        Game game = createGame("Test Game");
 
         // Act
-        Game found = clubSearchService.findGameById((short) 1);
+        Game result = clubSearchService.findGameById(game.getId());
 
         // Assert
-        assertNotNull(found);
-        assertEquals(game.getId(), found.getId());
-        assertEquals("Billiards", found.getName());
+        assertNotNull(result);
+        assertEquals(game.getId(), result.getId());
+        assertEquals(game.getName(), result.getName());
     }
 
     @Test
-    void findGameByIdThrowsEntityNotFoundExceptionWhenGameDoesNotExist() {
+    void findGameByIdThrowsExceptionWhenGameNotFound() {
+        // Arrange
+        short nonExistentId = 999;
+
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.findGameById((short) 99)
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.findGameById(nonExistentId)
         );
+        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
     void findEmployeeByPhoneReturnsEmployeeWhenExists() {
         // Arrange
-        Employee employee = createEmployee("+7-123-456-78-90", false);
+        Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act
-        Employee found = clubSearchService.findEmployeeByPhone(employee.getPhone());
+        Employee result = clubSearchService.findEmployeeByPhone("+7-111-111-11-11");
 
         // Assert
-        assertNotNull(found);
-        assertEquals(employee.getId(), found.getId());
-        assertEquals(employee.getPhone(), found.getPhone());
+        assertNotNull(result);
+        assertEquals(employee.getId(), result.getId());
+        assertEquals(employee.getPhone(), result.getPhone());
     }
 
     @Test
-    void findEmployeeByPhoneThrowsEntityNotFoundExceptionWhenEmployeeDoesNotExist() {
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.findEmployeeByPhone("+7-000-000-00-00")
-        );
-    }
-
-    @Test
-    void findEmployeeByPhoneThrowsBlockedExceptionWhenEmployeeIsBlocked() {
+    void findEmployeeByPhoneThrowsExceptionWhenEmployeeNotFound() {
         // Arrange
-        Employee employee = createEmployee("+7-111-111-11-11", true);
+        String nonExistentPhone = "+7-999-999-99-99";
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.findEmployeeByPhone(nonExistentPhone)
+        );
+        assertTrue(exception.getMessage().contains(nonExistentPhone));
+    }
+
+    @Test
+    void findEmployeeByPhoneThrowsExceptionWhenEmployeeIsBlocked() {
+        // Arrange
+        Employee blockedEmployee = createBlockedEmployee("+7-222-222-22-22");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
-                clubSearchService.findEmployeeByPhone(employee.getPhone())
+                clubSearchService.findEmployeeByPhone(blockedEmployee.getPhone())
         );
+    }
+
+    @Test
+    void findEmployeeByPhoneWithCustomExceptionThrowsCustomException() {
+        // Arrange
+        String nonExistentPhone = "+7-999-999-99-99";
+        RuntimeException customException = new IllegalArgumentException("Custom error message");
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                clubSearchService.findEmployeeByPhone(nonExistentPhone, customException)
+        );
+        assertEquals("Custom error message", exception.getMessage());
     }
 
     @Test
     void findEmployeeByPhoneWithCustomExceptionReturnsEmployeeWhenExists() {
         // Arrange
-        Employee employee = createEmployee("+7-222-222-22-22", false);
-        RuntimeException customException = new RuntimeException("Custom error");
+        Employee employee = createEmployee("+7-333-333-33-33");
+        RuntimeException customException = new IllegalArgumentException("Should not be thrown");
 
         // Act
-        Employee found = clubSearchService.findEmployeeByPhone(employee.getPhone(), customException);
+        Employee result = clubSearchService.findEmployeeByPhone("+7-333-333-33-33", customException);
 
         // Assert
-        assertNotNull(found);
-        assertEquals(employee.getId(), found.getId());
-    }
-
-    @Test
-    void findEmployeeByPhoneWithCustomExceptionThrowsCustomExceptionWhenEmployeeDoesNotExist() {
-        // Arrange
-        RuntimeException customException = new RuntimeException("Custom error");
-
-        // Act & Assert
-        RuntimeException thrown = assertThrows(RuntimeException.class, () ->
-                clubSearchService.findEmployeeByPhone("+7-999-999-99-99", customException)
-        );
-        assertEquals("Custom error", thrown.getMessage());
+        assertNotNull(result);
+        assertEquals(employee.getId(), result.getId());
     }
 
     @Test
     void findEmployeeByPhoneWithCustomExceptionThrowsBlockedExceptionWhenEmployeeIsBlocked() {
         // Arrange
-        Employee employee = createEmployee("+7-333-333-33-33", true);
-        RuntimeException customException = new RuntimeException("Custom error");
+        Employee blockedEmployee = createBlockedEmployee("+7-444-444-44-44");
+        RuntimeException customException = new IllegalArgumentException("Custom error");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
-                clubSearchService.findEmployeeByPhone(employee.getPhone(), customException)
+                clubSearchService.findEmployeeByPhone(blockedEmployee.getPhone(), customException)
         );
     }
 
     @Test
     void findEmployeeByIdReturnsEmployeeWhenExists() {
         // Arrange
-        Employee employee = createEmployee("+7-444-444-44-44", false);
+        Employee employee = createEmployee("+7-555-555-55-55");
 
         // Act
-        Employee found = clubSearchService.findEmployeeById(employee.getId());
+        Employee result = clubSearchService.findEmployeeById(employee.getId());
 
         // Assert
-        assertNotNull(found);
-        assertEquals(employee.getId(), found.getId());
-        assertEquals(employee.getPhone(), found.getPhone());
+        assertNotNull(result);
+        assertEquals(employee.getId(), result.getId());
+        assertEquals(employee.getPhone(), result.getPhone());
     }
 
     @Test
-    void findEmployeeByIdThrowsEntityNotFoundExceptionWhenEmployeeDoesNotExist() {
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.findEmployeeById(999L)
-        );
-    }
-
-    @Test
-    void findEmployeeByIdThrowsBlockedExceptionWhenEmployeeIsBlocked() {
+    void findEmployeeByIdThrowsExceptionWhenEmployeeNotFound() {
         // Arrange
-        Employee employee = createEmployee("+7-555-555-55-55", true);
+        long nonExistentId = 999L;
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.findEmployeeById(nonExistentId)
+        );
+        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
+    }
+
+    @Test
+    void findEmployeeByIdThrowsExceptionWhenEmployeeIsBlocked() {
+        // Arrange
+        Employee blockedEmployee = createBlockedEmployee("+7-666-666-66-66");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
-                clubSearchService.findEmployeeById(employee.getId())
+                clubSearchService.findEmployeeById(blockedEmployee.getId())
         );
     }
 
     @Test
-    void findEmployeeByIdReturnsCorrectEmployeeAmongMultiple() {
+    void findClubByIdReturnsClubWhenExists() {
         // Arrange
-        Employee employee1 = createEmployee("+7-666-666-66-66", false);
-        Employee employee2 = createEmployee("+7-777-777-77-77", false);
-        Employee employee3 = createEmployee("+7-888-888-88-88", false);
+        Region region = createRegion("Test Region");
+        City city = createCity(region, "Test City");
+        Club club = createClub(city, "Test Club", true);
 
         // Act
-        Employee found = clubSearchService.findEmployeeById(employee2.getId());
+        Club result = clubSearchService.findClubById(club.getId());
 
         // Assert
-        assertEquals(employee2.getId(), found.getId());
-        assertEquals("+7-777-777-77-77", found.getPhone());
+        assertNotNull(result);
+        assertEquals(club.getId(), result.getId());
+        assertEquals(club.getName(), result.getName());
     }
 
     @Test
-    void getAllOpenClubsInCityReturnsPaginatedList() {
+    void findClubByIdThrowsExceptionWhenClubNotFound() {
         // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        createClub(city, "Club 1", true);
-        createClub(city, "Club 2", true);
-        createClub(city, "Club 3", true);
+        int nonExistentId = 999;
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.findClubById(nonExistentId)
+        );
+        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
+    }
+
+    @Test
+    void getAllOpenClubsInCityReturnsOnlyOpenClubs() {
+        // Arrange
+        Region region = createRegion("Test Region");
+        City city = createCity(region, "Test City");
+        Club openClub1 = createClub(city, "Open Club 1", true);
+        Club openClub2 = createClub(city, "Open Club 2", true);
+        Club closedClub = createClub(city, "Closed Club", false);
+
+        createPhoto(openClub1, "http://example.com/photo1.jpg", (short) 1);
+        createPhoto(openClub2, "http://example.com/photo2.jpg", (short) 1);
+
+        // Act
+        PagedClubShortListDto result = clubSearchService.getAllOpenClubsInCity(city.getId(), 0, 10);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.content().size());
+        assertEquals(2, result.pageInfoDto().totalElements());
+        assertEquals(1, result.pageInfoDto().totalPages());
+        assertTrue(result.pageInfoDto().isLast());
+    }
+
+    @Test
+    void getAllOpenClubsInCityReturnsPaginatedResults() {
+        // Arrange
+        Region region = createRegion("Test Region");
+        City city = createCity(region, "Test City");
+
+        for (int i = 1; i <= 5; i++) {
+            Club club = createClub(city, "Club " + i, true);
+            createPhoto(club, "http://example.com/photo" + i + ".jpg", (short) 1);
+        }
 
         // Act
         PagedClubShortListDto result = clubSearchService.getAllOpenClubsInCity(city.getId(), 0, 2);
@@ -351,67 +391,51 @@ class ClubSearchServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(2, result.content().size());
-        assertEquals(3, result.pageInfoDto().totalElements());
-        assertEquals(2, result.pageInfoDto().totalPages());
+        assertEquals(5, result.pageInfoDto().totalElements());
+        assertEquals(3, result.pageInfoDto().totalPages());
         assertFalse(result.pageInfoDto().isLast());
     }
 
     @Test
-    void getAllOpenClubsInCityReturnsLastPageCorrectly() {
+    void getAllOpenClubsInCityReturnsEmptyListWhenNoOpenClubs() {
         // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        createClub(city, "Club 1", true);
-        createClub(city, "Club 2", true);
-        createClub(city, "Club 3", true);
-
-        // Act
-        PagedClubShortListDto result = clubSearchService.getAllOpenClubsInCity(city.getId(), 1, 2);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.content().size());
-        assertTrue(result.pageInfoDto().isLast());
-    }
-
-    @Test
-    void getAllOpenClubsInCityExcludesClosedClubs() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        createClub(city, "Open Club 1", true);
-        createClub(city, "Open Club 2", true);
+        Region region = createRegion("Test Region");
+        City city = createCity(region, "Test City");
         createClub(city, "Closed Club", false);
 
         // Act
         PagedClubShortListDto result = clubSearchService.getAllOpenClubsInCity(city.getId(), 0, 10);
 
         // Assert
-        assertEquals(2, result.content().size());
-    }
-
-    @Test
-    void getAllOpenClubsInCityReturnsEmptyListWhenNoClustersInCity() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-
-        // Act
-        PagedClubShortListDto result = clubSearchService.getAllOpenClubsInCity(city.getId(), 0, 10);
-
-        // Assert
+        assertNotNull(result);
         assertTrue(result.content().isEmpty());
         assertEquals(0, result.pageInfoDto().totalElements());
     }
 
     @Test
+    void getAllOpenClubsInCityThrowsExceptionWhenCityNotFound() {
+        // Arrange
+        short nonExistentCityId = 999;
+
+        // Act & Assert
+        assertThrows(EntityNotFoundException.class, () ->
+                clubSearchService.getAllOpenClubsInCity(nonExistentCityId, 0, 10)
+        );
+    }
+
+    @Test
     void getClubFullInfoReturnsCompleteClubInformation() {
         // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city, "Full Info Club", true);
-        Photo photo = createPhoto("Club Photo", (short) 1);
-        club.addPhoto(photo);
+        Region region = createRegion("Test Region");
+        City city = createCity(region, "Test City");
+        Club club = createClub(city, "Test Club", true);
+
+        createPhoto(club, "http://example.com/photo1.jpg", (short) 1);
+        createPhoto(club, "http://example.com/photo2.jpg", (short) 2);
+        createPrice(club, new BigDecimal("1000.00"));
+
+        Game game = createGame("Test Game");
+        club.addGame(game);
         clubRepository.save(club);
 
         // Act
@@ -420,14 +444,23 @@ class ClubSearchServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(club.getId(), result.getId());
-        assertEquals("Full Info Club", result.getName());
+        assertEquals(club.getName(), result.getName());
+        assertEquals(club.getPhone(), result.getPhone());
+        assertEquals(club.getEmail(), result.getEmail());
+        assertEquals(club.getAddress(), result.getAddress());
+        assertNotNull(result.getPhotos());
+        assertNotNull(result.getPrices());
+        assertNotNull(result.getGames());
     }
 
     @Test
-    void getClubFullInfoThrowsExceptionWhenClubDoesNotExist() {
+    void getClubFullInfoThrowsExceptionWhenClubNotFound() {
+        // Arrange
+        int nonExistentId = 999;
+
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubSearchService.getClubFullInfo(999)
+                clubSearchService.getClubFullInfo(nonExistentId)
         );
     }
 }

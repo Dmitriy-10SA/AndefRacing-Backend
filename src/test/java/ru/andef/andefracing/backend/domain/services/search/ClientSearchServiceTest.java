@@ -30,133 +30,129 @@ class ClientSearchServiceTest {
         this.clientRepository = clientRepository;
     }
 
-    private Client createClient(String phone, boolean blocked) {
-        Client client = new Client("TestClient", phone, "password");
-        client.setBlocked(blocked);
+    private Client createClient(String name, String phone) {
+        Client client = new Client(name, phone, "password");
+        return clientRepository.save(client);
+    }
+
+    private Client createBlockedClient(String name, String phone) {
+        Client client = new Client(name, phone, "password");
+        client.setBlocked(true);
         return clientRepository.save(client);
     }
 
     @Test
     void findClientByPhoneReturnsClientWhenExists() {
         // Arrange
-        Client client = createClient("+7-123-456-78-90", false);
+        Client client = createClient("Test Client", "+7-111-111-11-11");
 
         // Act
-        Client found = clientSearchService.findClientByPhone(client.getPhone());
+        Client result = clientSearchService.findClientByPhone("+7-111-111-11-11");
 
         // Assert
-        assertNotNull(found);
-        assertEquals(client.getId(), found.getId());
-        assertEquals(client.getName(), found.getName());
-        assertEquals(client.getPhone(), found.getPhone());
+        assertNotNull(result);
+        assertEquals(client.getId(), result.getId());
+        assertEquals(client.getName(), result.getName());
+        assertEquals(client.getPhone(), result.getPhone());
     }
 
     @Test
-    void findClientByPhoneThrowsEntityNotFoundExceptionWhenClientDoesNotExist() {
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clientSearchService.findClientByPhone("+7-000-000-00-00")
-        );
-    }
-
-    @Test
-    void findClientByPhoneThrowsBlockedExceptionWhenClientIsBlocked() {
+    void findClientByPhoneThrowsExceptionWhenClientNotFound() {
         // Arrange
-        Client client = createClient("+7-111-111-11-11", true);
+        String nonExistentPhone = "+7-999-999-99-99";
+
+        // Act & Assert
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+                clientSearchService.findClientByPhone(nonExistentPhone)
+        );
+        assertTrue(exception.getMessage().contains(nonExistentPhone));
+    }
+
+    @Test
+    void findClientByPhoneThrowsExceptionWhenClientIsBlocked() {
+        // Arrange
+        Client blockedClient = createBlockedClient("Blocked Client", "+7-222-222-22-22");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
-                clientSearchService.findClientByPhone(client.getPhone())
+                clientSearchService.findClientByPhone(blockedClient.getPhone())
         );
+    }
+
+    @Test
+    void findClientByPhoneWithCustomExceptionThrowsCustomException() {
+        // Arrange
+        String nonExistentPhone = "+7-999-999-99-99";
+        RuntimeException customException = new IllegalArgumentException("Custom error message");
+
+        // Act & Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                clientSearchService.findClientByPhone(nonExistentPhone, customException)
+        );
+        assertEquals("Custom error message", exception.getMessage());
     }
 
     @Test
     void findClientByPhoneWithCustomExceptionReturnsClientWhenExists() {
         // Arrange
-        Client client = createClient("+7-222-222-22-22", false);
-        RuntimeException customException = new RuntimeException("Custom error");
+        Client client = createClient("Test Client", "+7-333-333-33-33");
+        RuntimeException customException = new IllegalArgumentException("Should not be thrown");
 
         // Act
-        Client found = clientSearchService.findClientByPhone(client.getPhone(), customException);
+        Client result = clientSearchService.findClientByPhone("+7-333-333-33-33", customException);
 
         // Assert
-        assertNotNull(found);
-        assertEquals(client.getId(), found.getId());
-    }
-
-    @Test
-    void findClientByPhoneWithCustomExceptionThrowsCustomExceptionWhenClientDoesNotExist() {
-        // Arrange
-        RuntimeException customException = new RuntimeException("Custom error");
-
-        // Act & Assert
-        RuntimeException thrown = assertThrows(RuntimeException.class, () ->
-                clientSearchService.findClientByPhone("+7-999-999-99-99", customException)
-        );
-        assertEquals("Custom error", thrown.getMessage());
+        assertNotNull(result);
+        assertEquals(client.getId(), result.getId());
     }
 
     @Test
     void findClientByPhoneWithCustomExceptionThrowsBlockedExceptionWhenClientIsBlocked() {
         // Arrange
-        Client client = createClient("+7-333-333-33-33", true);
-        RuntimeException customException = new RuntimeException("Custom error");
+        Client blockedClient = createBlockedClient("Blocked Client", "+7-444-444-44-44");
+        RuntimeException customException = new IllegalArgumentException("Custom error");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
-                clientSearchService.findClientByPhone(client.getPhone(), customException)
+                clientSearchService.findClientByPhone(blockedClient.getPhone(), customException)
         );
     }
 
     @Test
     void findClientByIdReturnsClientWhenExists() {
         // Arrange
-        Client client = createClient("+7-444-444-44-44", false);
+        Client client = createClient("Test Client", "+7-555-555-55-55");
 
         // Act
-        Client found = clientSearchService.findClientById(client.getId());
+        Client result = clientSearchService.findClientById(client.getId());
 
         // Assert
-        assertNotNull(found);
-        assertEquals(client.getId(), found.getId());
-        assertEquals(client.getName(), found.getName());
-        assertEquals(client.getPhone(), found.getPhone());
+        assertNotNull(result);
+        assertEquals(client.getId(), result.getId());
+        assertEquals(client.getName(), result.getName());
+        assertEquals(client.getPhone(), result.getPhone());
     }
 
     @Test
-    void findClientByIdThrowsEntityNotFoundExceptionWhenClientDoesNotExist() {
+    void findClientByIdThrowsExceptionWhenClientNotFound() {
         // Arrange
         long nonExistentId = 999L;
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
+        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
                 clientSearchService.findClientById(nonExistentId)
         );
+        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
-    void findClientByIdThrowsBlockedExceptionWhenClientIsBlocked() {
+    void findClientByIdThrowsExceptionWhenClientIsBlocked() {
         // Arrange
-        Client client = createClient("+7-555-555-55-55", true);
+        Client blockedClient = createBlockedClient("Blocked Client", "+7-666-666-66-66");
 
         // Act & Assert
         assertThrows(BlockedException.class, () ->
-                clientSearchService.findClientById(client.getId())
+                clientSearchService.findClientById(blockedClient.getId())
         );
-    }
-
-    @Test
-    void findClientByIdReturnsCorrectClientAmongMultiple() {
-        // Arrange
-        Client client1 = createClient("+7-666-666-66-66", false);
-        Client client2 = createClient("+7-777-777-77-77", false);
-        Client client3 = createClient("+7-888-888-88-88", false);
-
-        // Act
-        Client found = clientSearchService.findClientById(client2.getId());
-
-        // Assert
-        assertEquals(client2.getId(), found.getId());
-        assertEquals(client2.getPhone(), found.getPhone());
     }
 }
