@@ -8,13 +8,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientChangePasswordDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientLoginDto;
 import ru.andef.andefracing.backend.network.dtos.auth.client.ClientRegisterDto;
 
-@Tag(name = "Auth - клиент")
+@Tag(name = ApiTags.CLIENT_AUTH)
 @RestController
 @RequestMapping(ApiPaths.AUTH_CLIENT)
 @RequiredArgsConstructor

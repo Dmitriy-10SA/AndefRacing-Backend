@@ -9,12 +9,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.domain.services.search.LocationSearchService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityShortDto;
 
 import java.util.List;
 
-@Tag(name = "Search")
+@Tag(name = ApiTags.SEARCH)
 @RestController
 @RequestMapping(ApiPaths.CITIES_SEARCH)
 @RequiredArgsConstructor

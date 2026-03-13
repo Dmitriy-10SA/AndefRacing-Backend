@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.AuthService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeAuthResponseDto;
 import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeClubDto;
@@ -17,7 +18,7 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 
 import java.util.List;
 
-@Tag(name = "Auth - сотрудник")
+@Tag(name = ApiTags.EMPLOYEE_AUTH)
 @RestController
 @RequestMapping(ApiPaths.AUTH_EMPLOYEE)
 @Validated

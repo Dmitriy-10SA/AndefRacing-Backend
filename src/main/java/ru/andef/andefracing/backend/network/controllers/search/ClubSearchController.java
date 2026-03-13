@@ -9,11 +9,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 
-@Tag(name = "Search")
+@Tag(name = ApiTags.SEARCH)
 @RestController
 @RequestMapping(ApiPaths.CLUBS_SEARCH)
 @Validated

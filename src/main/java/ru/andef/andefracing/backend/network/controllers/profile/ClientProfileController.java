@@ -12,13 +12,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
-@Tag(name = "Profile - клиент")
+@Tag(name = ApiTags.CLIENT_PROFILE)
 @RestController
 @RequestMapping(ApiPaths.PROFILE_CLIENT)
 @Validated

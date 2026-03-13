@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.domain.services.ProfileService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.profile.employee.EmployeePersonalInfoDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
-@Tag(name = "Profile - сотрудник")
+@Tag(name = ApiTags.EMPLOYEE_PROFILE)
 @RestController
 @RequestMapping(ApiPaths.PROFILE_EMPLOYEE)
 @RequiredArgsConstructor

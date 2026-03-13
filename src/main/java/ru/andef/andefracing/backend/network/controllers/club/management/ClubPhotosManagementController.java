@@ -11,13 +11,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.util.List;
 
-@Tag(name = "Management - фотографии")
+@Tag(name = ApiTags.CLUB_MANAGEMENT)
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT_PHOTOS)
 @Validated

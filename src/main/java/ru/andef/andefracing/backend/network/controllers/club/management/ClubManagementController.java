@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.andef.andefracing.backend.domain.services.club.management.ClubManagementService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
-@Tag(name = "Management - клубы")
+@Tag(name = ApiTags.CLUB_MANAGEMENT)
 @RestController
 @RequestMapping(ApiPaths.CLUB_MANAGEMENT)
 @Validated

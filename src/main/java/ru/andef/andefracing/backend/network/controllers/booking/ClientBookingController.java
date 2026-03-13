@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.andef.andefracing.backend.domain.services.booking.BookingManagementService;
 import ru.andef.andefracing.backend.domain.services.booking.BookingSearchService;
 import ru.andef.andefracing.backend.network.ApiPaths;
+import ru.andef.andefracing.backend.network.ApiTags;
 import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
@@ -23,7 +24,7 @@ import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 import java.time.LocalDate;
 import java.util.List;
 
-@Tag(name = "Booking - клиент")
+@Tag(name = ApiTags.CLIENT_BOOKING)
 @RestController
 @RequestMapping(ApiPaths.BOOKINGS_CLIENT)
 @Validated
