@@ -9,6 +9,7 @@ import ru.andef.andefracing.backend.data.projections.BookingsPerDayProjection;
 import ru.andef.andefracing.backend.data.projections.FinancialStatsAggregateProjection;
 import ru.andef.andefracing.backend.data.projections.RevenuePerDayProjection;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
+import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.report.BookingStatisticsDto;
 import ru.andef.andefracing.backend.network.dtos.report.FinancialStatisticsDto;
 
@@ -21,7 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
-    private final SService searchService;
+    private final ClubSearchService clubSearchService;
 
     private final BookingRepository bookingRepository;
 
@@ -31,7 +32,7 @@ public class ReportService {
      */
     @Transactional(readOnly = true)
     public BookingStatisticsDto getBookingStatistics(int clubId, LocalDate startDate, LocalDate endDate) {
-        Club club = searchService.findClubById(clubId);
+        Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         BookingStatsAggregateProjection bookingStatsAggregateProjection = bookingRepository
@@ -59,7 +60,7 @@ public class ReportService {
      */
     @Transactional(readOnly = true)
     public FinancialStatisticsDto getFinancialStatistics(int clubId, LocalDate startDate, LocalDate endDate) {
-        Club club = searchService.findClubById(clubId);
+        Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         FinancialStatsAggregateProjection financialStatsAggregateProjection = bookingRepository
