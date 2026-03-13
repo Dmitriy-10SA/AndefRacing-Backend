@@ -14,6 +14,7 @@ import ru.andef.andefracing.backend.domain.exceptions.auth.client.ClientWithThis
 import ru.andef.andefracing.backend.domain.exceptions.auth.employee.EmployeeWithThisPhoneNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.BookingIntersectionException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
+import ru.andef.andefracing.backend.domain.exceptions.common.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.common.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.common.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
@@ -28,6 +29,7 @@ public class ExceptionHandlerRestControllerAdvice {
     private static final String ENTITY_NOT_FOUND_ERROR = "Entity not found";
     private static final String DUPLICATE_ERROR = "Duplicate error";
     private static final String CONDITIONS_NOT_MET_ERROR = "Conditions not met error";
+    private static final String BLOCKED_ERROR = "Blocked error";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -56,6 +58,14 @@ public class ExceptionHandlerRestControllerAdvice {
     @ExceptionHandler(value = {DuplicateException.class, BookingIntersectionException.class})
     public ResponseEntity<ErrorDto> handleDuplicateExceptions(RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(getHttpStatus(ex), DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибок блокировки
+     */
+    @ExceptionHandler(value = BlockedException.class)
+    public ResponseEntity<ErrorDto> handleBlockedExceptions(RuntimeException ex, HttpServletRequest request) {
+        return buildErrorResponse(getHttpStatus(ex), BLOCKED_ERROR, ex.getMessage(), request);
     }
 
     /**
