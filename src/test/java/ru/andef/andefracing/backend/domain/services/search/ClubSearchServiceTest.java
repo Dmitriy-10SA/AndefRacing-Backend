@@ -20,6 +20,7 @@ import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.PasswordIsNotSetException;
 import ru.andef.andefracing.backend.network.dtos.search.ClubFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.search.PagedClubShortListDto;
 
@@ -89,6 +90,7 @@ class ClubSearchServiceTest {
 
     private Employee createEmployee(String phone) {
         Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+        employee.setNeedPassword(false);
         return employeeRepository.save(employee);
     }
 
@@ -285,6 +287,7 @@ class ClubSearchServiceTest {
     void findEmployeeByIdReturnsEmployeeWhenExists() {
         // Arrange
         Employee employee = createEmployee("+7-555-555-55-55");
+        employee.setNeedPassword(false);
 
         // Act
         Employee result = clubSearchService.findEmployeeById(employee.getId());
@@ -305,6 +308,18 @@ class ClubSearchServiceTest {
                 clubSearchService.findEmployeeById(nonExistentId)
         );
         assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
+    }
+
+    @Test
+    void findEmployeeByIdThrowsExceptionWhenEmployeeWithPasswordNotFound() {
+        // Arrange
+        Employee employee = createEmployee("+7-555-555-55-55");
+        employee.setNeedPassword(true);
+
+        // Act & Assert
+        assertThrows(PasswordIsNotSetException.class, () ->
+                clubSearchService.findEmployeeById(employee.getId())
+        );
     }
 
     @Test

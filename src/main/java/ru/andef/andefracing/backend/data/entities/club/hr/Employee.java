@@ -45,6 +45,7 @@ public class Employee {
     private String password;
 
     @Column(name = "need_password", nullable = false)
+    @Setter
     private boolean needPassword;
 
     @Column(name = "is_blocked", nullable = false)

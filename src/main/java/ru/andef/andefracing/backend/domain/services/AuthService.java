@@ -118,7 +118,7 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public boolean isEmployeeFirstEnter(String phone) {
-        Employee employee = clubSearchService.findEmployeeByPhone(phone);
+        Employee employee = clubSearchService.findEmployeeByPhoneWithoutPasswordNotSetException(phone);
         return employee.isNeedPassword();
     }
 
@@ -127,8 +127,10 @@ public class AuthService {
      */
     @Transactional
     public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
-        Employee employee = clubSearchService
-                .findEmployeeByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
+        Employee employee = clubSearchService.findEmployeeByPhoneWithoutPasswordNotSetException(
+                loginDto.getPhone(),
+                new InvalidPhoneOrPasswordException()
+        );
         if (employee.isNeedPassword()) {
             String passwordHash = passwordEncoder.encode(loginDto.getPassword());
             employee.setPassword(passwordHash);
@@ -145,8 +147,10 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public EmployeeAuthResponseDto loginEmployee(int clubId, EmployeeLoginDto loginDto) {
-        Employee employee = clubSearchService
-                .findEmployeeByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
+        Employee employee = clubSearchService.findEmployeeByPhoneWithoutPasswordNotSetException(
+                loginDto.getPhone(),
+                new InvalidPhoneOrPasswordException()
+        );
         checkPassword(loginDto.getPassword(), employee.getPassword());
         Club club = clubSearchService.findClubById(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);

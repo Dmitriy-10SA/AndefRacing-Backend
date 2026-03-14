@@ -112,6 +112,27 @@ public class ClubSearchService {
     }
 
     /**
+     * Получение сотрудника по номеру телефона или выброс кастомного исключения, но без проверки задания пароля
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByPhoneWithoutPasswordNotSetException(String phone) {
+        Employee employee = employeeRepository.findByPhone(phone)
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с телефоном " + phone + " не найден"));
+        checkEmployeeIsBlocked(employee);
+        return employee;
+    }
+
+    /**
+     * Получение сотрудника по номеру телефона или выброс кастомного исключения, но без проверки задания пароля
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByPhoneWithoutPasswordNotSetException(String phone, RuntimeException exception) {
+        Employee employee = employeeRepository.findByPhone(phone).orElseThrow(() -> exception);
+        checkEmployeeIsBlocked(employee);
+        return employee;
+    }
+
+    /**
      * Получение сотрудника по id или выброс исключения
      */
     @Transactional(readOnly = true)

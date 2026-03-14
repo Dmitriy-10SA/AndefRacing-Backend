@@ -112,6 +112,7 @@ class AuthServiceTest {
 
     private Employee createEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employee.setNeedPassword(false);
         return employeeRepository.save(employee);
     }
 
@@ -258,6 +259,8 @@ class AuthServiceTest {
     void isEmployeeFirstEnterReturnsTrueWhenEmployeeNeedsPassword() {
         // Arrange
         Employee employee = createEmployee();
+        employee.setNeedPassword(true);
+
 
         // Act
         boolean result = authService.isEmployeeFirstEnter("+7-222-222-22-22");
@@ -300,6 +303,7 @@ class AuthServiceTest {
         Club club2 = createClub(city, "Club 2");
 
         Employee employee = createEmployee();
+        employee.setNeedPassword(true);
         club1.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         club2.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club1);

@@ -96,6 +96,7 @@ class ProfileServiceTest {
 
     private Employee createEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employee.setNeedPassword(false);
         return employeeRepository.save(employee);
     }
 

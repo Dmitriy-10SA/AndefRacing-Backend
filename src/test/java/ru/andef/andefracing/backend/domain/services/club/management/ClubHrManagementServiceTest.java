@@ -85,6 +85,7 @@ class ClubHrManagementServiceTest {
 
     private Employee createEmployee(String phone) {
         Employee employee = new Employee("Surname", "Name", "Patronymic", phone);
+        employee.setNeedPassword(false);
         return employeeRepository.save(employee);
     }
 

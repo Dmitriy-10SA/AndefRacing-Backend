@@ -111,6 +111,7 @@ class BookingSearchServiceTest {
 
     private Employee createEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-333-333-33-33");
+        employee.setNeedPassword(false);
         return employeeRepository.save(employee);
     }
 
