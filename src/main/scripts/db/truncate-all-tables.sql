@@ -2,7 +2,6 @@
 TRUNCATE TABLE favorite.client_favorite_club CASCADE;
 TRUNCATE TABLE bookings.booking CASCADE;
 TRUNCATE TABLE hr.employee_club CASCADE;
-TRUNCATE TABLE hr.employee_role CASCADE;
 TRUNCATE TABLE hr.employee CASCADE;
 TRUNCATE TABLE info.work_schedule_exception CASCADE;
 TRUNCATE TABLE info.work_schedule CASCADE;
@@ -24,6 +23,5 @@ ALTER SEQUENCE info.price_id_seq RESTART WITH 1;
 ALTER SEQUENCE info.work_schedule_id_seq RESTART WITH 1;
 ALTER SEQUENCE info.work_schedule_exception_id_seq RESTART WITH 1;
 ALTER SEQUENCE hr.employee_id_seq RESTART WITH 1;
-ALTER SEQUENCE hr.employee_role_id_seq RESTART WITH 1;
 ALTER SEQUENCE clients.client_id_seq RESTART WITH 1;
 ALTER SEQUENCE bookings.booking_id_seq RESTART WITH 1;
