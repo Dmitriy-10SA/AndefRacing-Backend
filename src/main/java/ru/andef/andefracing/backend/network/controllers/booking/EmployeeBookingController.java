@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -100,8 +101,8 @@ public class EmployeeBookingController {
      */
     @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
-            @RequestParam("startDate") @NotNull LocalDate startDate,
-            @RequestParam("endDate") @NotNull LocalDate endDate,
+            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
             @NotBlank(message = "Номер телефона должен быть заполнен")
             @Pattern(

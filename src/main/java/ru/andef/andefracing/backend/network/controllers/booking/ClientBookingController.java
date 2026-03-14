@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -68,8 +69,8 @@ public class ClientBookingController {
      */
     @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<ClientBookingShortDto>> getBookings(
-            @RequestParam(name = "startDate") @NotNull LocalDate startDate,
-            @RequestParam(name = "endDate") @NotNull LocalDate endDate,
+            @RequestParam(name = "startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam(name = "endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();

@@ -3,6 +3,7 @@ package ru.andef.andefracing.backend.network.controllers;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -35,8 +36,8 @@ public class ReportController {
      */
     @GetMapping(path = "/booking-statistics", version = ApiVersions.V1)
     public ResponseEntity<BookingStatisticsDto> getBookingStatistics(
-            @RequestParam("startDate") @NotNull LocalDate startDate,
-            @RequestParam("endDate") @NotNull LocalDate endDate,
+            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
@@ -54,8 +55,8 @@ public class ReportController {
      */
     @GetMapping(path = "/financial-statistics", version = ApiVersions.V1)
     public ResponseEntity<FinancialStatisticsDto> getFinancialStatistics(
-            @RequestParam("startDate") @NotNull LocalDate startDate,
-            @RequestParam("endDate") @NotNull LocalDate endDate,
+            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();

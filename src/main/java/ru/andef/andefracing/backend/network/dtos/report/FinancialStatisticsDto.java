@@ -1,5 +1,7 @@
 package ru.andef.andefracing.backend.network.dtos.report;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -9,12 +11,12 @@ import java.util.List;
  */
 public record FinancialStatisticsDto(
         int clubId,
-        LocalDate startDate,
-        LocalDate endDate,
+        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
         BigDecimal totalRevenue,
         List<DateAndTotalRevenueDto> dateAndTotalRevenues,
         BigDecimal averageReceipt
 ) {
-    public record DateAndTotalRevenueDto(LocalDate date, BigDecimal revenue) {
+    public record DateAndTotalRevenueDto(@DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, BigDecimal revenue) {
     }
 }

@@ -1,5 +1,7 @@
 package ru.andef.andefracing.backend.network.dtos.management.work.schedule;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -8,7 +10,7 @@ import java.time.LocalTime;
  */
 public record WorkScheduleExceptionDto(
         long id,
-        LocalDate date,
+        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
         LocalTime openTime,
         LocalTime closeTime,
         boolean isWorkDay,
