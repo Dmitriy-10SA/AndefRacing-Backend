@@ -48,7 +48,7 @@ public class ApiExceptionHandler {
      */
     private HttpStatus getHttpStatus(RuntimeException ex) {
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
-        return (responseStatus != null) ? responseStatus.code() : HttpStatus.INTERNAL_SERVER_ERROR;
+        return (responseStatus != null) ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     /**
