@@ -8,10 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
-import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
-import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.PasswordIsNotSetException;
+import ru.andef.andefracing.backend.domain.exceptions.*;
 import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
@@ -78,7 +75,8 @@ public class ApiExceptionHandler {
                     InvalidBookingSlotException.class,
                     PhotoReorderMismatchException.class,
                     NotEnoughSimulatorsException.class,
-                    CannotAddExceptionDayDueToExistingBookingsException.class
+                    CannotAddExceptionDayDueToExistingBookingsException.class,
+                    InvalidDateRangeException.class
             }
     )
     public ResponseEntity<ErrorDto> handleConditionsNotMetExceptions(RuntimeException ex, HttpServletRequest request) {

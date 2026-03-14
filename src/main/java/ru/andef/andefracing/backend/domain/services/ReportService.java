@@ -9,6 +9,7 @@ import ru.andef.andefracing.backend.data.projections.BookingsPerDayProjection;
 import ru.andef.andefracing.backend.data.projections.FinancialStatsAggregateProjection;
 import ru.andef.andefracing.backend.data.projections.RevenuePerDayProjection;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
+import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.report.BookingStatisticsDto;
 import ru.andef.andefracing.backend.network.dtos.report.FinancialStatisticsDto;
@@ -27,11 +28,21 @@ public class ReportService {
     private final BookingRepository bookingRepository;
 
     /**
+     * Проверка, что дата начала меньше даты конца
+     */
+    private void checkDateRange(LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            throw new InvalidDateRangeException();
+        }
+    }
+
+    /**
      * Получение отчета «Cтатистика бронирований», который включает:
      * общее число бронирований, процент отмен, число бронирований по дням
      */
     @Transactional(readOnly = true)
     public BookingStatisticsDto getBookingStatistics(int clubId, LocalDate startDate, LocalDate endDate) {
+        checkDateRange(startDate, endDate);
         Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
@@ -60,6 +71,7 @@ public class ReportService {
      */
     @Transactional(readOnly = true)
     public FinancialStatisticsDto getFinancialStatistics(int clubId, LocalDate startDate, LocalDate endDate) {
+        checkDateRange(startDate, endDate);
         Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
