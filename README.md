@@ -20,6 +20,7 @@
 | **Фреймворк** | Spring Boot 4 |
 | **База данных** | PostgreSQL 16 |
 | **Кэширование** | Redis 8 |
+| **Версионирование API** | Через заголовок `X-Version` |
 | **Аутентификация** | JWT (JSON Web Tokens) + Spring Security |
 | **Маппинг** | MapStruct |
 | **Бойлерплейт код** | Lombok |
