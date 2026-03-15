@@ -145,6 +145,17 @@ public class ClubSearchService {
     }
 
     /**
+     * Получение сотрудника по id без выброса исключения
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByIdWithoutPasswordNotSetException(long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + id + " не найден"));
+        checkEmployeeIsBlocked(employee);
+        return employee;
+    }
+
+    /**
      * Получение клуба по id или выброс исключения
      */
     @Transactional(readOnly = true)

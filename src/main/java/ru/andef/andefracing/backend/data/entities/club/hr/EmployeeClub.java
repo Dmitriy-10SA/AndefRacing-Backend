@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 
@@ -34,6 +36,7 @@ public class EmployeeClub {
     private Employee employee;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(name = "employee_role", nullable = false)
     private EmployeeRole employeeRole;
 
@@ -68,6 +71,8 @@ public class EmployeeClub {
     public static class EmployeeClubId implements Serializable {
         private int club;
         private long employee;
+        @Enumerated(EnumType.STRING)
+        @JdbcType(PostgreSQLEnumJdbcType.class)
         private EmployeeRole employeeRole;
 
         @Override

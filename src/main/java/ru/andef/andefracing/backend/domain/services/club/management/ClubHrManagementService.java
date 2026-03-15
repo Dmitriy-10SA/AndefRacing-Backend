@@ -95,7 +95,8 @@ public class ClubHrManagementService {
     @Transactional
     public void addExistingEmployeeToClub(int clubId, AddExistingEmployeeDto addExistingEmployeeDto) {
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeByPhone(addExistingEmployeeDto.getPhone());
+        Employee employee = clubSearchService
+                .findEmployeeByPhoneWithoutPasswordNotSetException(addExistingEmployeeDto.getPhone());
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
             if (employeeClub.getEmployee().equals(employee)) {
                 throw new DuplicateException("Сотрудник с id " + employee.getId() + " уже есть в клубе");
@@ -131,7 +132,7 @@ public class ClubHrManagementService {
     @Transactional
     public void deleteEmployeeFromClub(int clubId, long employeeId) {
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
         boolean isExistingInClub = false;
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
             if (employeeClub.getEmployee().equals(employee)) {

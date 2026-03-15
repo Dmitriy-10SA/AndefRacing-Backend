@@ -28,7 +28,7 @@ public class AddNewEmployeeDto extends AddExistingEmployeeDto {
 
     public AddNewEmployeeDto(
             String phone,
-            List<@NotNull EmployeeRole> roles,
+            @Size(min = 1) List<@NotNull EmployeeRole> roles,
             String surname,
             String name,
             String patronymic
