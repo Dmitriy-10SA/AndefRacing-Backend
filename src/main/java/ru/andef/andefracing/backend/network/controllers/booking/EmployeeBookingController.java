@@ -3,9 +3,7 @@ package ru.andef.andefracing.backend.network.controllers.booking;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -124,14 +122,13 @@ public class EmployeeBookingController {
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
-            @NotBlank(message = "Номер телефона должен быть заполнен")
-            @Pattern(
-                    regexp = "^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$",
-                    message = "Телефон должен быть в формате: +7-XXX-XXX-XX-XX"
-            )
             String clientPhone,
             Authentication authentication
     ) {
+        boolean isValidPhone = clientPhone == null || clientPhone.matches("^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$");
+        if (!isValidPhone) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -149,7 +146,7 @@ public class EmployeeBookingController {
     /**
      * Просмотр полной информации о бронировании
      */
-    @GetMapping(path = "/{bookingId}", version = ApiVersions.V1)
+    @GetMapping(path = "/full-info/{bookingId}", version = ApiVersions.V1)
     public ResponseEntity<EmployeeBookingFullInfoDto> getFullBookingInfo(
             @PathVariable long bookingId,
             Authentication authentication
