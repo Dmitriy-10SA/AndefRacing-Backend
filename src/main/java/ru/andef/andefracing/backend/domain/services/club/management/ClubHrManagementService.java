@@ -168,6 +168,9 @@ public class ClubHrManagementService {
      */
     @Transactional
     public void updateEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole oldRole, EmployeeRole newRole) {
+        if (oldRole.equals(EmployeeRole.EMPLOYEE)) {
+            throw new IllegalArgumentException("Нельзя изменить роль EMPLOYEE на другую роль");
+        }
         Club club = clubSearchService.findClubById(clubId);
         Employee employee = clubSearchService.findEmployeeById(employeeId);
         deleteEmployeeRoleInClub(club, employee, oldRole);
@@ -182,6 +185,11 @@ public class ClubHrManagementService {
     public void deleteEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole role) {
         Club club = clubSearchService.findClubById(clubId);
         Employee employee = clubSearchService.findEmployeeById(employeeId);
+        if (role.equals(EmployeeRole.EMPLOYEE) && findEmployeeRolesInClub(club, employee).size() > 1) {
+            throw new IllegalArgumentException(
+                    "Нельзя удалить роль EMPLOYEE у сотрудника, у которого есть другие роли"
+            );
+        }
         deleteEmployeeRoleInClub(club, employee, role);
         clubRepository.save(club);
     }

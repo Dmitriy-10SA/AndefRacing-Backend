@@ -26,6 +26,7 @@ public class ApiExceptionHandler {
     private static final String DUPLICATE_ERROR = "Duplicate error";
     private static final String CONDITIONS_NOT_MET_ERROR = "Conditions not met error";
     private static final String BLOCKED_ERROR = "Blocked error";
+    private static final String ILLEGAL_ARGUMENT_ERROR = "Illegal argument error";
 
     /**
      * Создаёт стандартный ответ об ошибке
@@ -54,6 +55,14 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = DuplicateException.class)
     public ResponseEntity<ErrorDto> handleDuplicateExceptions(RuntimeException ex, HttpServletRequest request) {
         return buildErrorResponse(getHttpStatus(ex), DUPLICATE_ERROR, ex.getMessage(), request);
+    }
+
+    /**
+     * Обработка ошибок, связанных с неправильными аргументами
+     */
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ErrorDto> handleIllegalArgumentException(RuntimeException ex, HttpServletRequest request) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, ILLEGAL_ARGUMENT_ERROR, ex.getMessage(), request);
     }
 
     /**

@@ -11,6 +11,7 @@ import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedul
 import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
@@ -291,6 +292,9 @@ public class ClubManagementService {
             LocalDate startDate,
             LocalDate endDate
     ) {
+        if (startDate.isAfter(endDate)) {
+            throw new InvalidDateRangeException();
+        }
         Club club = clubSearchService.findClubById(clubId);
         List<WorkScheduleException> workScheduleExceptions = workScheduleExceptionRepository.
                 findAllByRangeOfDatesBetweenStartAndEnd(club.getId(), startDate, endDate);
