@@ -3,6 +3,7 @@ package ru.andef.andefracing.backend.network.controllers.search;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,8 +29,8 @@ public class ClubSearchController {
     @GetMapping(path = "/{cityId}", version = ApiVersions.V1)
     public ResponseEntity<PagedClubShortListDto> getAllOpenClubsInCity(
             @PathVariable short cityId,
-            @RequestParam @Min(value = 0) int pageNumber,
-            @RequestParam @Min(value = 1) @Max(value = 100) int pageSize
+            @RequestParam @NotNull @Min(value = 0) Integer pageNumber,
+            @RequestParam @NotNull @Min(value = 1) @Max(value = 100) Integer pageSize
     ) {
         PagedClubShortListDto pagedClubShortListDto = clubSearchService
                 .getAllOpenClubsInCity(cityId, pageNumber, pageSize);

@@ -30,6 +30,8 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtUtils;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -118,7 +120,7 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public boolean isEmployeeFirstEnter(String phone) {
-        Employee employee = clubSearchService.findEmployeeByPhone(phone);
+        Employee employee = clubSearchService.findEmployeeByPhoneWithoutPasswordNotSetException(phone);
         return employee.isNeedPassword();
     }
 
@@ -127,8 +129,10 @@ public class AuthService {
      */
     @Transactional
     public List<EmployeeClubDto> preLoginEmployee(EmployeeLoginDto loginDto) {
-        Employee employee = clubSearchService
-                .findEmployeeByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
+        Employee employee = clubSearchService.findEmployeeByPhoneWithoutPasswordNotSetException(
+                loginDto.getPhone(),
+                new InvalidPhoneOrPasswordException()
+        );
         if (employee.isNeedPassword()) {
             String passwordHash = passwordEncoder.encode(loginDto.getPassword());
             employee.setPassword(passwordHash);
@@ -136,8 +140,8 @@ public class AuthService {
         } else {
             checkPassword(loginDto.getPassword(), employee.getPassword());
         }
-        List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
-        return clubMapper.toEmployeeClubDto(clubs, cityMapper, regionMapper);
+        Set<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).collect(Collectors.toSet());
+        return clubMapper.toEmployeeClubDto(clubs.stream().toList(), cityMapper, regionMapper);
     }
 
     /**
@@ -145,8 +149,10 @@ public class AuthService {
      */
     @Transactional(readOnly = true)
     public EmployeeAuthResponseDto loginEmployee(int clubId, EmployeeLoginDto loginDto) {
-        Employee employee = clubSearchService
-                .findEmployeeByPhone(loginDto.getPhone(), new InvalidPhoneOrPasswordException());
+        Employee employee = clubSearchService.findEmployeeByPhoneWithoutPasswordNotSetException(
+                loginDto.getPhone(),
+                new InvalidPhoneOrPasswordException()
+        );
         checkPassword(loginDto.getPassword(), employee.getPassword());
         Club club = clubSearchService.findClubById(clubId);
         List<String> roles = getEmployeeRolesInClub(club, employee);

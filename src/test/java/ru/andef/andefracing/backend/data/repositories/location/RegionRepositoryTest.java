@@ -1,8 +1,11 @@
 package ru.andef.andefracing.backend.data.repositories.location;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.location.City;
@@ -16,15 +19,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DataJpaTest
-@Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
+@ActiveProfiles("test")
+@Transactional
+@Sql(scripts = "classpath:scripts/db/truncate-all-tables-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class RegionRepositoryTest {
-
     private final RegionRepository regionRepository;
     private final CityRepository cityRepository;
     private final ClubRepository clubRepository;
 
     @Autowired
-    RegionRepositoryTest(
+    public RegionRepositoryTest(
             RegionRepository regionRepository,
             CityRepository cityRepository,
             ClubRepository clubRepository

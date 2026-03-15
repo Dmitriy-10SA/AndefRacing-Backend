@@ -9,7 +9,7 @@ import lombok.Getter;
 public class CityDto extends CityShortDto {
     private final RegionShortDto region;
 
-    public CityDto(short id, String name, RegionShortDto region) {
+    public CityDto(Short id, String name, RegionShortDto region) {
         super(id, name);
         this.region = region;
     }

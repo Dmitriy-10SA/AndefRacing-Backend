@@ -2,8 +2,10 @@ package ru.andef.andefracing.backend.network.controllers.booking;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -39,8 +41,21 @@ public class ClientBookingController {
     @GetMapping(path = "/free-slots/{clubId}", version = ApiVersions.V1)
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlotsInClub(
             @PathVariable int clubId,
-            @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
+            @NotNull
+            @Min(value = 15, message = "Длительность бронирования должна быть >= 15 минут")
+            Short durationMinutes,
+            @NotNull
+            @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1")
+            Short cntEquipment,
+            @NotNull(message = "Необходимо передать дату")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date
     ) {
+        FreeBookingSlotsRequestDto freeBookingSlotsRequestDto = new FreeBookingSlotsRequestDto(
+                durationMinutes,
+                cntEquipment,
+                date
+        );
         List<FreeBookingSlotDto> freeBookingSlots = bookingSearchService
                 .getFreeBookingSlotsInClub(clubId, freeBookingSlotsRequestDto);
         return ResponseEntity.ok(freeBookingSlots);
@@ -68,8 +83,14 @@ public class ClientBookingController {
      */
     @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<ClientBookingShortDto>> getBookings(
-            @RequestParam(name = "startDate") @NotNull LocalDate startDate,
-            @RequestParam(name = "endDate") @NotNull LocalDate endDate,
+            @RequestParam(name = "startDate")
+            @NotNull
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+            @RequestParam(name = "endDate")
+            @NotNull
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();

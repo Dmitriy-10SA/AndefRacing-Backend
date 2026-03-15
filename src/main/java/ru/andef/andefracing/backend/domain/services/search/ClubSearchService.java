@@ -15,6 +15,7 @@ import ru.andef.andefracing.backend.data.entities.location.City;
 import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.PasswordIsNotSetException;
 import ru.andef.andefracing.backend.domain.mappers.club.*;
 import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.dtos.common.club.ClubInfoDto;
@@ -79,6 +80,15 @@ public class ClubSearchService {
     }
 
     /**
+     * Проверка, задан ли пароль у сотрудника
+     */
+    private void checkEmployeeHasPassword(Employee employee) {
+        if (employee.isNeedPassword()) {
+            throw new PasswordIsNotSetException("Пароль не задан");
+        }
+    }
+
+    /**
      * Получение сотрудника по номеру телефона или выброс исключения
      */
     @Transactional(readOnly = true)
@@ -86,6 +96,7 @@ public class ClubSearchService {
         Employee employee = employeeRepository.findByPhone(phone)
                 .orElseThrow(() -> new EntityNotFoundException("Сотрудник с телефоном " + phone + " не найден"));
         checkEmployeeIsBlocked(employee);
+        checkEmployeeHasPassword(employee);
         return employee;
     }
 
@@ -96,6 +107,28 @@ public class ClubSearchService {
     public Employee findEmployeeByPhone(String phone, RuntimeException exception) {
         Employee employee = employeeRepository.findByPhone(phone).orElseThrow(() -> exception);
         checkEmployeeIsBlocked(employee);
+        checkEmployeeHasPassword(employee);
+        return employee;
+    }
+
+    /**
+     * Получение сотрудника по номеру телефона или выброс кастомного исключения, но без проверки задания пароля
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByPhoneWithoutPasswordNotSetException(String phone) {
+        Employee employee = employeeRepository.findByPhone(phone)
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с телефоном " + phone + " не найден"));
+        checkEmployeeIsBlocked(employee);
+        return employee;
+    }
+
+    /**
+     * Получение сотрудника по номеру телефона или выброс кастомного исключения, но без проверки задания пароля
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByPhoneWithoutPasswordNotSetException(String phone, RuntimeException exception) {
+        Employee employee = employeeRepository.findByPhone(phone).orElseThrow(() -> exception);
+        checkEmployeeIsBlocked(employee);
         return employee;
     }
 
@@ -104,6 +137,18 @@ public class ClubSearchService {
      */
     @Transactional(readOnly = true)
     public Employee findEmployeeById(long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + id + " не найден"));
+        checkEmployeeIsBlocked(employee);
+        checkEmployeeHasPassword(employee);
+        return employee;
+    }
+
+    /**
+     * Получение сотрудника по id без выброса исключения
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByIdWithoutPasswordNotSetException(long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + id + " не найден"));
         checkEmployeeIsBlocked(employee);

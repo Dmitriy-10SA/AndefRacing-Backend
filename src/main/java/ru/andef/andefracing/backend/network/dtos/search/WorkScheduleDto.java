@@ -7,10 +7,10 @@ import java.time.LocalTime;
  * DTO - день из графика работы
  */
 public record WorkScheduleDto(
-        long id,
+        Long id,
         DayOfWeek dayOfWeek,
         LocalTime openTime,
         LocalTime closeTime,
-        boolean isWorkDay
+        Boolean isWorkDay
 ) {
 }

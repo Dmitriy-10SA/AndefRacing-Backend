@@ -10,6 +10,7 @@ public record AddPhotoDto(
         @NotNull(message = "Необходимо указать url для фото")
         @NotBlank(message = "url не может быть пустым")
         String url,
-        short sequenceNumber
+        @NotNull
+        Short sequenceNumber
 ) {
 }

@@ -221,9 +221,10 @@ BEGIN
         RETURNING id INTO v_employee_id;
     END IF;
 
--- Присваиваем роль "Управляющий"
+-- Присваиваем роль "Управляющий" и "Сотрудник"
     INSERT INTO hr.employee_club (club_id, employee_id, employee_role)
-    VALUES (v_club_id, v_employee_id, 'MANAGER'::hr.employee_role);
+    VALUES (v_club_id, v_employee_id, 'MANAGER'::hr.employee_role),
+           (v_club_id, v_employee_id, 'EMPLOYEE'::hr.employee_role);
 
     RETURN v_club_id;
 END;

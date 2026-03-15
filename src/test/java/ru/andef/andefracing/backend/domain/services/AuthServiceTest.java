@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
@@ -36,9 +37,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
+@ActiveProfiles("test")
 @Transactional
+@Sql(scripts = "classpath:scripts/db/truncate-all-tables-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AuthServiceTest {
     private final AuthService authService;
     private final ClientRepository clientRepository;
@@ -108,11 +110,6 @@ class AuthServiceTest {
         Client client = new Client("Blocked Client", "+7-111-111-11-11", passwordHash);
         client.setBlocked(true);
         clientRepository.save(client);
-    }
-
-    private Employee createEmployee() {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
-        return employeeRepository.save(employee);
     }
 
     private Employee createEmployeeWithPassword() {
@@ -257,7 +254,9 @@ class AuthServiceTest {
     @Test
     void isEmployeeFirstEnterReturnsTrueWhenEmployeeNeedsPassword() {
         // Arrange
-        Employee employee = createEmployee();
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employeeRepository.save(employee);
+
 
         // Act
         boolean result = authService.isEmployeeFirstEnter("+7-222-222-22-22");
@@ -299,7 +298,8 @@ class AuthServiceTest {
         Club club1 = createClub(city, "Club 1");
         Club club2 = createClub(city, "Club 2");
 
-        Employee employee = createEmployee();
+        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employeeRepository.save(employee);
         club1.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         club2.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club1);

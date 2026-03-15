@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
@@ -31,9 +32,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
+@ActiveProfiles("test")
 @Transactional
+@Sql(scripts = "classpath:scripts/db/truncate-all-tables-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ProfileServiceTest {
     private final ProfileService profileService;
     private final ClientRepository clientRepository;
@@ -96,6 +98,7 @@ class ProfileServiceTest {
 
     private Employee createEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employee.setPassword("password");
         return employeeRepository.save(employee);
     }
 

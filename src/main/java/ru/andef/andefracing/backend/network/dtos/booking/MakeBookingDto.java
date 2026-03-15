@@ -14,8 +14,9 @@ import java.math.BigDecimal;
 @Getter
 @RequiredArgsConstructor
 public abstract class MakeBookingDto {
+    @NotNull
     @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1")
-    private final short cntEquipment;
+    private final Short cntEquipment;
     @NotNull
     @Min(1)
     private final BigDecimal price;

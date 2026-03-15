@@ -11,6 +11,7 @@ import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkSchedul
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.data.repositories.club.WorkScheduleExceptionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.BookingMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
@@ -127,6 +128,9 @@ public class BookingSearchService {
      */
     @Transactional(readOnly = true)
     public List<ClientBookingShortDto> getAllClientBookings(long clientId, LocalDate startDate, LocalDate endDate) {
+        if (startDate.isAfter(endDate)) {
+            throw new InvalidDateRangeException();
+        }
         clientSearchService.findClientById(clientId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);

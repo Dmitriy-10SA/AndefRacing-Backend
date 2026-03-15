@@ -3,6 +3,7 @@ package ru.andef.andefracing.backend.network.controllers.club.management;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class ClubManagementController {
      */
     @PatchMapping(version = ApiVersions.V1)
     public ResponseEntity<Void> updateCntEquipmentInClub(
-            @RequestParam(name = "cntEquipment") @Min(1) @Max(10000) short cntEquipment,
+            @RequestParam(name = "cntEquipment") @NotNull @Min(1) @Max(10000) Short cntEquipment,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();

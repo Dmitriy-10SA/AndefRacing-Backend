@@ -4,8 +4,8 @@ package ru.andef.andefracing.backend.network.dtos.common;
  * Dto фотографии
  */
 public record PhotoDto(
-        long id,
+        Long id,
         String url,
-        short sequenceNumber
+        Short sequenceNumber
 ) {
 }

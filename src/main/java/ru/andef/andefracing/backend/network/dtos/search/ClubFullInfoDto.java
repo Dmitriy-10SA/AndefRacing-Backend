@@ -18,13 +18,13 @@ public class ClubFullInfoDto extends ClubShortDto {
     private final List<WorkScheduleDto> workSchedules;
 
     public ClubFullInfoDto(
-            int id,
+            Integer id,
             String name,
             String phone,
             String email,
             String address,
-            short cntEquipment,
-            boolean isOpen,
+            Short cntEquipment,
+            Boolean isOpen,
             List<PhotoDto> photos,
             List<GameDto> games,
             List<PriceDto> prices,

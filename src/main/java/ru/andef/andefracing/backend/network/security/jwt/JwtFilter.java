@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,19 +44,20 @@ public class JwtFilter extends OncePerRequestFilter {
                 String subject = claims.getSubject();
                 UsernamePasswordAuthenticationToken authToken;
                 if (subject.equals(jwtProperties.getClientSubject())) {
-                    long clientId = claims.get(jwtProperties.getIdClaim(), long.class);
+                    long clientId = claims.get(jwtProperties.getIdClaim(), Long.class);
                     ClientPrincipal principal = new ClientPrincipal(clientId);
                     authToken = new UsernamePasswordAuthenticationToken(
                             principal,
                             null,
-                            List.of(new SimpleGrantedAuthority(jwtProperties.getClientRole()))
+                            List.of(new SimpleGrantedAuthority("ROLE_" + jwtProperties.getClientRole()))
                     );
                 } else if (subject.equals(jwtProperties.getEmployeeSubject())) {
-                    long employeeId = claims.get(jwtProperties.getIdClaim(), long.class);
-                    int clubId = claims.get(jwtProperties.getClubIdClaim(), int.class);
+                    long employeeId = claims.get(jwtProperties.getIdClaim(), Long.class);
+                    int clubId = claims.get(jwtProperties.getClubIdClaim(), Integer.class);
                     String clubName = claims.get(jwtProperties.getClubNameClaim(), String.class);
-                    String[] roles = claims.get(jwtProperties.getRolesClaim(), String[].class);
-                    List<SimpleGrantedAuthority> authorities = Arrays.stream(roles)
+                    @SuppressWarnings("unchecked")
+                    List<String> roles = claims.get(jwtProperties.getRolesClaim(), List.class);
+                    List<SimpleGrantedAuthority> authorities = roles.stream()
                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                             .collect(Collectors.toList());
                     EmployeePrincipal principal = new EmployeePrincipal(employeeId, clubId, clubName);

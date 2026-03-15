@@ -9,6 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class CityShortDto {
-    private final short id;
+    private final Short id;
     private final String name;
 }

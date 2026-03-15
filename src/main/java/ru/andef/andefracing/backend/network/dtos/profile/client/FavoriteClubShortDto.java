@@ -14,13 +14,13 @@ public class FavoriteClubShortDto extends ClubShortDto {
     private final PhotoDto mainPhoto;
 
     public FavoriteClubShortDto(
-            int id,
+            Integer id,
             String name,
             String phone,
             String email,
             String address,
-            short cntEquipment,
-            boolean isOpen,
+            Short cntEquipment,
+            Boolean isOpen,
             CityDto city,
             PhotoDto mainPhoto
     ) {

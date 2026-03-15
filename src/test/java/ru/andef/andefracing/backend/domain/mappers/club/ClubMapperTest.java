@@ -102,7 +102,7 @@ class ClubMapperTest {
         assertEquals("test@club.com", dto.getEmail());
         assertEquals("Test Address, 123", dto.getAddress());
         assertEquals((short) 5, dto.getCntEquipment());
-        assertTrue(dto.isOpen());
+        assertTrue(dto.getIsOpen());
         assertNotNull(dto.getCity());
         assertEquals("Москва", dto.getCity().getName());
     }
@@ -142,7 +142,7 @@ class ClubMapperTest {
         assertEquals("test@club.com", dto.getEmail());
         assertEquals("Test Address, 123", dto.getAddress());
         assertEquals((short) 5, dto.getCntEquipment());
-        assertTrue(dto.isOpen());
+        assertTrue(dto.getIsOpen());
         assertNotNull(dto.getCity());
         assertEquals("Москва", dto.getCity().getName());
         assertNotNull(dto.getMainPhoto());
@@ -184,7 +184,7 @@ class ClubMapperTest {
         assertEquals("test@club.com", dto.getEmail());
         assertEquals("Test Address, 123", dto.getAddress());
         assertEquals((short) 5, dto.getCntEquipment());
-        assertTrue(dto.isOpen());
+        assertTrue(dto.getIsOpen());
         assertNotNull(dto.getMainPhoto());
         assertEquals("https://example.com/photo1.jpg", dto.getMainPhoto().url());
     }
@@ -235,7 +235,7 @@ class ClubMapperTest {
         assertEquals("test@club.com", dto.getEmail());
         assertEquals("Test Address, 123", dto.getAddress());
         assertEquals((short) 5, dto.getCntEquipment());
-        assertTrue(dto.isOpen());
+        assertTrue(dto.getIsOpen());
         assertNotNull(dto.getPhotos());
         assertEquals(2, dto.getPhotos().size());
         assertNotNull(dto.getGames());
@@ -263,11 +263,11 @@ class ClubMapperTest {
         assertEquals("test@club.com", dto.getEmail());
         assertEquals("Test Address, 123", dto.getAddress());
         assertEquals((short) 5, dto.getCntEquipment());
-        assertTrue(dto.isOpen());
+        assertTrue(dto.getIsOpen());
     }
 
     @Test
-    @DisplayName("Преобразование Club с isOpen = false")
+    @DisplayName("Преобразование Club с getIsOpen() = false")
     void testToShortDtoClosedClub() {
         // Arrange
         Club club = createTestClub();
@@ -278,7 +278,7 @@ class ClubMapperTest {
 
         // Assert
         assertNotNull(dto);
-        assertFalse(dto.isOpen());
+        assertFalse(dto.getIsOpen());
     }
 
     @Test

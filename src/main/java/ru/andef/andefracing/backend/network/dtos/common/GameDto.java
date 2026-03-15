@@ -4,9 +4,9 @@ package ru.andef.andefracing.backend.network.dtos.common;
  * DTO - игра
  */
 public record GameDto(
-        short id,
+        Short id,
         String name,
         String photoUrl,
-        boolean isActive
+        Boolean isActive
 ) {
 }

@@ -91,7 +91,11 @@ public class Club {
      * Добавление сотрудника в клуб
      */
     public void addEmployee(Employee employee, List<EmployeeRole> roles) {
-        roles.forEach(role -> addRoleForEmployee(employee, role));
+        List<EmployeeRole> fullRoles = new ArrayList<>(roles);
+        if (!fullRoles.contains(EmployeeRole.EMPLOYEE)) {
+            fullRoles.add(EmployeeRole.EMPLOYEE);
+        }
+        fullRoles.forEach(role -> addRoleForEmployee(employee, role));
     }
 
     /**
@@ -123,17 +127,17 @@ public class Club {
      * Удаление сотрудника из клуба
      */
     public boolean deleteEmployee(Employee employee) {
-        boolean deleted = false;
+        boolean isDeleted = false;
         Iterator<EmployeeClub> iterator = employeesAndRoles.iterator();
         while (iterator.hasNext()) {
             EmployeeClub employeeClub = iterator.next();
             if (employeeClub.getEmployee().equals(employee)) {
                 iterator.remove();
                 employee.getClubAndRoles().remove(employeeClub);
-                deleted = true;
+                isDeleted = true;
             }
         }
-        return deleted;
+        return isDeleted;
     }
 
     /**
