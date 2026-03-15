@@ -1,10 +1,13 @@
 package ru.andef.andefracing.backend.data.repositories.club;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
@@ -21,16 +24,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-@Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
+@ActiveProfiles("test")
+@Transactional
+@Sql(scripts = "classpath:scripts/db/truncate-all-tables-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClubRepositoryTest {
-
     private final ClubRepository clubRepository;
     private final ClientRepository clientRepository;
     private final RegionRepository regionRepository;
     private final CityRepository cityRepository;
 
     @Autowired
-    ClubRepositoryTest(
+    public ClubRepositoryTest(
             ClubRepository clubRepository,
             ClientRepository clientRepository,
             RegionRepository regionRepository,

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
@@ -28,6 +29,7 @@ import ru.andef.andefracing.backend.domain.exceptions.management.ClubCloseCondit
 import ru.andef.andefracing.backend.domain.exceptions.management.ClubOpenConditionsNotMetException;
 import ru.andef.andefracing.backend.domain.exceptions.management.InvalidWorkScheduleException;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
+import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
@@ -41,9 +43,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
+@ActiveProfiles("test")
 @Transactional
+@Sql(scripts = "classpath:scripts/db/truncate-all-tables-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ClubManagementServiceTest {
     private final ClubManagementService clubManagementService;
     private final ClubRepository clubRepository;
@@ -1053,5 +1056,127 @@ class ClubManagementServiceTest {
         // Assert
         Price updatedPrice = priceRepository.findById(priceId).orElseThrow();
         assertEquals(new BigDecimal("1501.00"), updatedPrice.getValue());
+    }
+
+    @Test
+    void managePhotosInClubAddsNewPhotosSuccessfully() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
+
+        List<AddPhotoDto> addPhotoDtos = List.of(
+                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1),
+                new AddPhotoDto("http://example.com/photo2.jpg", (short) 2)
+        );
+
+        // Act
+        clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos);
+
+        // Assert
+        Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(2, updatedClub.getPhotos().size());
+        assertTrue(updatedClub.getPhotos().stream().anyMatch(p -> p.getUrl().equals("http://example.com/photo1.jpg") && p.getSequenceNumber() == 1));
+        assertTrue(updatedClub.getPhotos().stream().anyMatch(p -> p.getUrl().equals("http://example.com/photo2.jpg") && p.getSequenceNumber() == 2));
+    }
+
+    @Test
+    void managePhotosInClubUpdatesExistingPhotoSequenceNumber() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
+
+        club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
+        clubRepository.save(club);
+
+        List<AddPhotoDto> addPhotoDtos = List.of(
+                new AddPhotoDto("http://example.com/photo1.jpg", (short) 5) // обновляем sequenceNumber
+        );
+
+        // Act
+        clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos);
+
+        // Assert
+        Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(1, updatedClub.getPhotos().size());
+        assertEquals(5, updatedClub.getPhotos().get(0).getSequenceNumber());
+    }
+
+    @Test
+    void managePhotosInClubRemovesPhotosNotInList() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
+
+        club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
+        club.addPhoto(new Photo("http://example.com/photo2.jpg", (short) 2));
+        clubRepository.save(club);
+
+        List<AddPhotoDto> addPhotoDtos = List.of(
+                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1) // photo2 удалится
+        );
+
+        // Act
+        clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos);
+
+        // Assert
+        Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
+        assertEquals(1, updatedClub.getPhotos().size());
+        assertEquals("http://example.com/photo1.jpg", updatedClub.getPhotos().get(0).getUrl());
+    }
+
+    @Test
+    void managePhotosInClubThrowsExceptionForDuplicateUrls() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
+
+        List<AddPhotoDto> addPhotoDtos = List.of(
+                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1),
+                new AddPhotoDto("http://example.com/photo1.jpg", (short) 2)
+        );
+
+        // Act & Assert
+        assertThrows(DuplicateException.class, () ->
+                clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos)
+        );
+    }
+
+    @Test
+    void managePhotosInClubThrowsExceptionForDuplicateSequenceNumbers() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
+
+        List<AddPhotoDto> addPhotoDtos = List.of(
+                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1),
+                new AddPhotoDto("http://example.com/photo2.jpg", (short) 1)
+        );
+
+        // Act & Assert
+        assertThrows(DuplicateException.class, () ->
+                clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos)
+        );
+    }
+
+    @Test
+    void managePhotosInClubThrowsExceptionForEmptyListInOpenClub() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city);
+        club.setOpen(true);
+        clubRepository.save(club);
+
+        List<AddPhotoDto> addPhotoDtos = List.of();
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () ->
+                clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos)
+        );
     }
 }

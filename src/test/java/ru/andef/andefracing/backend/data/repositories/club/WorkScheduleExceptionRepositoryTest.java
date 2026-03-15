@@ -1,8 +1,11 @@
 package ru.andef.andefracing.backend.data.repositories.club;
 
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.work.schedule.WorkScheduleException;
@@ -19,16 +22,18 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@Sql(scripts = "classpath:scripts/db/create-test-schema.sql")
+@ActiveProfiles("test")
+@Transactional
+@Sql(scripts = "classpath:scripts/db/truncate-all-tables-for-tests.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class WorkScheduleExceptionRepositoryTest {
-
     private final WorkScheduleExceptionRepository workScheduleExceptionRepository;
     private final ClubRepository clubRepository;
     private final RegionRepository regionRepository;
     private final CityRepository cityRepository;
 
     @Autowired
-    WorkScheduleExceptionRepositoryTest(
+    public WorkScheduleExceptionRepositoryTest(
             WorkScheduleExceptionRepository workScheduleExceptionRepository,
             ClubRepository clubRepository,
             RegionRepository regionRepository,
