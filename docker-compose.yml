@@ -13,6 +13,21 @@ services:
       - postgres_data_andef_racing:/var/lib/postgresql/data
       - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
 
+  redis:
+    image: redis:8
+    container_name: AndefRacing-redis
+    restart: unless-stopped
+    ports:
+      - ${REDIS_PORTS}
+    volumes:
+      - redis_data_andef_racing:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory ${REDIS_MAX_MEMORY}
+      --maxmemory-policy allkeys-lru
+      --requirepass ${REDIS_PASSWORD}
+
   postgres-test:
     image: postgres:16
     container_name: AndefRacing-postgres-test
@@ -30,3 +45,4 @@ services:
 
 volumes:
   postgres_data_andef_racing:
+  redis_data_andef_racing:

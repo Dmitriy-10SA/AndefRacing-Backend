@@ -1,8 +1,10 @@
 package ru.andef.andefracing.backend.domain.services.search;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.andef.andefracing.backend.CacheConfig;
 import ru.andef.andefracing.backend.data.entities.location.City;
 import ru.andef.andefracing.backend.data.entities.location.Region;
 import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
@@ -45,6 +47,7 @@ public class LocationSearchService {
     /**
      * Получение всех регионов в которых есть открытые клубы
      */
+    @Cacheable(value = CacheConfig.CacheNames.REGIONS, key = "'all'")
     @Transactional(readOnly = true)
     public List<RegionShortDto> getAllRegionsWithOpenClubs() {
         List<Region> regions = regionRepository.findAllRegionsWithOpenClubs();
@@ -54,6 +57,7 @@ public class LocationSearchService {
     /**
      * Получение всех городов в указанном регионе, в которых есть открытые клубы
      */
+    @Cacheable(value = CacheConfig.CacheNames.CITIES, key = "#regionId")
     @Transactional(readOnly = true)
     public List<CityShortDto> getAllCitiesInRegionWithOpenClubs(short regionId) {
         Region region = findRegionById(regionId);
