@@ -1,4 +1,27 @@
 services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: AndefRacing-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_EXPIRATION_MILLIS: ${JWT_EXPIRATION_MILLIS}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - andef-racing-network
+
   postgres:
     image: postgres:16
     container_name: AndefRacing-postgres
@@ -12,6 +35,8 @@ services:
     volumes:
       - postgres_data_andef_racing:/var/lib/postgresql/data
       - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
+    networks:
+      - andef-racing-network
 
   redis:
     image: redis:8
@@ -27,6 +52,8 @@ services:
       --maxmemory ${REDIS_MAX_MEMORY}
       --maxmemory-policy allkeys-lru
       --requirepass ${REDIS_PASSWORD}
+    networks:
+      - andef-racing-network
 
   postgres-test:
     image: postgres:16
@@ -40,9 +67,15 @@ services:
       - ${POSTGRES_TEST_PORTS}
     volumes:
       - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
+    networks:
+      - andef-racing-network
     profiles:
       - test
 
 volumes:
   postgres_data_andef_racing:
   redis_data_andef_racing:
+
+networks:
+  andef-racing-network:
+    driver: bridge
