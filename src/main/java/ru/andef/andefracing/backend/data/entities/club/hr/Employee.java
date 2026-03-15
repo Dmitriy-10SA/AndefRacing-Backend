@@ -1,9 +1,7 @@
 package ru.andef.andefracing.backend.data.entities.club.hr;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
@@ -47,14 +45,17 @@ public class Employee {
     private String password;
 
     @Column(name = "need_password", nullable = false)
+    @Setter
     private boolean needPassword;
 
     @Column(name = "is_blocked", nullable = false)
+    @Setter
     private boolean isBlocked;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     private List<EmployeeClub> clubAndRoles = new ArrayList<>();
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "createdByEmployee", fetch = FetchType.LAZY)
     private List<Booking> bookings = new ArrayList<>();
 
@@ -72,9 +73,9 @@ public class Employee {
     }
 
     /**
-     * Добавление бронирования, которое было создано сотрудником, только после оплаты (с возвратом бронирования)
+     * Добавление бронирования, которое было создано сотрудником
      */
-    public Booking addBooking(
+    public Booking makeBooking(
             Club club,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime,
@@ -88,6 +89,13 @@ public class Employee {
     }
 
     /**
+     * Подтверждение оплаты бронирования
+     */
+    public void confirmBookingPayment(Booking booking) {
+        booking.confirmPay(this);
+    }
+
+    /**
      * Отмена бронирования
      */
     public void cancelBooking(Booking booking) {
@@ -95,7 +103,7 @@ public class Employee {
     }
 
     /**
-     * Установка пароля сотрудника
+     * Установка|изменение пароля сотрудника
      */
     public void setPassword(String password) {
         if (needPassword) {

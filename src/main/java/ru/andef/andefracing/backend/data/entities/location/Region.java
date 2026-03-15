@@ -12,8 +12,6 @@ import java.util.Objects;
 
 /**
  * Регион
- *
- * @see City город
  */
 @Entity
 @Table(name = "region", schema = "location")
@@ -29,7 +27,7 @@ public class Region {
     @Column(name = "name", unique = true, nullable = false, length = 100)
     private String name;
 
-    @OneToMany(mappedBy = "region", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "region", fetch = FetchType.LAZY)
     @OrderBy(value = "name ASC")
     private List<City> cities = new ArrayList<>();
 

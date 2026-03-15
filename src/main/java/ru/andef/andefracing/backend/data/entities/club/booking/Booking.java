@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 import org.hibernate.proxy.HibernateProxy;
-import ru.andef.andefracing.backend.data.entities.client.Client;
+import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 
@@ -55,6 +57,7 @@ public class Booking {
     private BigDecimal priceValue;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(name = "status", nullable = false)
     private BookingStatus status;
 
@@ -66,8 +69,16 @@ public class Booking {
     @Setter
     private Employee createdByEmployee;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pay_confirmed_by_employee_id")
+    @Setter
+    private Employee payConfirmedByEmployee;
+
+    @Column(name = "note")
+    private String note;
+
     /**
-     * Бронирование, созданное клиентом (оплата в течение 10 минут)
+     * Бронирование, созданное клиентом
      */
     public Booking(
             Club club,
@@ -83,13 +94,14 @@ public class Booking {
         this.endDateTime = endDateTime;
         this.cntEquipment = cntEquipment;
         this.priceValue = priceValue;
-        this.status = BookingStatus.PENDING;
+        this.status = BookingStatus.PENDING_PAYMENT;
         this.isWalkIn = false;
         this.createdByEmployee = null;
+        this.payConfirmedByEmployee = null;
     }
 
     /**
-     * Бронирование, созданное сотрудником (оплата сразу)
+     * Бронирование, созданное сотрудником
      */
     public Booking(
             Club club,
@@ -105,16 +117,18 @@ public class Booking {
         this.endDateTime = endDateTime;
         this.cntEquipment = cntEquipment;
         this.priceValue = priceValue;
-        this.status = BookingStatus.PAID;
+        this.status = BookingStatus.PENDING_PAYMENT;
         this.isWalkIn = true;
         this.createdByEmployee = employee;
+        this.payConfirmedByEmployee = null;
     }
 
     /**
-     * Оплата бронирования
+     * Подтверждение оплаты бронирования
      */
-    public void paid() {
+    public void confirmPay(Employee employee) {
         this.status = BookingStatus.PAID;
+        this.payConfirmedByEmployee = employee;
     }
 
     /**
@@ -122,6 +136,7 @@ public class Booking {
      */
     public void cancel() {
         this.status = BookingStatus.CANCELLED;
+        this.payConfirmedByEmployee = null;
     }
 
     @Override

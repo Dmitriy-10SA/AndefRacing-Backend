@@ -8,10 +8,9 @@ import lombok.Getter;
  * @see Booking бронирование
  */
 public enum BookingStatus {
-    PENDING("Ожидание оплаты"),
+    PENDING_PAYMENT("В ожидании оплаты"),
     PAID("Оплачено"),
-    CANCELLED("Отменено"),
-    EXPIRED("Истекло время для оплаты");
+    CANCELLED("Отменено");
 
     /**
      * Представление в виде текста на русском языке

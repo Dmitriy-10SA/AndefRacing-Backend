@@ -1,0 +1,27 @@
+package ru.andef.andefracing.backend.network.dtos.booking;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.math.BigDecimal;
+
+/**
+ * DTO для создания бронирования
+ */
+@Getter
+@RequiredArgsConstructor
+public abstract class MakeBookingDto {
+    @NotNull
+    @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1")
+    private final Short cntEquipment;
+    @NotNull
+    @Min(1)
+    private final BigDecimal price;
+    @NotNull(message = "Необходимо передать слот")
+    @Valid
+    private final FreeBookingSlotDto slot;
+    private final String note;
+}

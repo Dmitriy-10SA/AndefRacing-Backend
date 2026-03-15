@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: AndefRacing-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_PORTS}
+    volumes:
+      - postgres_data_andef_racing:/var/lib/postgresql/data
+      - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
+
+  postgres-test:
+    image: postgres:16
+    container_name: AndefRacing-postgres-test
+    restart: no
+    environment:
+      POSTGRES_DB: ${POSTGRES_TEST_DB}
+      POSTGRES_USER: ${POSTGRES_TEST_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_TEST_PASSWORD}
+    ports:
+      - ${POSTGRES_TEST_PORTS}
+    volumes:
+      - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
+    profiles:
+      - test
+
+volumes:
+  postgres_data_andef_racing:

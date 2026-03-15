@@ -34,3 +34,6 @@ build/
 
 ### environment variables ###
 /.env
+/docs/.$ER_AndefRacing.drawio.bkp
+/.gigaide/gigaide.properties
+/docs/.~lock.FR_AndefRacing.odt#
