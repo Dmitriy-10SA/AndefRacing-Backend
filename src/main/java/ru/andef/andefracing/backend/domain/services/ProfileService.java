@@ -1,11 +1,14 @@
 package ru.andef.andefracing.backend.domain.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.andef.andefracing.backend.CacheConfig;
 import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
@@ -53,6 +56,7 @@ public class ProfileService {
     /**
      * Получение информации о клиенте
      */
+    @Cacheable(value = CacheConfig.CacheNames.CLIENT_PROFILE, key = "#clientId")
     @Transactional(readOnly = true)
     public ClientPersonalInfoDto getClientPersonalInfo(long clientId) {
         Client client = clientSearchService.findClientById(clientId);
@@ -62,6 +66,7 @@ public class ProfileService {
     /**
      * Редактирование личной информации клиента (имя, номер телефона)
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLIENT_PROFILE, key = "#clientId")
     @Transactional
     public void changeClientPersonalInfo(long clientId, ClientChangePersonalInfoDto changePersonalInfoDto) {
         Client client = clientSearchService.findClientById(clientId);
@@ -118,6 +123,7 @@ public class ProfileService {
     /**
      * Получение информации о сотруднике (фамилия, имя, отчество, номер телефона, роли в текущем клубе)
      */
+    @Cacheable(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, key = "#employeeId + '_' + #clubId")
     @Transactional(readOnly = true)
     public EmployeePersonalInfoDto getEmployeePersonalInfo(long employeeId, int clubId) {
         Employee employee = clubSearchService.findEmployeeById(employeeId);

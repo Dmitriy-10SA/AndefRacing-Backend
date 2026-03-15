@@ -1,8 +1,11 @@
 package ru.andef.andefracing.backend.domain.services.club.management;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.andef.andefracing.backend.CacheConfig;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.Game;
 import ru.andef.andefracing.backend.data.entities.club.Photo;
@@ -74,6 +77,7 @@ public class ClubManagementService {
     /**
      * Добавить активную игру в клуб (из справочника)
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void addGameToClub(int clubId, short gameId) {
         Club club = clubSearchService.findClubById(clubId);
@@ -89,6 +93,7 @@ public class ClubManagementService {
     /**
      * Получение справочника игр (только активных)
      */
+    @Cacheable(value = CacheConfig.CacheNames.GAMES, key = "'all'")
     @Transactional(readOnly = true)
     public List<GameDto> getAllActiveGames() {
         List<Game> games = gameRepository.findAllByIsActiveTrue();
@@ -98,6 +103,7 @@ public class ClubManagementService {
     /**
      * Удалить игру из клуба
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void deleteGameInClub(int clubId, short gameId) {
         Club club = clubSearchService.findClubById(clubId);
@@ -113,6 +119,7 @@ public class ClubManagementService {
     /**
      * Изменение количества симуляторов в выбранном текущим клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void updateCntEquipmentInClub(int clubId, short cntEquipment) {
         Club club = clubSearchService.findClubById(clubId);
@@ -123,6 +130,15 @@ public class ClubManagementService {
     /**
      * Открыть клуб
      */
+    @CacheEvict(
+            value = {
+                    CacheConfig.CacheNames.CLUB_FULL_INFO,
+                    CacheConfig.CacheNames.CLUBS_IN_CITY,
+                    CacheConfig.CacheNames.REGIONS,
+                    CacheConfig.CacheNames.CITIES
+            },
+            allEntries = true
+    )
     @Transactional
     public void openClub(int clubId) {
         Club club = clubSearchService.findClubById(clubId);
@@ -141,6 +157,15 @@ public class ClubManagementService {
     /**
      * Закрыть клуб
      */
+    @CacheEvict(
+            value = {
+                    CacheConfig.CacheNames.CLUB_FULL_INFO,
+                    CacheConfig.CacheNames.CLUBS_IN_CITY,
+                    CacheConfig.CacheNames.REGIONS,
+                    CacheConfig.CacheNames.CITIES
+            },
+            allEntries = true
+    )
     @Transactional
     public void closeClub(int clubId) {
         Club club = clubSearchService.findClubById(clubId);
@@ -156,6 +181,13 @@ public class ClubManagementService {
     /**
      * Управление фотографиями в клубе
      */
+    @CacheEvict(
+            value = {
+                    CacheConfig.CacheNames.CLUB_FULL_INFO,
+                    CacheConfig.CacheNames.CLUBS_IN_CITY
+            },
+            allEntries = true
+    )
     @Transactional
     public void managePhotosInClub(int clubId, List<AddPhotoDto> addPhotoDtos) {
         Set<String> urls = addPhotoDtos.stream().map(AddPhotoDto::url).collect(Collectors.toSet());
@@ -194,6 +226,7 @@ public class ClubManagementService {
     /**
      * Добавление цены за кол-во минут игры в клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void addPriceForMinutesInClub(int clubId, AddPriceDto addPriceDto) {
         Club club = clubSearchService.findClubById(clubId);
@@ -213,6 +246,7 @@ public class ClubManagementService {
     /**
      * Изменение цены за кол-во минут игры в клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void updatePriceForMinutesInClub(int clubId, long priceId, BigDecimal value) {
         Club club = clubSearchService.findClubById(clubId);
@@ -229,6 +263,7 @@ public class ClubManagementService {
     /**
      * Удаление цены за кол-во минут игры в клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void deletePriceForMinutesInClub(int clubId, long priceId) {
         Club club = clubSearchService.findClubById(clubId);
@@ -244,6 +279,7 @@ public class ClubManagementService {
     /**
      * Добавление «дня-исключения» в график работы в выбранном текущим клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void addWorkScheduleExceptionInClub(int clubId, AddWorkScheduleExceptionDto addWorkScheduleExceptionDto) {
         boolean isWorkDay = addWorkScheduleExceptionDto.isWorkDay();
@@ -289,6 +325,7 @@ public class ClubManagementService {
     /**
      * Удаление «дня-исключения» в графике работы в выбранном текущим клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void deleteWorkScheduleExceptionInClub(int clubId, long workScheduleExceptionId) {
         Club club = clubSearchService.findClubById(clubId);
@@ -306,6 +343,7 @@ public class ClubManagementService {
     /**
      * Изменение графика работы, а точнее времени открытия и/или закрытия в конкретный день недели
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
     public void updateWorkScheduleInClub(int clubId, UpdateWorkScheduleDto updateWorkScheduleDto) {
         boolean isWorkDay = updateWorkScheduleDto.isWorkDay();

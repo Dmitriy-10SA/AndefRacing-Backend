@@ -1,11 +1,13 @@
 package ru.andef.andefracing.backend.domain.services.search;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.andef.andefracing.backend.CacheConfig;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.Game;
 import ru.andef.andefracing.backend.data.entities.club.Photo;
@@ -167,6 +169,7 @@ public class ClubSearchService {
     /**
      * Получение всех клубов (работающих) в указанном городе с пагинацией
      */
+    @Cacheable(value = CacheConfig.CacheNames.CLUBS_IN_CITY, key = "#cityId + '_' + #pageNumber + '_' + #pageSize")
     @Transactional(readOnly = true)
     public PagedClubShortListDto getAllOpenClubsInCity(short cityId, int pageNumber, int pageSize) {
         City city = locationSearchService.findCityById(cityId);
@@ -186,6 +189,7 @@ public class ClubSearchService {
     /**
      * Получение подробной информации о клубе
      */
+    @Cacheable(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional(readOnly = true)
     public ClubFullInfoDto getClubFullInfo(int clubId) {
         Club club = findClubById(clubId);
