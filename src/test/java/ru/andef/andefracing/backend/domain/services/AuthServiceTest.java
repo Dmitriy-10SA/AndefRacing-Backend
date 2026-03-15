@@ -112,12 +112,6 @@ class AuthServiceTest {
         clientRepository.save(client);
     }
 
-    private Employee createEmployee() {
-        Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
-        employee.setPassword("password");
-        return employeeRepository.save(employee);
-    }
-
     private Employee createEmployeeWithPassword() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
         String passwordHash = passwordEncoder.encode("password123");
