@@ -153,7 +153,7 @@ public class ClubHrManagementService {
     @Transactional
     public void addRoleToEmployeeInClub(int clubId, long employeeId, EmployeeRole role) {
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
         List<EmployeeRole> rolesInClub = findEmployeeRolesInClub(club, employee);
         if (rolesInClub.isEmpty()) {
             throw new EntityNotFoundException("Сотрудник c id " + employeeId + " не найден в клубе");
@@ -173,7 +173,7 @@ public class ClubHrManagementService {
             throw new IllegalArgumentException("Нельзя изменить роль EMPLOYEE на другую роль");
         }
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
         deleteEmployeeRoleInClub(club, employee, oldRole);
         club.addRoleForEmployee(employee, newRole);
         clubRepository.save(club);
@@ -185,7 +185,7 @@ public class ClubHrManagementService {
     @Transactional
     public void deleteEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole role) {
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
         if (role.equals(EmployeeRole.EMPLOYEE) && findEmployeeRolesInClub(club, employee).size() > 1) {
             throw new IllegalArgumentException(
                     "Нельзя удалить роль EMPLOYEE у сотрудника, у которого есть другие роли"
