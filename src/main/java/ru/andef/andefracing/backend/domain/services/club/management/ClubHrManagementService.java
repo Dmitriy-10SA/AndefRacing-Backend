@@ -1,8 +1,10 @@
 package ru.andef.andefracing.backend.domain.services.club.management;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.andef.andefracing.backend.CacheConfig;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.entities.club.hr.EmployeeClub;
@@ -150,6 +152,7 @@ public class ClubHrManagementService {
     /**
      * Добавить роль сотруднику в выбранном текущим клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, allEntries = true)
     @Transactional
     public void addRoleToEmployeeInClub(int clubId, long employeeId, EmployeeRole role) {
         Club club = clubSearchService.findClubById(clubId);
@@ -167,6 +170,7 @@ public class ClubHrManagementService {
     /**
      * Изменить роль сотрудника в выбранном текущем клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, allEntries = true)
     @Transactional
     public void updateEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole oldRole, EmployeeRole newRole) {
         if (oldRole.equals(EmployeeRole.EMPLOYEE)) {
@@ -182,6 +186,7 @@ public class ClubHrManagementService {
     /**
      * Удалить роль сотрудника в выбранном текущим клубе
      */
+    @CacheEvict(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, allEntries = true)
     @Transactional
     public void deleteEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole role) {
         Club club = clubSearchService.findClubById(clubId);
