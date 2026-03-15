@@ -12,7 +12,10 @@ import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
-import ru.andef.andefracing.backend.domain.exceptions.management.*;
+import ru.andef.andefracing.backend.domain.exceptions.management.CannotAddExceptionDayDueToExistingBookingsException;
+import ru.andef.andefracing.backend.domain.exceptions.management.ClubCloseConditionsNotMetException;
+import ru.andef.andefracing.backend.domain.exceptions.management.ClubOpenConditionsNotMetException;
+import ru.andef.andefracing.backend.domain.exceptions.management.InvalidWorkScheduleException;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PriceMapper;
@@ -28,7 +31,11 @@ import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkSc
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.*;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -147,62 +154,40 @@ public class ClubManagementService {
     }
 
     /**
-     * Добавление фотографии в клуб
+     * Управление фотографиями в клубе
      */
     @Transactional
-    public void addPhotoInClub(int clubId, AddPhotoDto addPhotoDto) {
+    public void managePhotosInClub(int clubId, List<AddPhotoDto> addPhotoDtos) {
+        Set<String> urls = addPhotoDtos.stream().map(AddPhotoDto::url).collect(Collectors.toSet());
+        if (addPhotoDtos.size() != urls.size()) {
+            throw new DuplicateException("В списке фотографий есть дубликаты url");
+        }
+        Set<Short> sequenceNumbers = addPhotoDtos.stream()
+                .map(AddPhotoDto::sequenceNumber)
+                .collect(Collectors.toSet());
+        if (addPhotoDtos.size() != sequenceNumbers.size()) {
+            throw new DuplicateException("В списке фотографий есть дубликаты sequenceNumber");
+        }
         Club club = clubSearchService.findClubById(clubId);
+        if (club.isOpen() && addPhotoDtos.isEmpty()) {
+            throw new IllegalArgumentException("Для открытого клуба список фотографий не может быть пустым");
+        }
+        Map<String, AddPhotoDto> addPhotoDtosMap = addPhotoDtos.stream()
+                .collect(Collectors.toMap(AddPhotoDto::url, dto -> dto));
         List<Photo> photosInClub = club.getPhotos();
-        List<String> urls = photosInClub.stream().map(Photo::getUrl).toList();
-        List<Short> sequenceNumbers = photosInClub.stream().map(Photo::getSequenceNumber).toList();
-        if (urls.contains(addPhotoDto.url())) {
-            throw new DuplicateException("Фото с url" + addPhotoDto.url() + " уже существует в клубе");
-        } else if (sequenceNumbers.contains(addPhotoDto.sequenceNumber())) {
-            throw new DuplicateException(
-                    "Фото с sequenceNumber" + addPhotoDto.sequenceNumber() + " уже существует в клубе"
-            );
-        }
-        Photo photo = photoMapper.toEntity(addPhotoDto);
-        club.addPhoto(photo);
-        clubRepository.save(club);
-    }
-
-    /**
-     * Удаление фотографии из клуба
-     */
-    @Transactional
-    public void deletePhotoFromClub(int clubId, long photoId) {
-        Club club = clubSearchService.findClubById(clubId);
-        Photo photo = clubSearchService.findPhotoById(photoId);
-        boolean isDeleted = club.deletePhoto(photo);
-        if (isDeleted) {
-            clubRepository.save(club);
-        } else {
-            throw new EntityNotFoundException("Фото с id " + photoId + " не найдено в клубе");
-        }
-    }
-
-    /**
-     * Переупорядочивание фотографий в клубе
-     */
-    @Transactional
-    public void reorderPhotosInClub(int clubId, List<Long> orderedPhotoIds) {
-        Club club = clubSearchService.findClubById(clubId);
-        List<Photo> photosInClub = club.getPhotos();
-        if (photosInClub.size() != orderedPhotoIds.size()) {
-            throw new PhotoReorderMismatchException(
-                    "Несовпадение кол-ва фотографий в клубе (" + photosInClub.size() +
-                            ") и для переупорядочивания (" + orderedPhotoIds.size() + ")"
-            );
-        }
-        photosInClub.forEach(photo -> {
-            if (!orderedPhotoIds.contains(photo.getId())) {
-                throw new PhotoReorderMismatchException(
-                        "Фото с id " + photo.getId() + " не указано, хотя должно быть"
-                );
+        Iterator<Photo> photoIterator = photosInClub.iterator();
+        while (photoIterator.hasNext()) {
+            Photo photo = photoIterator.next();
+            if (!addPhotoDtosMap.containsKey(photo.getUrl())) {
+                photoIterator.remove();
+            } else {
+                photo.setSequenceNumber(addPhotoDtosMap.get(photo.getUrl()).sequenceNumber());
+                addPhotoDtosMap.remove(photo.getUrl());
             }
-        });
-        club.reorderPhotos(orderedPhotoIds);
+        }
+        for (AddPhotoDto dto : addPhotoDtosMap.values()) {
+            club.addPhoto(photoMapper.toEntity(dto));
+        }
         clubRepository.save(club);
     }
 
