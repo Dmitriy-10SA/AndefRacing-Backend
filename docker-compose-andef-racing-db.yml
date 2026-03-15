@@ -25,6 +25,8 @@ services:
       - ${POSTGRES_TEST_PORTS}
     volumes:
       - ./src/main/scripts/db/init:/docker-entrypoint-initdb.d
+    profiles:
+      - test
 
 volumes:
   postgres_data_andef_racing:
