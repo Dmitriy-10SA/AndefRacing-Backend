@@ -11,7 +11,7 @@ import java.time.LocalTime;
  */
 public record WorkScheduleExceptionDto(
         Long id,
-        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         LocalTime openTime,
         LocalTime closeTime,
         @NotNull Boolean isWorkDay,

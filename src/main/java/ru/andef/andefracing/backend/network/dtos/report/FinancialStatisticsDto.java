@@ -11,12 +11,12 @@ import java.util.List;
  */
 public record FinancialStatisticsDto(
         Integer clubId,
-        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
-        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
         BigDecimal totalRevenue,
         List<DateAndTotalRevenueDto> dateAndTotalRevenues,
         BigDecimal averageReceipt
 ) {
-    public record DateAndTotalRevenueDto(@DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, BigDecimal revenue) {
+    public record DateAndTotalRevenueDto(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, BigDecimal revenue) {
     }
 }

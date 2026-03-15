@@ -10,7 +10,7 @@ import java.time.LocalTime;
  * DTO для добавления дня-исключения в расписании работы
  */
 public record AddWorkScheduleExceptionDto(
-        @NotNull(message = "Необходимо передать дату") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
+        @NotNull(message = "Необходимо передать дату") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         LocalTime openTime,
         LocalTime closeTime,
         @NotNull Boolean isWorkDay,

@@ -11,12 +11,12 @@ import java.util.List;
  */
 public record BookingStatisticsDto(
         Integer clubId,
-        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
-        @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
         Long bookingsCount,
         BigDecimal cancellationsPercent,
         List<DateAndBookingsCountDto> dateAndBookingsCountDtoList
 ) {
-    public record DateAndBookingsCountDto(@DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, Long bookingsCount) {
+    public record DateAndBookingsCountDto(@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Long bookingsCount) {
     }
 }

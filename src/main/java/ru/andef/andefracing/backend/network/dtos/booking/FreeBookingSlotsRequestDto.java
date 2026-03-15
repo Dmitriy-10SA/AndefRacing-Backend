@@ -12,6 +12,6 @@ import java.time.LocalDate;
 public record FreeBookingSlotsRequestDto(
         @NotNull@Min(value = 1, message = "Длительность бронирования должна быть >= 1 минуты") Short durationMinutes,
         @NotNull @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1") Short cntEquipment,
-        @NotNull(message = "Необходимо передать дату") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date
+        @NotNull(message = "Необходимо передать дату") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
 ) {
 }
