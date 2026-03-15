@@ -10,13 +10,13 @@ import java.util.List;
  * DTO для отчета «Cтатистика бронирований»
  */
 public record BookingStatisticsDto(
-        int clubId,
+        Integer clubId,
         @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
         @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
-        long bookingsCount,
+        Long bookingsCount,
         BigDecimal cancellationsPercent,
         List<DateAndBookingsCountDto> dateAndBookingsCountDtoList
 ) {
-    public record DateAndBookingsCountDto(@DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, long bookingsCount) {
+    public record DateAndBookingsCountDto(@DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date, Long bookingsCount) {
     }
 }

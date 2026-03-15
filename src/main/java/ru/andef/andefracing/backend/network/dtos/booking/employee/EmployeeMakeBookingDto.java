@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * DTO для создания бронирования сотрудником
  */
 public class EmployeeMakeBookingDto extends MakeBookingDto {
-    public EmployeeMakeBookingDto(short cntEquipment, BigDecimal price, FreeBookingSlotDto slot, String note) {
+    public EmployeeMakeBookingDto(Short cntEquipment, BigDecimal price, FreeBookingSlotDto slot, String note) {
         super(cntEquipment, price, slot, note);
     }
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -74,8 +75,8 @@ public class ClientProfileController {
      */
     @GetMapping(path = "/favorite-clubs", version = ApiVersions.V1)
     public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs(
-            @RequestParam @Min(value = 0) int pageNumber,
-            @RequestParam @Min(value = 1) @Max(value = 100) int pageSize,
+            @RequestParam @NotNull @Min(value = 0) Integer pageNumber,
+            @RequestParam @NotNull@Min(value = 1) @Max(value = 100) Integer pageSize,
             Authentication authentication
     ) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();

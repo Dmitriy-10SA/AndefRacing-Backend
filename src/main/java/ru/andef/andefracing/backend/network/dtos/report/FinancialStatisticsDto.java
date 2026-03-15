@@ -10,7 +10,7 @@ import java.util.List;
  * DTO для отчета «Финансовая статистика»
  */
 public record FinancialStatisticsDto(
-        int clubId,
+        Integer clubId,
         @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
         @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
         BigDecimal totalRevenue,

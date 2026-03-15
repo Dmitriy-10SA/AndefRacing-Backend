@@ -11,13 +11,13 @@ public class ClubInfoDto extends ClubShortDto {
     private final PhotoDto mainPhoto;
 
     public ClubInfoDto(
-            int id,
+            Integer id,
             String name,
             String phone,
             String email,
             String address,
-            short cntEquipment,
-            boolean isOpen,
+            Short cntEquipment,
+            Boolean isOpen,
             PhotoDto mainPhoto
     ) {
         super(id, name, phone, email, address, cntEquipment, isOpen);

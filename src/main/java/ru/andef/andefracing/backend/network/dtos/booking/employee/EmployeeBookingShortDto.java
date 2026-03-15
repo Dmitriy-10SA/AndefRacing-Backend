@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
  */
 public class EmployeeBookingShortDto extends BookingShortDto {
     public EmployeeBookingShortDto(
-            long id,
+            Long id,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime,
             BookingStatus status

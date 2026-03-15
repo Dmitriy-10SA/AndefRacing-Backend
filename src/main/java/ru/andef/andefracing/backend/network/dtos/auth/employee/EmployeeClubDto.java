@@ -17,8 +17,8 @@ public class EmployeeClubDto extends ClubShortDto {
             String phone,
             String email,
             String address,
-            short cntEquipment,
-            boolean isOpen,
+            Short cntEquipment,
+            Boolean isOpen,
             CityDto city
     ) {
         super(id, name, phone, email, address, cntEquipment, isOpen);

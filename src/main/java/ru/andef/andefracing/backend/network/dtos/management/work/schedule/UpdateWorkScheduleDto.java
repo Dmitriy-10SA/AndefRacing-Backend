@@ -12,6 +12,6 @@ public record UpdateWorkScheduleDto(
         @NotNull(message = "Необходимо передать дату") DayOfWeek dayOfWeek,
         LocalTime openTime,
         LocalTime closeTime,
-        boolean isWorkDay
+        @NotNull Boolean isWorkDay
 ) {
 }

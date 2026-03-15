@@ -12,7 +12,7 @@ import java.time.OffsetDateTime;
 @Getter
 @RequiredArgsConstructor
 public abstract class BookingShortDto {
-    private final long id;
+    private final Long id;
     private final OffsetDateTime startDateTime;
     private final OffsetDateTime endDateTime;
     private final BookingStatus status;

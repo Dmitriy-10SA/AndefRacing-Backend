@@ -4,7 +4,7 @@ package ru.andef.andefracing.backend.network.dtos.management.hr;
  * DTO - сотрудник
  */
 public record EmployeeDto(
-        long id,
+        Long id,
         String surname,
         String name,
         String patronymic,

@@ -12,17 +12,17 @@ import java.time.OffsetDateTime;
  */
 @Getter
 public class EmployeeBookingFullInfoDto extends EmployeeBookingShortDto {
-    private final short cntEquipment;
+    private final Short cntEquipment;
     private final BigDecimal price;
     private final String note;
     private final ClientDto client;
 
     public EmployeeBookingFullInfoDto(
-            long id,
+            Long id,
             OffsetDateTime startDateTime,
             OffsetDateTime endDateTime,
             BookingStatus status,
-            short cntEquipment,
+            Short cntEquipment,
             BigDecimal price,
             String note,
             ClientDto client

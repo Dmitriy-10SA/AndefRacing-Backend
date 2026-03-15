@@ -51,8 +51,8 @@ public class ClubWorkScheduleManagementController {
      */
     @GetMapping(path = "/exceptions", version = ApiVersions.V1)
     public ResponseEntity<List<WorkScheduleExceptionDto>> getAllWorkSchedulesExceptionsInClub(
-            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
-            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
+            @RequestParam("startDate") @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();

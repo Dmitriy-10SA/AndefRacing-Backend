@@ -6,8 +6,8 @@ import java.math.BigDecimal;
  * DTO - цена за количество минут
  */
 public record PriceDto(
-        long id,
-        short durationMinutes,
+        Long id,
+        Short durationMinutes,
         BigDecimal value
 ) {
 }

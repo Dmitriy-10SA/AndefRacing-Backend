@@ -36,8 +36,8 @@ public class ReportController {
      */
     @GetMapping(path = "/booking-statistics", version = ApiVersions.V1)
     public ResponseEntity<BookingStatisticsDto> getBookingStatistics(
-            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
-            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
+            @RequestParam("startDate") @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
@@ -55,8 +55,8 @@ public class ReportController {
      */
     @GetMapping(path = "/financial-statistics", version = ApiVersions.V1)
     public ResponseEntity<FinancialStatisticsDto> getFinancialStatistics(
-            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
-            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
+            @RequestParam("startDate") @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam("endDate") @NotNull @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();

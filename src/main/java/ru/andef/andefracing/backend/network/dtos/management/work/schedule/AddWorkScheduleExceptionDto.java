@@ -13,7 +13,7 @@ public record AddWorkScheduleExceptionDto(
         @NotNull(message = "Необходимо передать дату") @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate date,
         LocalTime openTime,
         LocalTime closeTime,
-        boolean isWorkDay,
+        @NotNull Boolean isWorkDay,
         String description
 ) {
 }

@@ -2,6 +2,7 @@ package ru.andef.andefracing.backend.network.controllers.booking;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -42,13 +43,26 @@ public class EmployeeBookingController {
      */
     @GetMapping(path = "/free-slots", version = ApiVersions.V1)
     public ResponseEntity<List<FreeBookingSlotDto>> getFreeBookingSlotsInClub(
-            @RequestBody @Valid FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
+            @NotNull
+            @Min(value = 15, message = "Длительность бронирования должна быть >= 15 минут")
+            Short durationMinutes,
+            @NotNull
+            @Min(value = 1, message = "Кол-во оборудования для бронирования должно быть >= 1")
+            Short cntEquipment,
+            @NotNull(message = "Необходимо передать дату")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        FreeBookingSlotsRequestDto freeBookingSlotsRequestDto = new FreeBookingSlotsRequestDto(
+                durationMinutes,
+                cntEquipment,
+                date
+        );
         List<FreeBookingSlotDto> freeBookingSlots = bookingSearchService
                 .getFreeBookingSlotsInClub(principal.clubId(), freeBookingSlotsRequestDto);
         return ResponseEntity.ok(freeBookingSlots);
@@ -101,8 +115,14 @@ public class EmployeeBookingController {
      */
     @GetMapping(version = ApiVersions.V1)
     public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
-            @RequestParam("startDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
-            @RequestParam("endDate") @NotNull @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate,
+            @RequestParam("startDate")
+            @NotNull
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate startDate,
+            @RequestParam("endDate")
+            @NotNull
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
             @NotBlank(message = "Номер телефона должен быть заполнен")
             @Pattern(

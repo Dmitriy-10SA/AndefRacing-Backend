@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
  */
 @Getter
 public class ClientBookingFullInfoDto extends ClientBookingShortDto {
-    private final short cntEquipment;
+    private final Short cntEquipment;
     private final BigDecimal price;
     private final String note;
 
@@ -24,7 +24,7 @@ public class ClientBookingFullInfoDto extends ClientBookingShortDto {
             BookingStatus status,
             ClubShortDto club,
             CityDto city,
-            short cntEquipment,
+            Short cntEquipment,
             BigDecimal price,
             String note
     ) {
