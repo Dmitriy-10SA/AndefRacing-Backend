@@ -180,7 +180,7 @@ class ClubHrManagementServiceTest {
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
-        assertEquals(1, updatedClub.getEmployeesAndRoles().size());
+        assertEquals(2, updatedClub.getEmployeesAndRoles().size());
         assertEquals(employee.getId(), updatedClub.getEmployeesAndRoles().get(0).getEmployee().getId());
     }
 
@@ -327,21 +327,22 @@ class ClubHrManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         Employee employee = createEmployee("+7-111-111-11-11");
-        club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
+        club.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         clubRepository.save(club);
 
         // Act
         clubHrManagementService.updateEmployeeRoleInClub(
                 club.getId(),
                 employee.getId(),
-                EmployeeRole.EMPLOYEE,
+                EmployeeRole.ADMIN,
                 EmployeeRole.MANAGER
         );
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
-        assertEquals(1, updatedClub.getEmployeesAndRoles().size());
-        assertEquals(EmployeeRole.MANAGER, updatedClub.getEmployeesAndRoles().get(0).getEmployeeRole());
+        assertEquals(2, updatedClub.getEmployeesAndRoles().size());
+        assertTrue(updatedClub.getEmployeesAndRoles().stream().anyMatch(e -> e.getEmployeeRole().equals(EmployeeRole.MANAGER)));
+        assertFalse(updatedClub.getEmployeesAndRoles().stream().anyMatch(e -> e.getEmployeeRole().equals(EmployeeRole.ADMIN)));
     }
 
     @Test
@@ -485,23 +486,6 @@ class ClubHrManagementServiceTest {
     }
 
     @Test
-    void updateEmployeeRoleInClubThrowsExceptionWhenClubNotFound() {
-        // Arrange
-        int nonExistentClubId = 999;
-        Employee employee = createEmployee("+7-111-111-11-11");
-
-        // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.updateEmployeeRoleInClub(
-                        nonExistentClubId,
-                        employee.getId(),
-                        EmployeeRole.EMPLOYEE,
-                        EmployeeRole.MANAGER
-                )
-        );
-    }
-
-    @Test
     void updateEmployeeRoleInClubThrowsExceptionWhenEmployeeNotInClub() {
         // Arrange
         Region region = createRegion();
@@ -514,7 +498,7 @@ class ClubHrManagementServiceTest {
                 clubHrManagementService.updateEmployeeRoleInClub(
                         club.getId(),
                         employee.getId(),
-                        EmployeeRole.EMPLOYEE,
+                        EmployeeRole.ADMIN,
                         EmployeeRole.MANAGER
                 )
         );

@@ -91,10 +91,11 @@ public class Club {
      * Добавление сотрудника в клуб
      */
     public void addEmployee(Employee employee, List<EmployeeRole> roles) {
-        if (!roles.contains(EmployeeRole.EMPLOYEE)) {
-            roles.add(EmployeeRole.EMPLOYEE);
+        List<EmployeeRole> fullRoles = new ArrayList<>(roles);
+        if (!fullRoles.contains(EmployeeRole.EMPLOYEE)) {
+            fullRoles.add(EmployeeRole.EMPLOYEE);
         }
-        roles.forEach(role -> addRoleForEmployee(employee, role));
+        fullRoles.forEach(role -> addRoleForEmployee(employee, role));
     }
 
     /**

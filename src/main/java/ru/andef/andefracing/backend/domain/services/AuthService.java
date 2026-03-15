@@ -30,6 +30,8 @@ import ru.andef.andefracing.backend.network.dtos.auth.employee.EmployeeLoginDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtUtils;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -138,8 +140,8 @@ public class AuthService {
         } else {
             checkPassword(loginDto.getPassword(), employee.getPassword());
         }
-        List<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).toList();
-        return clubMapper.toEmployeeClubDto(clubs, cityMapper, regionMapper);
+        Set<Club> clubs = employee.getClubAndRoles().stream().map(EmployeeClub::getClub).collect(Collectors.toSet());
+        return clubMapper.toEmployeeClubDto(clubs.stream().toList(), cityMapper, regionMapper);
     }
 
     /**
