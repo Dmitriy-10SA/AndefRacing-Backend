@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
+import ru.andef.andefracing.backend.data.entities.club.Club;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -38,6 +40,27 @@ public class WorkScheduleException {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", nullable = false)
+    @Setter
+    private Club club;
+
+    public WorkScheduleException(
+            long id,
+            LocalDate date,
+            LocalTime openTime,
+            LocalTime closeTime,
+            boolean isWorkDay,
+            String description
+    ) {
+        this.id = id;
+        this.date = date;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.isWorkDay = isWorkDay;
+        this.description = description;
+    }
 
     /**
      * Нерабочий день-исключение

@@ -31,6 +31,17 @@ public class Photo {
     @Setter
     private short sequenceNumber;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", nullable = false)
+    @Setter
+    private Club club;
+
+    public Photo(long id, String url, short sequenceNumber) {
+        this.id = id;
+        this.url = url;
+        this.sequenceNumber = sequenceNumber;
+    }
+
     public Photo(String url, short sequenceNumber) {
         this.url = url;
         this.sequenceNumber = sequenceNumber;
