@@ -5,6 +5,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.andef.andefracing.backend.CacheConfig;
 import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.Game;
@@ -25,19 +26,22 @@ import ru.andef.andefracing.backend.domain.mappers.club.PriceMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.WorkScheduleExceptionMapper;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
-import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.*;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -189,36 +193,36 @@ public class ClubManagementService {
             allEntries = true
     )
     @Transactional
-    public void managePhotosInClub(int clubId, List<AddPhotoDto> addPhotoDtos) {
-        Set<String> urls = addPhotoDtos.stream().map(AddPhotoDto::url).collect(Collectors.toSet());
-        if (addPhotoDtos.size() != urls.size()) {
+    public void managePhotosInClub(int clubId, List<MultipartFile> files) throws IOException {
+        Set<String> fileNames = files.stream().map(MultipartFile::getOriginalFilename).collect(Collectors.toSet());
+        if (files.size() != fileNames.size()) {
             throw new DuplicateException("В списке фотографий есть дубликаты url");
         }
-        Set<Short> sequenceNumbers = addPhotoDtos.stream()
-                .map(AddPhotoDto::sequenceNumber)
-                .collect(Collectors.toSet());
-        if (addPhotoDtos.size() != sequenceNumbers.size()) {
-            throw new DuplicateException("В списке фотографий есть дубликаты sequenceNumber");
-        }
         Club club = clubSearchService.findClubById(clubId);
-        if (club.isOpen() && addPhotoDtos.isEmpty()) {
+        if (club.isOpen() && files.isEmpty()) {
             throw new IllegalArgumentException("Для открытого клуба список фотографий не может быть пустым");
+        } else if (!club.isOpen() && files.isEmpty()) {
+            club.getPhotos().clear();
+            clubRepository.save(club);
+            return;
         }
-        Map<String, AddPhotoDto> addPhotoDtosMap = addPhotoDtos.stream()
-                .collect(Collectors.toMap(AddPhotoDto::url, dto -> dto));
-        List<Photo> photosInClub = club.getPhotos();
-        Iterator<Photo> photoIterator = photosInClub.iterator();
-        while (photoIterator.hasNext()) {
-            Photo photo = photoIterator.next();
-            if (!addPhotoDtosMap.containsKey(photo.getUrl())) {
-                photoIterator.remove();
-            } else {
-                photo.setSequenceNumber(addPhotoDtosMap.get(photo.getUrl()).sequenceNumber());
-                addPhotoDtosMap.remove(photo.getUrl());
-            }
-        }
-        for (AddPhotoDto dto : addPhotoDtosMap.values()) {
-            club.addPhoto(photoMapper.toEntity(dto));
+        club.getPhotos().clear();
+        clubRepository.flush();
+        Path uploadDirPath = Paths.get(
+                System.getProperty("user.home"),
+                "app",
+                "uploads",
+                "clubs",
+                String.valueOf(clubId)
+        );
+        Files.createDirectories(uploadDirPath);
+        short sequenceNumber = 1;
+        for (MultipartFile file : files) {
+            String fileName = UUID.randomUUID() + ".jpg";
+            Path filePath = uploadDirPath.resolve(fileName);
+            file.transferTo(filePath.toFile());
+            String url = "/files/clubs/" + clubId + "/" + fileName;
+            club.addPhoto(new Photo(url, sequenceNumber++));
         }
         clubRepository.save(club);
     }
