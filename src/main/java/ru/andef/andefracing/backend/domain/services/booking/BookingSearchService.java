@@ -149,7 +149,7 @@ public class BookingSearchService {
                 .orElseThrow(() ->
                         new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
                 );
-        return bookingMapper.toClientBookingFullInfoDto(booking, clientMapper);
+        return bookingMapper.toClientBookingFullInfoDto(booking, clientMapper, clubMapper, cityMapper, regionMapper);
     }
 
     /**

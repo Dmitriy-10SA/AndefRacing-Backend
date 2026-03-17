@@ -56,5 +56,20 @@ public interface BookingMapper {
     @Mapping(target = "client", expression = "java(clientMapper.toDto(booking.getClient()))")
     EmployeeBookingFullInfoDto toEmployeeBookingFullInfoDto(Booking booking, @Context ClientMapper clientMapper);
 
-    ClientBookingFullInfoDto toClientBookingFullInfoDto(Booking booking, @Context ClientMapper clientMapper);
+    @Mapping(target = "id", expression = "java(booking.getId())")
+    @Mapping(target = "startDateTime", expression = "java(booking.getStartDateTime())")
+    @Mapping(target = "endDateTime", expression = "java(booking.getEndDateTime())")
+    @Mapping(target = "status", expression = "java(booking.getStatus())")
+    @Mapping(target = "club", expression = "java(clubMapper.toShortDto(booking.getClub()))")
+    @Mapping(target = "city", expression = "java(cityMapper.toDto(booking.getClub().getCity(), regionMapper))")
+    @Mapping(target = "cntEquipment", expression = "java(booking.getCntEquipment())")
+    @Mapping(target = "price", expression = "java(booking.getPriceValue())")
+    @Mapping(target = "note", expression = "java(booking.getNote())")
+    ClientBookingFullInfoDto toClientBookingFullInfoDto(
+            Booking booking,
+            @Context ClientMapper clientMapper,
+            @Context ClubMapper clubMapper,
+            @Context CityMapper cityMapper,
+            @Context RegionMapper regionMapper
+    );
 }
