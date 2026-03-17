@@ -1,6 +1,7 @@
 package ru.andef.andefracing.backend.domain.services.club.management;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -56,6 +57,9 @@ public class ClubManagementService {
     private final GameMapper gameMapper;
     private final PriceMapper priceMapper;
     private final WorkScheduleExceptionMapper workScheduleExceptionMapper;
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     /**
      * Валидация графика работы
@@ -205,13 +209,7 @@ public class ClubManagementService {
         }
         club.getPhotos().clear();
         clubRepository.flush();
-        Path uploadDirPath = Paths.get(
-                System.getProperty("user.home"),
-                "app",
-                "uploads",
-                "clubs",
-                String.valueOf(clubId)
-        );
+        Path uploadDirPath = Paths.get(uploadPath, "clubs", String.valueOf(clubId));
         Files.createDirectories(uploadDirPath);
         short sequenceNumber = 1;
         for (MultipartFile file : files) {

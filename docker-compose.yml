@@ -19,6 +19,8 @@ services:
     depends_on:
       - postgres
       - redis
+    volumes:
+      - ./uploads:/uploads
     networks:
       - andef-racing-network
 
