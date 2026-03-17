@@ -43,7 +43,7 @@ public interface ClubMapper {
     @Mapping(target = "cntEquipment", expression = "java(club.getCntEquipment())")
     @Mapping(target = "isOpen", expression = "java(club.isOpen())")
     @Mapping(target = "city", expression = "java(cityMapper.toDto(club.getCity(), regionMapper))")
-    @Mapping(target = "mainPhoto", expression = "java(photoMapper.toDto(club.getPhotos().get(0)))")
+    @Mapping(target = "mainPhoto", expression = "java(club.getPhotos().isEmpty() ? null : photoMapper.toDto(club.getPhotos().get(0)))")
     FavoriteClubShortDto toFavoriteClubShortDto(
             Club club,
             @Context CityMapper cityMapper,
@@ -65,7 +65,7 @@ public interface ClubMapper {
     @Mapping(target = "address", expression = "java(club.getAddress())")
     @Mapping(target = "cntEquipment", expression = "java(club.getCntEquipment())")
     @Mapping(target = "isOpen", expression = "java(club.isOpen())")
-    @Mapping(target = "mainPhoto", expression = "java(photoMapper.toDto(club.getPhotos().get(0)))")
+    @Mapping(target = "mainPhoto", expression = "java(club.getPhotos().isEmpty() ? null : photoMapper.toDto(club.getPhotos().get(0)))")
     ClubInfoDto toInfoDto(Club club, @Context PhotoMapper photoMapper);
 
     List<ClubInfoDto> toInfoDto(List<Club> clubs, @Context PhotoMapper photoMapper);

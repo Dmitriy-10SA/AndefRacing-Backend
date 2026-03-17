@@ -32,6 +32,17 @@ public class Price {
     @Setter
     private BigDecimal value;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", nullable = false)
+    @Setter
+    private Club club;
+
+    public Price(long id, short durationMinutes, BigDecimal value) {
+        this.id = id;
+        this.durationMinutes = durationMinutes;
+        this.value = value;
+    }
+
     public Price(short durationMinutes, BigDecimal value) {
         this.durationMinutes = durationMinutes;
         this.value = value;

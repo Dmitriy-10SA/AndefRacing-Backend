@@ -13,8 +13,10 @@ import ru.andef.andefracing.backend.data.entities.location.City;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Клуб
@@ -54,12 +56,11 @@ public class Club {
     @Setter
     private boolean isOpen;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "club_id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy(value = "sequenceNumber ASC")
     private List<Photo> photos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "club", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EmployeeClub> employeesAndRoles = new ArrayList<>();
 
     @Getter(AccessLevel.NONE)
@@ -72,19 +73,16 @@ public class Club {
     )
     private List<Game> games = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "club_id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy(value = "durationMinutes ASC")
     private List<Price> prices = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "club_id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "club", cascade = CascadeType.ALL)
     @OrderBy(value = "dayOfWeek ASC")
     private List<WorkSchedule> workSchedules = new ArrayList<>();
 
     @Getter(AccessLevel.NONE)
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "club_id", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WorkScheduleException> workScheduleExceptions = new ArrayList<>();
 
     /**
@@ -145,6 +143,7 @@ public class Club {
      */
     public void addWorkScheduleException(WorkScheduleException workScheduleException) {
         workScheduleExceptions.add(workScheduleException);
+        workScheduleException.setClub(this);
     }
 
     /**
@@ -152,6 +151,7 @@ public class Club {
      */
     public void deleteWorkScheduleException(WorkScheduleException workScheduleException) {
         workScheduleExceptions.remove(workScheduleException);
+        workScheduleException.setClub(this);
     }
 
     /**
@@ -168,6 +168,7 @@ public class Club {
                 workSchedule.setWorkDay(isWorkDay);
                 workSchedule.setOpenTime(openTime);
                 workSchedule.setCloseTime(closeTime);
+                workSchedule.setClub(this);
                 return;
             }
         }
@@ -210,6 +211,7 @@ public class Club {
      */
     public void addPrice(Price price) {
         prices.add(price);
+        price.setClub(this);
     }
 
     /**
@@ -219,6 +221,7 @@ public class Club {
         for (Price price : prices) {
             if (price.getDurationMinutes() == durationMinutes) {
                 price.setValue(value);
+                price.setClub(this);
                 return true;
             }
         }
@@ -229,7 +232,11 @@ public class Club {
      * Удаление цены за кол-во минут в клубе
      */
     public boolean deletePrice(Price price) {
-        return prices.remove(price);
+        boolean isDeleted = prices.remove(price);
+        if (isDeleted) {
+            price.setClub(null);
+        }
+        return isDeleted;
     }
 
     /**
@@ -237,25 +244,7 @@ public class Club {
      */
     public void addPhoto(Photo photo) {
         photos.add(photo);
-    }
-
-    /**
-     * Переупорядочивание фотографий в клубе
-     */
-    public void reorderPhotos(List<Long> orderedPhotoIds) {
-        Map<Long, Photo> idAndPhoto = photos.stream().collect(Collectors.toMap(Photo::getId, it -> it));
-        short sequenceNumber = 1;
-        for (Long id : orderedPhotoIds) {
-            Photo photo = idAndPhoto.get(id);
-            photo.setSequenceNumber(sequenceNumber++);
-        }
-    }
-
-    /**
-     * Удаление фотографии в клубе
-     */
-    public boolean deletePhoto(Photo photo) {
-        return photos.remove(photo);
+        photo.setClub(this);
     }
 
     @Override

@@ -29,7 +29,6 @@ import ru.andef.andefracing.backend.domain.exceptions.management.ClubCloseCondit
 import ru.andef.andefracing.backend.domain.exceptions.management.ClubOpenConditionsNotMetException;
 import ru.andef.andefracing.backend.domain.exceptions.management.InvalidWorkScheduleException;
 import ru.andef.andefracing.backend.network.dtos.common.GameDto;
-import ru.andef.andefracing.backend.network.dtos.management.AddPhotoDto;
 import ru.andef.andefracing.backend.network.dtos.management.AddPriceDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWorkScheduleExceptionDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
@@ -244,7 +243,9 @@ class ClubManagementServiceTest {
 
         // Добавляем график работы (7 дней)
         for (DayOfWeek day : DayOfWeek.values()) {
-            club.getWorkSchedules().add(new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
+            WorkSchedule workSchedule = new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true);
+            club.getWorkSchedules().add(workSchedule);
+            workSchedule.setClub(club);
         }
 
         // Добавляем игру
@@ -593,7 +594,9 @@ class ClubManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.MONDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(20, 0), true));
+        WorkSchedule workSchedule = new WorkSchedule(0L, (short) DayOfWeek.MONDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(20, 0), true);
+        club.getWorkSchedules().add(workSchedule);
+        workSchedule.setClub(club);
         clubRepository.save(club);
 
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
@@ -622,7 +625,9 @@ class ClubManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.SUNDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(20, 0), true));
+        WorkSchedule workSchedule = new WorkSchedule(0L, (short) DayOfWeek.SUNDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(20, 0), true);
+        club.getWorkSchedules().add(workSchedule);
+        workSchedule.setClub(club);
         clubRepository.save(club);
 
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
@@ -904,7 +909,9 @@ class ClubManagementServiceTest {
 
         // Добавляем график работы (7 дней)
         for (DayOfWeek day : DayOfWeek.values()) {
-            club.getWorkSchedules().add(new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
+            WorkSchedule workSchedule = new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true);
+            club.getWorkSchedules().add(workSchedule);
+            workSchedule.setClub(club);
         }
 
         // Добавляем игру
@@ -931,7 +938,9 @@ class ClubManagementServiceTest {
 
         // Добавляем график работы (7 дней)
         for (DayOfWeek day : DayOfWeek.values()) {
-            club.getWorkSchedules().add(new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
+            WorkSchedule workSchedule = new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true);
+            club.getWorkSchedules().add(workSchedule);
+            workSchedule.setClub(club);
         }
 
         // Добавляем игру
@@ -961,7 +970,9 @@ class ClubManagementServiceTest {
 
         // Добавляем график работы (7 дней)
         for (DayOfWeek day : DayOfWeek.values()) {
-            club.getWorkSchedules().add(new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
+            WorkSchedule workSchedule = new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true);
+            workSchedule.setClub(club);
+            club.getWorkSchedules().add(workSchedule);
         }
 
         clubRepository.save(club);
@@ -986,12 +997,15 @@ class ClubManagementServiceTest {
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
 
         // Добавляем график работы (только 5 дней вместо 7)
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.MONDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.TUESDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.WEDNESDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.THURSDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
-        club.getWorkSchedules().add(new WorkSchedule(0L, (short) DayOfWeek.FRIDAY.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true));
-
+        int cnt = 0;
+        for (DayOfWeek day : DayOfWeek.values()) {
+            if (cnt++ == 4) {
+                break;
+            }
+            WorkSchedule workSchedule = new WorkSchedule(0L, (short) day.getValue(), LocalTime.of(10, 0), LocalTime.of(22, 0), true);
+            club.getWorkSchedules().add(workSchedule);
+            workSchedule.setClub(club);
+        }
         // Добавляем игру
         Game game = createGame("Test Game", true);
         club.addGame(game);
@@ -1056,127 +1070,5 @@ class ClubManagementServiceTest {
         // Assert
         Price updatedPrice = priceRepository.findById(priceId).orElseThrow();
         assertEquals(new BigDecimal("1501.00"), updatedPrice.getValue());
-    }
-
-    @Test
-    void managePhotosInClubAddsNewPhotosSuccessfully() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city);
-
-        List<AddPhotoDto> addPhotoDtos = List.of(
-                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1),
-                new AddPhotoDto("http://example.com/photo2.jpg", (short) 2)
-        );
-
-        // Act
-        clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos);
-
-        // Assert
-        Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
-        assertEquals(2, updatedClub.getPhotos().size());
-        assertTrue(updatedClub.getPhotos().stream().anyMatch(p -> p.getUrl().equals("http://example.com/photo1.jpg") && p.getSequenceNumber() == 1));
-        assertTrue(updatedClub.getPhotos().stream().anyMatch(p -> p.getUrl().equals("http://example.com/photo2.jpg") && p.getSequenceNumber() == 2));
-    }
-
-    @Test
-    void managePhotosInClubUpdatesExistingPhotoSequenceNumber() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city);
-
-        club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
-        clubRepository.save(club);
-
-        List<AddPhotoDto> addPhotoDtos = List.of(
-                new AddPhotoDto("http://example.com/photo1.jpg", (short) 5) // обновляем sequenceNumber
-        );
-
-        // Act
-        clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos);
-
-        // Assert
-        Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
-        assertEquals(1, updatedClub.getPhotos().size());
-        assertEquals(5, updatedClub.getPhotos().get(0).getSequenceNumber());
-    }
-
-    @Test
-    void managePhotosInClubRemovesPhotosNotInList() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city);
-
-        club.addPhoto(new Photo("http://example.com/photo1.jpg", (short) 1));
-        club.addPhoto(new Photo("http://example.com/photo2.jpg", (short) 2));
-        clubRepository.save(club);
-
-        List<AddPhotoDto> addPhotoDtos = List.of(
-                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1) // photo2 удалится
-        );
-
-        // Act
-        clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos);
-
-        // Assert
-        Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
-        assertEquals(1, updatedClub.getPhotos().size());
-        assertEquals("http://example.com/photo1.jpg", updatedClub.getPhotos().get(0).getUrl());
-    }
-
-    @Test
-    void managePhotosInClubThrowsExceptionForDuplicateUrls() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city);
-
-        List<AddPhotoDto> addPhotoDtos = List.of(
-                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1),
-                new AddPhotoDto("http://example.com/photo1.jpg", (short) 2)
-        );
-
-        // Act & Assert
-        assertThrows(DuplicateException.class, () ->
-                clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos)
-        );
-    }
-
-    @Test
-    void managePhotosInClubThrowsExceptionForDuplicateSequenceNumbers() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city);
-
-        List<AddPhotoDto> addPhotoDtos = List.of(
-                new AddPhotoDto("http://example.com/photo1.jpg", (short) 1),
-                new AddPhotoDto("http://example.com/photo2.jpg", (short) 1)
-        );
-
-        // Act & Assert
-        assertThrows(DuplicateException.class, () ->
-                clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos)
-        );
-    }
-
-    @Test
-    void managePhotosInClubThrowsExceptionForEmptyListInOpenClub() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city);
-        club.setOpen(true);
-        clubRepository.save(club);
-
-        List<AddPhotoDto> addPhotoDtos = List.of();
-
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () ->
-                clubManagementService.managePhotosInClub(club.getId(), addPhotoDtos)
-        );
     }
 }
