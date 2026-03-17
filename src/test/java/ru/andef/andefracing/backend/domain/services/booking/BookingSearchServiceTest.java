@@ -206,8 +206,10 @@ class BookingSearchServiceTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
-                List.of(new WorkScheduleException(date, null))
+                new ArrayList<>()
         );
+        club.addWorkScheduleException(new WorkScheduleException(date, null));
+        clubRepository.save(club);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         club = clubRepository.save(club);
 

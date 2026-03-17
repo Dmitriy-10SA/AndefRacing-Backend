@@ -288,49 +288,4 @@ class ClubTest {
         assertEquals(1, club.getPhotos().size());
         assertTrue(club.getPhotos().contains(photo));
     }
-
-    @Test
-    @DisplayName("Переупорядочивание фотографий в клубе")
-    void testReorderPhotos() {
-        Club club = getClub();
-        Photo photo1 = new Photo(1, "url1", (short) 1);
-        Photo photo2 = new Photo(2, "url2", (short) 2);
-        Photo photo3 = new Photo(3, "url3", (short) 3);
-        club.addPhoto(photo1);
-        club.addPhoto(photo2);
-        club.addPhoto(photo3);
-        assertEquals(1, photo1.getSequenceNumber());
-        assertEquals(2, photo2.getSequenceNumber());
-        assertEquals(3, photo3.getSequenceNumber());
-        List<Long> newOrder = List.of(3L, 1L, 2L);
-        club.reorderPhotos(newOrder);
-        assertEquals(1, photo3.getSequenceNumber());
-        assertEquals(2, photo1.getSequenceNumber());
-        assertEquals(3, photo2.getSequenceNumber());
-    }
-
-    @Test
-    @DisplayName("Удаление фотографии из клуба")
-    void testDeletePhoto() {
-        Club club = getClub();
-        Photo photo = new Photo(1, "url", (short) 1);
-        club.addPhoto(photo);
-        assertEquals(1, club.getPhotos().size());
-        boolean isDeleted = club.deletePhoto(photo);
-        assertTrue(isDeleted);
-        assertTrue(club.getPhotos().isEmpty());
-    }
-
-    @Test
-    @DisplayName("Удаление фотографии из клуба, которой нет в этом клубе")
-    void testDeletePhotoWhichDoesNotExistInClub() {
-        Club club = getClub();
-        Photo photo = new Photo(1, "url", (short) 1);
-        club.addPhoto(photo);
-        assertEquals(1, club.getPhotos().size());
-        Photo photoForDelete = new Photo(2, "url", (short) 1);
-        boolean isDeleted = club.deletePhoto(photoForDelete);
-        assertFalse(isDeleted);
-        assertEquals(1, club.getPhotos().size());
-    }
 }

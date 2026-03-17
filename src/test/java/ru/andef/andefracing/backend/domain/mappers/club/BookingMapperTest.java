@@ -49,7 +49,7 @@ class BookingMapperTest {
         regionMapper = new RegionMapperImpl();
         clubMapper = new ClubMapperImpl();
         clientMapper = new ClientMapperImpl();
-        bookingMapper = new BookingMapperImpl(clubMapper);
+        bookingMapper = new BookingMapperImpl();
     }
 
     private Booking createTestBooking() {
@@ -216,7 +216,7 @@ class BookingMapperTest {
         Booking booking = createTestBooking();
 
         // Act
-        ClientBookingFullInfoDto dto = bookingMapper.toClientBookingFullInfoDto(booking, clientMapper);
+        ClientBookingFullInfoDto dto = bookingMapper.toClientBookingFullInfoDto(booking, clientMapper, clubMapper, cityMapper, regionMapper);
 
         // Assert
         assertNotNull(dto);

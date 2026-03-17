@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
+import ru.andef.andefracing.backend.data.entities.club.Club;
 
 import java.time.LocalTime;
 import java.util.Objects;
@@ -38,6 +39,19 @@ public class WorkSchedule {
     @Column(name = "is_work_day", nullable = false)
     @Setter
     private boolean isWorkDay;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "club_id", nullable = false)
+    @Setter
+    private Club club;
+
+    public WorkSchedule(long id, short dayOfWeek, LocalTime openTime, LocalTime closeTime, boolean isWorkDay) {
+        this.id = id;
+        this.dayOfWeek = dayOfWeek;
+        this.openTime = openTime;
+        this.closeTime = closeTime;
+        this.isWorkDay = isWorkDay;
+    }
 
     @Override
     public final boolean equals(Object o) {
