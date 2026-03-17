@@ -21,7 +21,6 @@ import ru.andef.andefracing.backend.domain.exceptions.management.ClubCloseCondit
 import ru.andef.andefracing.backend.domain.exceptions.management.ClubOpenConditionsNotMetException;
 import ru.andef.andefracing.backend.domain.exceptions.management.InvalidWorkScheduleException;
 import ru.andef.andefracing.backend.domain.mappers.club.GameMapper;
-import ru.andef.andefracing.backend.domain.mappers.club.PhotoMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.PriceMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.WorkScheduleExceptionMapper;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
@@ -31,7 +30,6 @@ import ru.andef.andefracing.backend.network.dtos.management.work.schedule.AddWor
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.UpdateWorkScheduleDto;
 import ru.andef.andefracing.backend.network.dtos.management.work.schedule.WorkScheduleExceptionDto;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -56,7 +54,6 @@ public class ClubManagementService {
     private final WorkScheduleExceptionRepository workScheduleExceptionRepository;
 
     private final GameMapper gameMapper;
-    private final PhotoMapper photoMapper;
     private final PriceMapper priceMapper;
     private final WorkScheduleExceptionMapper workScheduleExceptionMapper;
 
