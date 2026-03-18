@@ -70,7 +70,6 @@ class ClientBookingControllerTest {
     void makeBookingReturnsOkWhenValidAndAuthenticated() throws Exception {
         ClientMakeBookingDto dto = new ClientMakeBookingDto(
                 (short) 1,
-                java.math.BigDecimal.TEN,
                 new ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto(
                         OffsetDateTime.of(
                                 LocalDateTime.of(2026, 1, 1, 10, 0),
