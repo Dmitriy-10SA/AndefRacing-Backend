@@ -209,7 +209,7 @@ public class BookingSearchService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         return bookingMapper.toClientBookingFullInfoDto(booking, clientMapper, clubMapper, cityMapper, regionMapper);
     }
@@ -296,7 +296,7 @@ public class BookingSearchService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         return bookingMapper.toEmployeeBookingFullInfoDto(booking, clientMapper);
     }

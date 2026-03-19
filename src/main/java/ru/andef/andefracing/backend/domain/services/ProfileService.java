@@ -84,7 +84,7 @@ public class ProfileService {
         Client client = clientSearchService.findClientById(clientId);
         Club club = clubSearchService.findClubById(clubId);
         if (client.getFavoriteClubs().contains(club)) {
-            throw new DuplicateException("Клуб с id " + clubId + " уже добавлен в избранное");
+            throw new DuplicateException("Клуб уже добавлен в избранное");
         }
         client.addFavoriteClub(club);
         clientRepository.save(client);
@@ -116,7 +116,7 @@ public class ProfileService {
         Client client = clientSearchService.findClientById(clientId);
         Club club = clubSearchService.findClubById(clubId);
         if (!client.getFavoriteClubs().contains(club)) {
-            throw new EntityNotFoundException("У клиента нет избранного клуба с id " + clubId);
+            throw new EntityNotFoundException("У клиента нет такого избранного клуба");
         }
         client.deleteFavoriteClub(club);
         clientRepository.save(client);

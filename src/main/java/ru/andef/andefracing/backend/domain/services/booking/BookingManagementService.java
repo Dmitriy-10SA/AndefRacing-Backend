@@ -119,7 +119,7 @@ public class BookingManagementService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         employee.confirmBookingPayment(booking);
         bookingRepository.save(booking);
@@ -134,7 +134,7 @@ public class BookingManagementService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         employee.cancelBooking(booking);
         bookingRepository.save(booking);

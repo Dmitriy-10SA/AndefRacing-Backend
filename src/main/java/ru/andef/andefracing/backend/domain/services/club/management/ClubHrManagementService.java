@@ -54,9 +54,9 @@ public class ClubHrManagementService {
     private void deleteEmployeeRoleInClub(Club club, Employee employee, EmployeeRole role) {
         List<EmployeeRole> rolesInClub = findEmployeeRolesInClub(club, employee);
         if (rolesInClub.isEmpty()) {
-            throw new EntityNotFoundException("Сотрудник c id " + employee.getId() + " не найден в клубе");
+            throw new EntityNotFoundException("Сотрудник не найден в клубе");
         } else if (!rolesInClub.contains(role)) {
-            throw new EntityNotFoundException("У сотрудника с id " + employee.getId() + " нет роли " + role.getRu());
+            throw new EntityNotFoundException("У сотрудника нет роли " + role.getRu());
         }
         club.deleteRoleForEmployee(employee, role);
     }
@@ -101,7 +101,7 @@ public class ClubHrManagementService {
                 .findEmployeeByPhoneWithoutPasswordNotSetException(addExistingEmployeeDto.getPhone());
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
             if (employeeClub.getEmployee().equals(employee)) {
-                throw new DuplicateException("Сотрудник с id " + employee.getId() + " уже есть в клубе");
+                throw new DuplicateException("Сотрудник уже есть в клубе");
             }
         }
         club.addEmployee(employee, addExistingEmployeeDto.getRoles());
@@ -143,7 +143,7 @@ public class ClubHrManagementService {
             }
         }
         if (!isExistingInClub) {
-            throw new EntityNotFoundException("Сотрудник c id " + employeeId + " не найден в клубе");
+            throw new EntityNotFoundException("Сотрудник не найден в клубе");
         }
         club.deleteEmployee(employee);
         clubRepository.save(club);
@@ -159,9 +159,9 @@ public class ClubHrManagementService {
         Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
         List<EmployeeRole> rolesInClub = findEmployeeRolesInClub(club, employee);
         if (rolesInClub.isEmpty()) {
-            throw new EntityNotFoundException("Сотрудник c id " + employeeId + " не найден в клубе");
+            throw new EntityNotFoundException("Сотрудник не найден в клубе");
         } else if (rolesInClub.contains(role)) {
-            throw new DuplicateException("Сотрудник с id " + employeeId + " уже имеет роль " + role.getRu());
+            throw new DuplicateException("Сотрудник уже имеет роль " + role.getRu());
         }
         club.addRoleForEmployee(employee, role);
         clubRepository.save(club);

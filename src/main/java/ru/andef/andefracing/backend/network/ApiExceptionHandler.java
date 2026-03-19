@@ -82,7 +82,6 @@ public class ApiExceptionHandler {
                     ClubCloseConditionsNotMetException.class,
                     InvalidWorkScheduleException.class,
                     InvalidBookingSlotException.class,
-                    PhotoReorderMismatchException.class,
                     NotEnoughSimulatorsException.class,
                     CannotAddExceptionDayDueToExistingBookingsException.class,
                     InvalidDateRangeException.class

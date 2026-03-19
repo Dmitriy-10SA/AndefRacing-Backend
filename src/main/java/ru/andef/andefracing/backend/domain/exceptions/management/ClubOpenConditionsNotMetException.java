@@ -14,8 +14,7 @@ public class ClubOpenConditionsNotMetException extends RuntimeException {
 
     public ClubOpenConditionsNotMetException(int id) {
         super(
-                "Нельзя открыть клуб с id " + id +
-                        ", так как не выполнены все необходимые для этого условия, а именно:" +
+                "Нельзя открыть клуб, так как не выполнены все необходимые для этого условия, а именно:" +
                         "кол-во фотографий >= 1, кол-во цен >= 1, активных игр >= 1 " +
                         "и написан стандартный график работы на всю неделю"
         );
