@@ -84,6 +84,7 @@ public class BookingSearchService {
     public List<FreeBookingSlotDto> getFreeBookingSlotsInClub(
             int clubId,
             FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
+            LocalDate userCurrentDate,
             LocalTime userCurrentTime
     ) {
         Club club = clubSearchService.findClubById(clubId);
@@ -120,8 +121,10 @@ public class BookingSearchService {
             dayEnd = OffsetDateTime.of(date, exceptionCloseTime, ZoneOffset.UTC);
         }
         // учет текущего времени пользователя
-        OffsetDateTime userCurrentDateTime = OffsetDateTime.of(date, userCurrentTime, ZoneOffset.UTC);
-        dayStart = userCurrentDateTime.isBefore(dayStart) ? dayStart : userCurrentDateTime;
+        if (userCurrentDate.equals(date)) {
+            OffsetDateTime userCurrentDateTime = OffsetDateTime.of(date, userCurrentTime, ZoneOffset.UTC);
+            dayStart = userCurrentDateTime.isBefore(dayStart) ? dayStart : userCurrentDateTime;
+        }
         // округление до кратного 15 минут вверх
         int minutes = dayStart.getMinute();
         int mod = minutes % 15;

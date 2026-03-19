@@ -52,6 +52,9 @@ public class ClientBookingController {
             @NotNull(message = "Необходимо передать дату")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date,
+            @NotNull(message = "Необходимо передать дату текущего времени")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate userCurrentDate,
             @NotNull(message = "Необходимо передать время")
             @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
             LocalTime userCurrentTime
@@ -62,7 +65,7 @@ public class ClientBookingController {
                 date
         );
         List<FreeBookingSlotDto> freeBookingSlots = bookingSearchService
-                .getFreeBookingSlotsInClub(clubId, freeBookingSlotsRequestDto, userCurrentTime);
+                .getFreeBookingSlotsInClub(clubId, freeBookingSlotsRequestDto, userCurrentDate, userCurrentTime);
         return ResponseEntity.ok(freeBookingSlots);
     }
 
