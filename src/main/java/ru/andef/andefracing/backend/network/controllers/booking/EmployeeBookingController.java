@@ -25,6 +25,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeB
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,9 @@ public class EmployeeBookingController {
             @NotNull(message = "Необходимо передать дату")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate date,
+            @NotNull(message = "Необходимо передать время")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+            LocalTime userCurrentTime,
             Authentication authentication
     ) {
         JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
@@ -63,7 +67,7 @@ public class EmployeeBookingController {
                 date
         );
         List<FreeBookingSlotDto> freeBookingSlots = bookingSearchService
-                .getFreeBookingSlotsInClub(principal.clubId(), freeBookingSlotsRequestDto);
+                .getFreeBookingSlotsInClub(principal.clubId(), freeBookingSlotsRequestDto, userCurrentTime);
         return ResponseEntity.ok(freeBookingSlots);
     }
 

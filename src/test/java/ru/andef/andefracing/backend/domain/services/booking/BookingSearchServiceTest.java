@@ -135,7 +135,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -163,7 +163,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -185,7 +185,7 @@ class BookingSearchServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request)
+                bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalTime.of(9, 0))
         );
     }
 
@@ -219,7 +219,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -246,7 +246,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -278,7 +278,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -558,7 +558,7 @@ class BookingSearchServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                bookingSearchService.getFreeBookingSlotsInClub(999, request)
+                bookingSearchService.getFreeBookingSlotsInClub(999, request, LocalTime.of(9, 0))
         );
     }
 

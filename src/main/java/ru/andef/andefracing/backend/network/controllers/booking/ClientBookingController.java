@@ -25,6 +25,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.client.PagedClientBooki
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Tag(name = ApiTags.CLIENT_BOOKING)
@@ -50,7 +51,10 @@ public class ClientBookingController {
             Short cntEquipment,
             @NotNull(message = "Необходимо передать дату")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-            LocalDate date
+            LocalDate date,
+            @NotNull(message = "Необходимо передать время")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+            LocalTime userCurrentTime
     ) {
         FreeBookingSlotsRequestDto freeBookingSlotsRequestDto = new FreeBookingSlotsRequestDto(
                 durationMinutes,
@@ -58,7 +62,7 @@ public class ClientBookingController {
                 date
         );
         List<FreeBookingSlotDto> freeBookingSlots = bookingSearchService
-                .getFreeBookingSlotsInClub(clubId, freeBookingSlotsRequestDto);
+                .getFreeBookingSlotsInClub(clubId, freeBookingSlotsRequestDto, userCurrentTime);
         return ResponseEntity.ok(freeBookingSlots);
     }
 

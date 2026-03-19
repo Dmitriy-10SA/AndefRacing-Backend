@@ -83,7 +83,8 @@ public class BookingSearchService {
     @Transactional(readOnly = true)
     public List<FreeBookingSlotDto> getFreeBookingSlotsInClub(
             int clubId,
-            FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
+            FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
+            LocalTime userCurrentTime
     ) {
         Club club = clubSearchService.findClubById(clubId);
         if (!club.isOpen()) {
@@ -118,7 +119,20 @@ public class BookingSearchService {
             dayStart = OffsetDateTime.of(date, exceptionOpenTime, ZoneOffset.UTC);
             dayEnd = OffsetDateTime.of(date, exceptionCloseTime, ZoneOffset.UTC);
         }
+        // учет текущего времени пользователя
+        OffsetDateTime userCurrentDateTime = OffsetDateTime.of(date, userCurrentTime, ZoneOffset.UTC);
+        dayStart = userCurrentDateTime.isBefore(dayStart) ? dayStart : userCurrentDateTime;
+        // округление до кратного 15 минут вверх
+        int minutes = dayStart.getMinute();
+        int mod = minutes % 15;
+        if (mod != 0) {
+            dayStart = dayStart.plusMinutes(15 - mod);
+        }
+        dayStart = dayStart.withSecond(0).withNano(0);
         OffsetDateTime slotStart = dayStart;
+        if (dayStart.isAfter(dayEnd)) {
+            return List.of();
+        }
         List<FreeBookingSlotDto> freeBookingSlots = new ArrayList<>();
         while (!slotStart.plusMinutes(durationMinutes).isAfter(dayEnd)) {
             OffsetDateTime slotEnd = slotStart.plusMinutes(durationMinutes);
