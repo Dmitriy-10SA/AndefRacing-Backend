@@ -1,5 +1,7 @@
 package ru.andef.andefracing.backend.data.repositories.club;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -185,6 +187,25 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     );
 
     /**
+     * Получение бронирований в клубе за диапазон дат для клиента с пагинацией
+     */
+    @Query(
+            value = """
+                    SELECT b
+                    FROM Booking b
+                    WHERE b.client.id = :clientId
+                    AND b.startDateTime < :end
+                    AND b.endDateTime > :start
+                    """
+    )
+    Page<Booking> findAllByDateRangeAndClientIdPaged(
+            @Param(value = "clientId") long clientId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end,
+            Pageable pageable
+    );
+
+    /**
      * Получение бронирований в клубе за диапазон дат, а также с указанным номером телефона клиента
      */
     @Query(
@@ -204,6 +225,46 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param(value = "start") OffsetDateTime start,
             @Param(value = "end") OffsetDateTime end,
             @Param(value = "clientPhone") String clientPhone
+    );
+
+    /**
+     * Получение бронирований в клубе за диапазон дат с пагинацией
+     */
+    @Query(
+            value = """
+                    SELECT b
+                    FROM Booking b
+                    WHERE b.club.id = :clubId
+                    AND b.startDateTime < :end
+                    AND b.endDateTime > :start
+                    """
+    )
+    Page<Booking> findAllByDateRangeAndClubIdPaged(
+            @Param(value = "clubId") int clubId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end,
+            Pageable pageable
+    );
+
+    /**
+     * Получение бронирований в клубе за диапазон дат с указанным номером телефона клиента с пагинацией
+     */
+    @Query(
+            value = """
+                    SELECT b
+                    FROM Booking b
+                    WHERE b.club.id = :clubId
+                    AND b.startDateTime < :end
+                    AND b.endDateTime > :start
+                    AND b.client.phone = :clientPhone
+                    """
+    )
+    Page<Booking> findAllByDateRangeAndClubIdAndClientPhonePaged(
+            @Param(value = "clubId") int clubId,
+            @Param(value = "start") OffsetDateTime start,
+            @Param(value = "end") OffsetDateTime end,
+            @Param(value = "clientPhone") String clientPhone,
+            Pageable pageable
     );
 
     Optional<Booking> findByIdAndClub(long bookingId, Club club);

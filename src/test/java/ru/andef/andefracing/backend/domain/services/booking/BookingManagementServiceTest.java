@@ -126,7 +126,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 2, new BigDecimal("2000.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 2, slot, null);
 
         // Act
         bookingManagementService.makeClientBooking(client.getId(), club.getId(), makeBookingDto);
@@ -154,7 +154,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.minusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(InvalidBookingSlotException.class, () ->
@@ -173,29 +173,10 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                bookingManagementService.makeClientBooking(client.getId(), club.getId(), makeBookingDto)
-        );
-    }
-
-    @Test
-    void makeClientBookingThrowsExceptionWhenPriceIsIncorrect() {
-        // Arrange
-        Region region = createRegion();
-        City city = createCity(region);
-        Club club = createClub(city, "Test Club", true);
-        Client client = createClient();
-
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
-        FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("500.00"), slot, null); // Wrong price
-
-        // Act & Assert
-        assertThrows(InvalidBookingSlotException.class, () ->
                 bookingManagementService.makeClientBooking(client.getId(), club.getId(), makeBookingDto)
         );
     }
@@ -211,7 +192,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(90); // 90 minutes not in price list
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1500.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
@@ -230,7 +211,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusDays(1);
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(InvalidBookingSlotException.class, () ->
@@ -254,7 +235,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 15, new BigDecimal("15000.00"), slot, null); // More than available
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 15, slot, null); // More than available
 
         // Act & Assert
         assertThrows(NotEnoughSimulatorsException.class, () ->
@@ -273,7 +254,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(120);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, new BigDecimal("1800.00"), slot, null);
+        EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 
         // Act
         bookingManagementService.makeEmployeeBooking(employee.getId(), club.getId(), makeBookingDto);
@@ -300,7 +281,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.minusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(InvalidBookingSlotException.class, () ->
@@ -391,7 +372,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
@@ -407,7 +388,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
@@ -425,7 +406,7 @@ class BookingManagementServiceTest {
         OffsetDateTime start = futureDateTime();
         OffsetDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
-        EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, new BigDecimal("1000.00"), slot, null);
+        EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->

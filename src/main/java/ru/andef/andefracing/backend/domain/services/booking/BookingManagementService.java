@@ -41,42 +41,23 @@ public class BookingManagementService {
     }
 
     /**
-     * Проверка верности указанной стоимости
+     * Получение цены бронирования
      */
-    private void checkPrice(
-            Club club,
-            OffsetDateTime start,
-            OffsetDateTime end,
-            short cntEquipment,
-            BigDecimal price
-    ) {
+    private BigDecimal getPriceValue(Club club, OffsetDateTime start, OffsetDateTime end, short cntEquipment) {
         short durationMinutes = (short) Duration.between(start, end).toMinutes();
-        BigDecimal expectedPrice = null;
         for (Price priceInClub : club.getPrices()) {
             if (priceInClub.getDurationMinutes() == durationMinutes) {
-                expectedPrice = priceInClub.getValue().multiply(BigDecimal.valueOf(cntEquipment));
-                expectedPrice = expectedPrice.setScale(2, RoundingMode.HALF_EVEN);
+                return priceInClub.getValue()
+                        .multiply(BigDecimal.valueOf(cntEquipment)).setScale(2, RoundingMode.HALF_EVEN);
             }
         }
-        if (expectedPrice == null) {
-            throw new EntityNotFoundException("Цены для кол-ва минут: " + durationMinutes + " нет в клубе");
-        } else if (expectedPrice.compareTo(price) != 0) {
-            throw new InvalidBookingSlotException("Указана некорректная цена");
-        }
+        throw new EntityNotFoundException("Цены для кол-ва минут: " + durationMinutes + " нет в клубе");
     }
 
     /**
      * Сделать бронирование (общий метод для сотрудников и клиентов)
      */
-    private void makeBooking(
-            Club club,
-            OffsetDateTime start,
-            OffsetDateTime end,
-            short cntEquipment,
-            BigDecimal price,
-            Supplier<Booking> makeBookingCallback
-    ) {
-        checkPrice(club, start, end, cntEquipment, price);
+    private void makeBooking(Club club, OffsetDateTime start, Supplier<Booking> makeBookingCallback) {
         if (!club.isOpen()) {
             throw new EntityNotFoundException("Клуб закрыт");
         }
@@ -102,14 +83,11 @@ public class BookingManagementService {
         Client client = clientSearchService.findClientById(clientId);
         Club club = clubSearchService.findClubById(clubId);
         short cntEquipment = clientMakeBookingDto.getCntEquipment();
-        BigDecimal price = clientMakeBookingDto.getPrice().setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal expectedPrice = getPriceValue(club, start, end, cntEquipment);
         makeBooking(
                 club,
                 start,
-                end,
-                cntEquipment,
-                price,
-                () -> client.makeBooking(club, start, end, cntEquipment, price)
+                () -> client.makeBooking(club, start, end, cntEquipment, expectedPrice)
         );
     }
 
@@ -124,14 +102,11 @@ public class BookingManagementService {
         Employee employee = clubSearchService.findEmployeeById(employeeId);
         Club club = clubSearchService.findClubById(clubId);
         short cntEquipment = employeeMakeBookingDto.getCntEquipment();
-        BigDecimal price = employeeMakeBookingDto.getPrice().setScale(2, RoundingMode.HALF_EVEN);
+        BigDecimal expectedPrice = getPriceValue(club, start, end, cntEquipment);
         makeBooking(
                 club,
                 start,
-                end,
-                cntEquipment,
-                price,
-                () -> employee.makeBooking(club, start, end, cntEquipment, price)
+                () -> employee.makeBooking(club, start, end, cntEquipment, expectedPrice)
         );
     }
 
@@ -144,7 +119,7 @@ public class BookingManagementService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         employee.confirmBookingPayment(booking);
         bookingRepository.save(booking);
@@ -159,7 +134,7 @@ public class BookingManagementService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         employee.cancelBooking(booking);
         bookingRepository.save(booking);

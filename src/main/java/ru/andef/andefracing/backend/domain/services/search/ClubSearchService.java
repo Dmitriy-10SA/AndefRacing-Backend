@@ -51,7 +51,7 @@ public class ClubSearchService {
     @Transactional(readOnly = true)
     public Photo findPhotoById(long id) {
         return photoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Фото с id " + id + " не найдено"));
+                .orElseThrow(() -> new EntityNotFoundException("Фото не найдено"));
     }
 
     /**
@@ -60,7 +60,7 @@ public class ClubSearchService {
     @Transactional(readOnly = true)
     public Price findPriceById(long id) {
         return priceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Цена с id " + id + " не найдена"));
+                .orElseThrow(() -> new EntityNotFoundException("Цена не найдена"));
     }
 
     /**
@@ -69,7 +69,7 @@ public class ClubSearchService {
     @Transactional(readOnly = true)
     public Game findGameById(short id) {
         return gameRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Игра с id " + id + " не найдена"));
+                .orElseThrow(() -> new EntityNotFoundException("Игра не найдена"));
     }
 
     /**
@@ -86,7 +86,7 @@ public class ClubSearchService {
      */
     private void checkEmployeeHasPassword(Employee employee) {
         if (employee.isNeedPassword()) {
-            throw new PasswordIsNotSetException("Пароль не задан");
+            throw new PasswordIsNotSetException("Необходимо задать пароль");
         }
     }
 
@@ -140,7 +140,7 @@ public class ClubSearchService {
     @Transactional(readOnly = true)
     public Employee findEmployeeById(long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник не найден"));
         checkEmployeeIsBlocked(employee);
         checkEmployeeHasPassword(employee);
         return employee;
@@ -152,7 +152,7 @@ public class ClubSearchService {
     @Transactional(readOnly = true)
     public Employee findEmployeeByIdWithoutPasswordNotSetException(long id) {
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Сотрудник с id " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Сотрудник не найден"));
         checkEmployeeIsBlocked(employee);
         return employee;
     }
@@ -163,7 +163,7 @@ public class ClubSearchService {
     @Transactional(readOnly = true)
     public Club findClubById(int id) {
         return clubRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Клуб с id " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Клуб не найден"));
     }
 
     /**

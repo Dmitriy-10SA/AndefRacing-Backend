@@ -89,7 +89,7 @@ public class ClubManagementService {
         Game game = clubSearchService.findGameById(gameId);
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
         if (gamesInClub.contains(game)) {
-            throw new DuplicateException("Игра с id " + gameId + " уже есть в клубе");
+            throw new DuplicateException("Игра уже есть в клубе");
         }
         club.addGame(game);
         clubRepository.save(club);
@@ -115,7 +115,7 @@ public class ClubManagementService {
         Game game = clubSearchService.findGameById(gameId);
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
         if (!gamesInClub.contains(game)) {
-            throw new EntityNotFoundException("Игра с id " + gameId + " не найдена в клубе");
+            throw new EntityNotFoundException("Игра не найдена в клубе");
         }
         club.deleteGame(game);
         clubRepository.save(club);
@@ -233,7 +233,7 @@ public class ClubManagementService {
         List<Short> durationMinutes = pricesInClub.stream().map(Price::getDurationMinutes).toList();
         if (durationMinutes.contains(addPriceDto.durationMinutes())) {
             throw new DuplicateException(
-                    "В клубе с id " + clubId + " уже есть стоимость за " + addPriceDto.durationMinutes() + " минут"
+                    "В клубе уже есть стоимость за " + addPriceDto.durationMinutes() + " минут"
             );
         }
         Price price = priceMapper.toEntity(addPriceDto);
@@ -256,7 +256,7 @@ public class ClubManagementService {
                 return;
             }
         }
-        throw new EntityNotFoundException("Цена с id " + priceId + " не найдена в клубе");
+        throw new EntityNotFoundException("Цена не найдена в клубе");
     }
 
     /**
@@ -271,7 +271,7 @@ public class ClubManagementService {
         if (isDeleted) {
             clubRepository.save(club);
         } else {
-            throw new EntityNotFoundException("Цена с id " + priceId + " не найдена в клубе");
+            throw new EntityNotFoundException("Цена не найдена в клубе");
         }
     }
 
@@ -330,11 +330,7 @@ public class ClubManagementService {
         Club club = clubSearchService.findClubById(clubId);
         WorkScheduleException workScheduleException = workScheduleExceptionRepository
                 .findByIdAndClubId(workScheduleExceptionId, club.getId())
-                .orElseThrow(() ->
-                        new EntityNotFoundException(
-                                "День-исключение с id " + workScheduleExceptionId + " не найден в клубе"
-                        )
-                );
+                .orElseThrow(() -> new EntityNotFoundException("День-исключение не найден в клубе"));
         club.deleteWorkScheduleException(workScheduleException);
         clubRepository.save(club);
     }

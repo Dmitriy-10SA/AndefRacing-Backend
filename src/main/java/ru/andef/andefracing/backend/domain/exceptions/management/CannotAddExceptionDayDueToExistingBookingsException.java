@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 public class CannotAddExceptionDayDueToExistingBookingsException extends RuntimeException {
     public CannotAddExceptionDayDueToExistingBookingsException() {
-        super("Нельзя добавить день-исключение при наличии бронирований");
+        super("Нельзя добавить день-исключение при наличии бронирований в этот день");
     }
 }

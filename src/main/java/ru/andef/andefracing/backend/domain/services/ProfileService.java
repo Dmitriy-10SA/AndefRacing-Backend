@@ -78,12 +78,13 @@ public class ProfileService {
     /**
      * Добавление клуба в список избранных клубов клиента
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional
     public void addClubToClientFavoriteClubs(long clientId, int clubId) {
         Client client = clientSearchService.findClientById(clientId);
         Club club = clubSearchService.findClubById(clubId);
         if (client.getFavoriteClubs().contains(club)) {
-            throw new DuplicateException("Клуб с id " + clubId + " уже добавлен в избранное");
+            throw new DuplicateException("Клуб уже добавлен в избранное");
         }
         client.addFavoriteClub(club);
         clientRepository.save(client);
@@ -109,12 +110,13 @@ public class ProfileService {
     /**
      * Удаление клуба из списка избранных клубов клиента
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional
     public void deleteClubFromClientFavoriteClubs(long clientId, int clubId) {
         Client client = clientSearchService.findClientById(clientId);
         Club club = clubSearchService.findClubById(clubId);
         if (!client.getFavoriteClubs().contains(club)) {
-            throw new EntityNotFoundException("У клиента нет избранного клуба с id " + clubId);
+            throw new EntityNotFoundException("У клиента нет такого избранного клуба");
         }
         client.deleteFavoriteClub(club);
         clientRepository.save(client);
@@ -133,5 +135,16 @@ public class ProfileService {
                 .map(EmployeeClub::getEmployeeRole)
                 .toList();
         return employeeMapper.toPersonalInfo(employee, roles);
+    }
+
+    /**
+     * Проверка, является ли клуб избранным у клиента
+     */
+    @Cacheable(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
+    @Transactional(readOnly = true)
+    public boolean isClubFavoriteForClient(long clientId, int clubId) {
+        Client client = clientSearchService.findClientById(clientId);
+        Club club = clubSearchService.findClubById(clubId);
+        return client.getFavoriteClubs().contains(club);
     }
 }

@@ -1,6 +1,9 @@
 package ru.andef.andefracing.backend.domain.services.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.andef.andefracing.backend.data.entities.club.Club;
@@ -23,8 +26,11 @@ import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingShortDto;
+import ru.andef.andefracing.backend.network.dtos.booking.client.PagedClientBookingShortListDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingShortDto;
+import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeBookingShortListDto;
+import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,6 +43,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class BookingSearchService {
+    private static final String START_DATE_TIME = "startDateTime";
+
     private final ClientSearchService clientSearchService;
     private final ClubSearchService clubSearchService;
 
@@ -75,7 +83,9 @@ public class BookingSearchService {
     @Transactional(readOnly = true)
     public List<FreeBookingSlotDto> getFreeBookingSlotsInClub(
             int clubId,
-            FreeBookingSlotsRequestDto freeBookingSlotsRequestDto
+            FreeBookingSlotsRequestDto freeBookingSlotsRequestDto,
+            LocalDate userCurrentDate,
+            LocalTime userCurrentTime
     ) {
         Club club = clubSearchService.findClubById(clubId);
         if (!club.isOpen()) {
@@ -110,7 +120,22 @@ public class BookingSearchService {
             dayStart = OffsetDateTime.of(date, exceptionOpenTime, ZoneOffset.UTC);
             dayEnd = OffsetDateTime.of(date, exceptionCloseTime, ZoneOffset.UTC);
         }
+        // учет текущего времени пользователя
+        if (userCurrentDate.equals(date)) {
+            OffsetDateTime userCurrentDateTime = OffsetDateTime.of(date, userCurrentTime, ZoneOffset.UTC);
+            dayStart = userCurrentDateTime.isBefore(dayStart) ? dayStart : userCurrentDateTime;
+        }
+        // округление до кратного 15 минут вверх
+        int minutes = dayStart.getMinute();
+        int mod = minutes % 15;
+        if (mod != 0) {
+            dayStart = dayStart.plusMinutes(15 - mod);
+        }
+        dayStart = dayStart.withSecond(0).withNano(0);
         OffsetDateTime slotStart = dayStart;
+        if (dayStart.isAfter(dayEnd)) {
+            return List.of();
+        }
         List<FreeBookingSlotDto> freeBookingSlots = new ArrayList<>();
         while (!slotStart.plusMinutes(durationMinutes).isAfter(dayEnd)) {
             OffsetDateTime slotEnd = slotStart.plusMinutes(durationMinutes);
@@ -139,6 +164,43 @@ public class BookingSearchService {
     }
 
     /**
+     * Получение списка всех бронирований клиента за диапазон дат с пагинацией
+     */
+    @Transactional(readOnly = true)
+    public PagedClientBookingShortListDto getAllClientBookingsPaged(
+            long clientId,
+            LocalDate startDate,
+            LocalDate endDate,
+            int pageNumber,
+            int pageSize
+    ) {
+        if (startDate.isAfter(endDate)) {
+            throw new InvalidDateRangeException();
+        }
+        clientSearchService.findClientById(clientId);
+        OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(START_DATE_TIME));
+        Page<Booking> bookingsPage = bookingRepository.findAllByDateRangeAndClientIdPaged(
+                clientId,
+                start,
+                end,
+                pageRequest
+        );
+        List<ClientBookingShortDto> content = bookingMapper.toClientBookingShortDto(
+                bookingsPage.getContent(),
+                clubMapper,
+                cityMapper,
+                regionMapper
+        );
+        long totalElements = bookingsPage.getTotalElements();
+        int totalPages = bookingsPage.getTotalPages();
+        boolean isLast = bookingsPage.isLast();
+        PageInfoDto pageInfoDto = new PageInfoDto(pageNumber, pageSize, totalElements, totalPages, isLast);
+        return new PagedClientBookingShortListDto(content, pageInfoDto);
+    }
+
+    /**
      * Просмотр полной информации о бронировании для клиента
      */
     @Transactional(readOnly = true)
@@ -147,7 +209,7 @@ public class BookingSearchService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         return bookingMapper.toClientBookingFullInfoDto(booking, clientMapper, clubMapper, cityMapper, regionMapper);
     }
@@ -179,6 +241,53 @@ public class BookingSearchService {
     }
 
     /**
+     * Получение списка всех бронирований за диапазон дат и по номеру телефона клиента (номер телефона опционален)
+     * для сотрудника с пагинацией
+     */
+    @Transactional(readOnly = true)
+    public PagedEmployeeBookingShortListDto getBookingsForEmployeePaged(
+            long employeeId,
+            int clubId,
+            LocalDate startDate,
+            LocalDate endDate,
+            Optional<String> clientPhone,
+            int pageNumber,
+            int pageSize
+    ) {
+        if (startDate.isAfter(endDate)) {
+            throw new InvalidDateRangeException();
+        }
+        clubSearchService.findEmployeeById(employeeId);
+        Club club = clubSearchService.findClubById(clubId);
+        OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(START_DATE_TIME));
+        Page<Booking> bookingsPage;
+        if (clientPhone.isPresent()) {
+            bookingsPage = bookingRepository.findAllByDateRangeAndClubIdAndClientPhonePaged(
+                    club.getId(),
+                    start,
+                    end,
+                    clientPhone.get(),
+                    pageRequest
+            );
+        } else {
+            bookingsPage = bookingRepository.findAllByDateRangeAndClubIdPaged(
+                    club.getId(),
+                    start,
+                    end,
+                    pageRequest
+            );
+        }
+        List<EmployeeBookingShortDto> content = bookingMapper.toEmployeeBookingShortDto(bookingsPage.getContent());
+        long totalElements = bookingsPage.getTotalElements();
+        int totalPages = bookingsPage.getTotalPages();
+        boolean isLast = bookingsPage.isLast();
+        PageInfoDto pageInfoDto = new PageInfoDto(pageNumber, pageSize, totalElements, totalPages, isLast);
+        return new PagedEmployeeBookingShortListDto(content, pageInfoDto);
+    }
+
+    /**
      * Просмотр полной информации о бронировании для сотрудника
      */
     @Transactional(readOnly = true)
@@ -187,7 +296,7 @@ public class BookingSearchService {
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Бронирование с id " + bookingId + " не найдено в клубе")
+                        new EntityNotFoundException("Бронирование не найдено в клубе")
                 );
         return bookingMapper.toEmployeeBookingFullInfoDto(booking, clientMapper);
     }
