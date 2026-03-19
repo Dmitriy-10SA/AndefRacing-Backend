@@ -22,12 +22,15 @@ import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingShortDto;
+import ru.andef.andefracing.backend.network.dtos.booking.client.PagedClientBookingShortListDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingShortDto;
+import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeBookingShortListDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -132,7 +135,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -160,7 +163,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -182,7 +185,7 @@ class BookingSearchServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request)
+                bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0))
         );
     }
 
@@ -216,7 +219,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -243,7 +246,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -275,7 +278,7 @@ class BookingSearchServiceTest {
         FreeBookingSlotsRequestDto request = new FreeBookingSlotsRequestDto((short) 60, (short) 1, date);
 
         // Act
-        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request);
+        List<FreeBookingSlotDto> result = bookingSearchService.getFreeBookingSlotsInClub(club.getId(), request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0));
 
         // Assert
         assertNotNull(result);
@@ -555,7 +558,292 @@ class BookingSearchServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                bookingSearchService.getFreeBookingSlotsInClub(999, request)
+                bookingSearchService.getFreeBookingSlotsInClub(999, request, LocalDate.of(2026, 6, 15), LocalTime.of(9, 0))
+        );
+    }
+
+    @Test
+    void getAllClientBookingsPagedReturnsPagedBookingsSortedByStartDateTime() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Test Club", true);
+        Client client = createClient("Test Client", "+7-111-111-11-11");
+
+        Booking booking1 = new Booking(
+                club, client,
+                atUtc(17, 10),
+                atUtc(17, 11),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club, client,
+                atUtc(15, 14),
+                atUtc(15, 15),
+                (short) 2,
+                new BigDecimal("2000.00")
+        );
+        Booking booking3 = new Booking(
+                club, client,
+                atUtc(16, 10),
+                atUtc(16, 11),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        LocalDate startDate = LocalDate.of(2026, 6, 15);
+        LocalDate endDate = LocalDate.of(2026, 6, 18);
+
+        // Act
+        PagedClientBookingShortListDto result = bookingSearchService.getAllClientBookingsPaged(
+                client.getId(), startDate, endDate, 0, 2
+        );
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.content());
+        assertNotNull(result.pageInfo());
+        assertEquals(2, result.content().size());
+        assertEquals(3, result.pageInfo().totalElements());
+        assertEquals(2, result.pageInfo().totalPages());
+        assertEquals(0, result.pageInfo().pageNumber());
+        assertEquals(2, result.pageInfo().pageSize());
+        assertFalse(result.pageInfo().isLast());
+        // Check sorting by startDateTime
+        assertEquals(booking2.getStartDateTime(), result.content().get(0).getStartDateTime());
+        assertEquals(booking3.getStartDateTime(), result.content().get(1).getStartDateTime());
+    }
+
+    @Test
+    void getAllClientBookingsPagedReturnsLastPageCorrectly() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Test Club", true);
+        Client client = createClient("Test Client", "+7-111-111-11-11");
+
+        Booking booking1 = new Booking(
+                club, client,
+                atUtc(15, 10),
+                atUtc(15, 11),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club, client,
+                atUtc(16, 14),
+                atUtc(16, 15),
+                (short) 2,
+                new BigDecimal("2000.00")
+        );
+        Booking booking3 = new Booking(
+                club, client,
+                atUtc(17, 10),
+                atUtc(17, 11),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        LocalDate startDate = LocalDate.of(2026, 6, 15);
+        LocalDate endDate = LocalDate.of(2026, 6, 18);
+
+        // Act
+        PagedClientBookingShortListDto result = bookingSearchService.getAllClientBookingsPaged(
+                client.getId(), startDate, endDate, 1, 2
+        );
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.content().size());
+        assertEquals(3, result.pageInfo().totalElements());
+        assertEquals(2, result.pageInfo().totalPages());
+        assertEquals(1, result.pageInfo().pageNumber());
+        assertTrue(result.pageInfo().isLast());
+    }
+
+    @Test
+    void getAllClientBookingsPagedReturnsEmptyPageWhenNoBookings() {
+        // Arrange
+        Client client = createClient("Test Client", "+7-111-111-11-11");
+
+        LocalDate startDate = LocalDate.of(2026, 6, 15);
+        LocalDate endDate = LocalDate.of(2026, 6, 17);
+
+        // Act
+        PagedClientBookingShortListDto result = bookingSearchService.getAllClientBookingsPaged(
+                client.getId(), startDate, endDate, 0, 10
+        );
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.content().isEmpty());
+        assertEquals(0, result.pageInfo().totalElements());
+        assertEquals(0, result.pageInfo().totalPages());
+        assertTrue(result.pageInfo().isLast());
+    }
+
+    @Test
+    void getAllClientBookingsPagedThrowsExceptionWhenStartDateAfterEndDate() {
+        // Arrange
+        Client client = createClient("Test Client", "+7-111-111-11-11");
+
+        LocalDate startDate = LocalDate.of(2026, 6, 20);
+        LocalDate endDate = LocalDate.of(2026, 6, 15);
+
+        // Act & Assert
+        assertThrows(InvalidDateRangeException.class, () ->
+                bookingSearchService.getAllClientBookingsPaged(client.getId(), startDate, endDate, 0, 10)
+        );
+    }
+
+    @Test
+    void getBookingsForEmployeePagedReturnsPagedBookingsSortedByStartDateTime() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Test Club", true);
+        Client client1 = createClient("Client 1", "+7-111-111-11-11");
+        Client client2 = createClient("Client 2", "+7-222-222-22-22");
+        Employee employee = createEmployee();
+
+        Booking booking1 = new Booking(
+                club, client1,
+                atUtc(17, 10),
+                atUtc(17, 11),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club, client2,
+                atUtc(15, 14),
+                atUtc(15, 15),
+                (short) 2,
+                new BigDecimal("2000.00")
+        );
+        Booking booking3 = new Booking(
+                club, client1,
+                atUtc(16, 10),
+                atUtc(16, 11),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        LocalDate startDate = LocalDate.of(2026, 6, 15);
+        LocalDate endDate = LocalDate.of(2026, 6, 18);
+
+        // Act
+        PagedEmployeeBookingShortListDto result = bookingSearchService.getBookingsForEmployeePaged(
+                employee.getId(), club.getId(), startDate, endDate, Optional.empty(), 0, 2
+        );
+
+        // Assert
+        assertNotNull(result);
+        assertNotNull(result.content());
+        assertNotNull(result.pageInfo());
+        assertEquals(2, result.content().size());
+        assertEquals(3, result.pageInfo().totalElements());
+        assertEquals(2, result.pageInfo().totalPages());
+        assertEquals(0, result.pageInfo().pageNumber());
+        assertEquals(2, result.pageInfo().pageSize());
+        assertFalse(result.pageInfo().isLast());
+        // Check sorting by startDateTime
+        assertEquals(booking2.getStartDateTime(), result.content().get(0).getStartDateTime());
+        assertEquals(booking3.getStartDateTime(), result.content().get(1).getStartDateTime());
+    }
+
+    @Test
+    void getBookingsForEmployeePagedFiltersBookingsByClientPhone() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Test Club", true);
+        Client client1 = createClient("Client 1", "+7-111-111-11-11");
+        Client client2 = createClient("Client 2", "+7-222-222-22-22");
+        Employee employee = createEmployee();
+
+        Booking booking1 = new Booking(
+                club, client1,
+                atUtc(15, 10),
+                atUtc(15, 11),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club, client2,
+                atUtc(16, 14),
+                atUtc(16, 15),
+                (short) 2,
+                new BigDecimal("2000.00")
+        );
+        Booking booking3 = new Booking(
+                club, client1,
+                atUtc(17, 10),
+                atUtc(17, 11),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        LocalDate startDate = LocalDate.of(2026, 6, 15);
+        LocalDate endDate = LocalDate.of(2026, 6, 18);
+
+        // Act
+        PagedEmployeeBookingShortListDto result = bookingSearchService.getBookingsForEmployeePaged(
+                employee.getId(), club.getId(), startDate, endDate, Optional.of("+7-111-111-11-11"), 0, 10
+        );
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.content().size());
+        assertEquals(2, result.pageInfo().totalElements());
+        assertEquals(1, result.pageInfo().totalPages());
+        assertTrue(result.pageInfo().isLast());
+    }
+
+    @Test
+    void getBookingsForEmployeePagedReturnsEmptyPageWhenNoBookings() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Test Club", true);
+        Employee employee = createEmployee();
+
+        LocalDate startDate = LocalDate.of(2026, 6, 15);
+        LocalDate endDate = LocalDate.of(2026, 6, 17);
+
+        // Act
+        PagedEmployeeBookingShortListDto result = bookingSearchService.getBookingsForEmployeePaged(
+                employee.getId(), club.getId(), startDate, endDate, Optional.empty(), 0, 10
+        );
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.content().isEmpty());
+        assertEquals(0, result.pageInfo().totalElements());
+        assertEquals(0, result.pageInfo().totalPages());
+        assertTrue(result.pageInfo().isLast());
+    }
+
+    @Test
+    void getBookingsForEmployeePagedThrowsExceptionWhenStartDateAfterEndDate() {
+        // Arrange
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Test Club", true);
+        Employee employee = createEmployee();
+
+        LocalDate startDate = LocalDate.of(2026, 6, 20);
+        LocalDate endDate = LocalDate.of(2026, 6, 15);
+
+        // Act & Assert
+        assertThrows(InvalidDateRangeException.class, () ->
+                bookingSearchService.getBookingsForEmployeePaged(
+                        employee.getId(), club.getId(), startDate, endDate, Optional.empty(), 0, 10
+                )
         );
     }
 }

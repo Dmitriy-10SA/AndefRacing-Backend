@@ -42,6 +42,7 @@ public class CacheConfig {
 
         // Профили - кешируем на 30 минут
         cacheConfigurations.put(CacheNames.CLIENT_PROFILE, defaultConfig.entryTtl(Duration.ofMinutes(30)));
+        cacheConfigurations.put(CacheNames.CLIENT_FAVORITE_CLUBS, defaultConfig.entryTtl(Duration.ofMinutes(30)));
         cacheConfigurations.put(CacheNames.EMPLOYEE_PROFILE, defaultConfig.entryTtl(Duration.ofMinutes(30)));
 
         return RedisCacheManager.builder(connectionFactory)
@@ -59,6 +60,7 @@ public class CacheConfig {
         public static final String CLUBS_IN_CITY = "clubsInCity";
 
         public static final String CLIENT_PROFILE = "clientProfile";
+        public static final String CLIENT_FAVORITE_CLUBS = "clientFavoriteClubs";
         public static final String EMPLOYEE_PROFILE = "employeeProfile";
     }
 }

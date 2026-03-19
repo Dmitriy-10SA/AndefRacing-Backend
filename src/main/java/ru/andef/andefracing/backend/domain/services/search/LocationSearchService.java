@@ -32,7 +32,7 @@ public class LocationSearchService {
     @Transactional(readOnly = true)
     public Region findRegionById(short id) {
         return regionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Регион с id " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Регион не найден"));
     }
 
     /**
@@ -41,7 +41,7 @@ public class LocationSearchService {
     @Transactional(readOnly = true)
     public City findCityById(short id) {
         return cityRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Город с id " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Город не найден"));
     }
 
     /**

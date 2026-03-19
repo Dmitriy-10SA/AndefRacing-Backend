@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.CONFLICT)
 public class NotEnoughSimulatorsException extends RuntimeException {
     public NotEnoughSimulatorsException() {
-        super("Недостаточно симуляторов для бронирования");
+        super("Недостаточно  свободных игровых мест для бронирования");
     }
 }

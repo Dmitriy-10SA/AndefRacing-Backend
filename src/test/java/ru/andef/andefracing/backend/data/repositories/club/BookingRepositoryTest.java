@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ru.andef.andefracing.backend.data.entities.Client;
@@ -544,6 +547,170 @@ class BookingRepositoryTest {
 
         assertEquals(1, result.size());
         assertEquals(client1.getPhone(), result.get(0).getClient().getPhone());
+    }
+
+    @Test
+    void findAllByDateRangeAndClientIdPagedReturnsPagedBookingsSortedByStartDateTime() {
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Club");
+
+        Client client = createClient("Client", "+7-111-111-11-11");
+
+        Booking booking1 = new Booking(
+                club,
+                client,
+                atUtc(2026, 1, 3, 10),
+                atUtc(2026, 1, 3, 12),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club,
+                client,
+                atUtc(2026, 1, 1, 10),
+                atUtc(2026, 1, 1, 12),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        Booking booking3 = new Booking(
+                club,
+                client,
+                atUtc(2026, 1, 2, 10),
+                atUtc(2026, 1, 2, 12),
+                (short) 1,
+                new BigDecimal("2000.00")
+        );
+
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        OffsetDateTime start = atUtc(2026, 1, 1, 0);
+        OffsetDateTime end = atUtc(2026, 1, 4, 0);
+
+        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by("startDateTime"));
+        Page<Booking> result = bookingRepository.findAllByDateRangeAndClientIdPaged(
+                client.getId(),
+                start,
+                end,
+                pageRequest
+        );
+
+        assertEquals(3, result.getTotalElements());
+        assertEquals(2, result.getTotalPages());
+        assertEquals(2, result.getContent().size());
+        assertEquals(booking2.getId(), result.getContent().get(0).getId());
+        assertEquals(booking3.getId(), result.getContent().get(1).getId());
+    }
+
+    @Test
+    void findAllByDateRangeAndClubIdPagedReturnsPagedBookingsSortedByStartDateTime() {
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Club");
+
+        Client client1 = createClient("Client1", "+7-111-111-11-11");
+        Client client2 = createClient("Client2", "+7-222-222-22-22");
+
+        Booking booking1 = new Booking(
+                club,
+                client1,
+                atUtc(2026, 1, 3, 10),
+                atUtc(2026, 1, 3, 12),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club,
+                client2,
+                atUtc(2026, 1, 1, 10),
+                atUtc(2026, 1, 1, 12),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        Booking booking3 = new Booking(
+                club,
+                client1,
+                atUtc(2026, 1, 2, 10),
+                atUtc(2026, 1, 2, 12),
+                (short) 1,
+                new BigDecimal("2000.00")
+        );
+
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        OffsetDateTime start = atUtc(2026, 1, 1, 0);
+        OffsetDateTime end = atUtc(2026, 1, 4, 0);
+
+        PageRequest pageRequest = PageRequest.of(0, 2, Sort.by("startDateTime"));
+        Page<Booking> result = bookingRepository.findAllByDateRangeAndClubIdPaged(
+                club.getId(),
+                start,
+                end,
+                pageRequest
+        );
+
+        assertEquals(3, result.getTotalElements());
+        assertEquals(2, result.getTotalPages());
+        assertEquals(2, result.getContent().size());
+        assertEquals(booking2.getId(), result.getContent().get(0).getId());
+        assertEquals(booking3.getId(), result.getContent().get(1).getId());
+    }
+
+    @Test
+    void findAllByDateRangeAndClubIdAndClientPhonePagedReturnsPagedBookingsForClientPhone() {
+        Region region = createRegion();
+        City city = createCity(region);
+        Club club = createClub(city, "Club");
+
+        Client client1 = createClient("Client1", "+7-111-111-11-11");
+        Client client2 = createClient("Client2", "+7-222-222-22-22");
+
+        Booking booking1 = new Booking(
+                club,
+                client1,
+                atUtc(2026, 1, 3, 10),
+                atUtc(2026, 1, 3, 12),
+                (short) 1,
+                new BigDecimal("1000.00")
+        );
+        Booking booking2 = new Booking(
+                club,
+                client2,
+                atUtc(2026, 1, 1, 10),
+                atUtc(2026, 1, 1, 12),
+                (short) 1,
+                new BigDecimal("1500.00")
+        );
+        Booking booking3 = new Booking(
+                club,
+                client1,
+                atUtc(2026, 1, 2, 10),
+                atUtc(2026, 1, 2, 12),
+                (short) 1,
+                new BigDecimal("2000.00")
+        );
+
+        bookingRepository.saveAll(List.of(booking1, booking2, booking3));
+
+        OffsetDateTime start = atUtc(2026, 1, 1, 0);
+        OffsetDateTime end = atUtc(2026, 1, 4, 0);
+
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("startDateTime"));
+        Page<Booking> result = bookingRepository.findAllByDateRangeAndClubIdAndClientPhonePaged(
+                club.getId(),
+                start,
+                end,
+                client1.getPhone(),
+                pageRequest
+        );
+
+        assertEquals(2, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
+        assertEquals(2, result.getContent().size());
+        assertEquals(client1.getPhone(), result.getContent().get(0).getClient().getPhone());
+        assertEquals(client1.getPhone(), result.getContent().get(1).getClient().getPhone());
+        assertEquals(booking3.getId(), result.getContent().get(0).getId());
+        assertEquals(booking1.getId(), result.getContent().get(1).getId());
     }
 }
 

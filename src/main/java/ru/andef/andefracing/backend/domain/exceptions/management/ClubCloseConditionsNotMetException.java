@@ -14,8 +14,7 @@ public class ClubCloseConditionsNotMetException extends RuntimeException {
 
     public ClubCloseConditionsNotMetException(int id) {
         super(
-                "Нельзя закрыть клуб с id " + id +
-                        ", так как не выполнены все необходимые для этого условия, а именно:" +
+                "Нельзя закрыть клуб, так как не выполнены все необходимые для этого условия, а именно:" +
                         " есть оплаченные или ожидающие оплаты бронирования"
         );
         this.id = id;
