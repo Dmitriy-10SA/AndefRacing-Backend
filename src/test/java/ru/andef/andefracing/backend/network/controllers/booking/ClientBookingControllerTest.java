@@ -12,6 +12,8 @@ import ru.andef.andefracing.backend.domain.services.booking.BookingManagementSer
 import ru.andef.andefracing.backend.domain.services.booking.BookingSearchService;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
+import ru.andef.andefracing.backend.network.dtos.booking.client.PagedClientBookingShortListDto;
+import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 import tools.jackson.databind.ObjectMapper;
 
@@ -21,8 +23,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -92,13 +93,20 @@ class ClientBookingControllerTest {
 
     @Test
     void getBookingsReturnsOkWhenValidAndAuthenticated() throws Exception {
-        when(bookingSearchService.getAllClientBookings(anyLong(), any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(Collections.emptyList());
+        PagedClientBookingShortListDto pagedDto = new PagedClientBookingShortListDto(
+                Collections.emptyList(),
+                new PageInfoDto(0, 10, 0L, 0, true)
+        );
+        when(bookingSearchService.getAllClientBookingsPaged(
+                anyLong(), any(LocalDate.class), any(LocalDate.class), anyInt(), anyInt()
+        )).thenReturn(pagedDto);
 
         mockMvc.perform(get("/api/v1/bookings/client")
                         .with(authentication(clientAuth()))
                         .param("startDate", "2026-01-01")
-                        .param("endDate", "2026-01-31"))
+                        .param("endDate", "2026-01-31")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "10"))
                 .andExpect(status().isOk());
     }
 

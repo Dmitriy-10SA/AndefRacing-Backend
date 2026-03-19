@@ -12,6 +12,8 @@ import ru.andef.andefracing.backend.domain.services.booking.BookingManagementSer
 import ru.andef.andefracing.backend.domain.services.booking.BookingSearchService;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBookingDto;
+import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeBookingShortListDto;
+import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 import tools.jackson.databind.ObjectMapper;
 
@@ -105,19 +107,46 @@ class EmployeeBookingControllerTest {
 
     @Test
     void getBookingsReturnsOkWhenValidAndAuthenticated() throws Exception {
-        when(bookingSearchService.getBookingsForEmployee(anyLong(), anyInt(), any(LocalDate.class), any(LocalDate.class), any()))
-                .thenReturn(Collections.emptyList());
+        PagedEmployeeBookingShortListDto pagedDto = new PagedEmployeeBookingShortListDto(
+                Collections.emptyList(),
+                new PageInfoDto(0, 10, 0L, 0, true)
+        );
+        when(bookingSearchService.getBookingsForEmployeePaged(
+                anyLong(), anyInt(), any(LocalDate.class), any(LocalDate.class), any(), anyInt(), anyInt()
+        )).thenReturn(pagedDto);
 
         mockMvc.perform(get("/api/v1/bookings/employee")
                         .with(authentication(employeeAuth()))
                         .param("startDate", "2026-01-01")
-                        .param("endDate", "2026-01-31"))
+                        .param("endDate", "2026-01-31")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "10"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getBookingsReturnsOkWhenValidAndAuthenticatedWithClientPhone() throws Exception {
+        PagedEmployeeBookingShortListDto pagedDto = new PagedEmployeeBookingShortListDto(
+                Collections.emptyList(),
+                new PageInfoDto(0, 10, 0L, 0, true)
+        );
+        when(bookingSearchService.getBookingsForEmployeePaged(
+                anyLong(), anyInt(), any(LocalDate.class), any(LocalDate.class), any(), anyInt(), anyInt()
+        )).thenReturn(pagedDto);
+
+        mockMvc.perform(get("/api/v1/bookings/employee")
+                        .with(authentication(employeeAuth()))
+                        .param("startDate", "2026-01-01")
+                        .param("endDate", "2026-01-31")
+                        .param("clientPhone", "+7-111-111-11-11")
+                        .param("pageNumber", "0")
+                        .param("pageSize", "10"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void getFullBookingInfoReturnsOkWhenAuthenticated() throws Exception {
-        mockMvc.perform(get("/api/v1/bookings/employee/1")
+        mockMvc.perform(get("/api/v1/bookings/employee/full-info/1")
                         .with(authentication(employeeAuth())))
                 .andExpect(status().isOk());
     }
