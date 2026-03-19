@@ -15,7 +15,7 @@ public interface RegionRepository extends JpaRepository<Region, Short> {
     @Query(
             nativeQuery = true,
             value = """
-                    SELECT r.* FROM location.region r
+                    SELECT DISTINCT r.* FROM location.region r
                     JOIN location.city c on r.id = c.region_id
                     JOIN info.club cl on c.id = cl.city_id
                     WHERE cl.is_open = TRUE
