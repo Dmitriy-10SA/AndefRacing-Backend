@@ -20,7 +20,6 @@ import ru.andef.andefracing.backend.network.ApiVersions;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequestDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
-import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBookingDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeBookingShortListDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
