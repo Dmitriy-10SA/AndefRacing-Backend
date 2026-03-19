@@ -1,7 +1,7 @@
 <div align="center">
-  <h1>🏁 AndefRacing Backend</h1>
+  <h1>🏁 AndefRacing</h1>
   <p>
-    <strong>Серверная часть экосистемы для управления сетью симрейсинг-клубов AndefRacing</strong>
+    <strong>Система для сети симрейсинг-клубов AndefRacing</strong>
   </p>
   <p>
     <img src="https://img.shields.io/badge/Java-17-orange?logo=java" alt="Java 17">
@@ -14,6 +14,7 @@
 
 ## 🛠 Стек технологий
 
+### Backend 
 | Компонент | Технология |
 |-----------|------------|
 | **Язык** | Java 17 |
