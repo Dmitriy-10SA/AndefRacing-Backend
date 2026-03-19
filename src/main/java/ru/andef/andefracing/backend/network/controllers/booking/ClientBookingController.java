@@ -2,6 +2,7 @@ package ru.andef.andefracing.backend.network.controllers.booking;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequest
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookingDto;
+import ru.andef.andefracing.backend.network.dtos.booking.client.PagedClientBookingShortListDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
@@ -79,10 +81,10 @@ public class ClientBookingController {
     }
 
     /**
-     * Получение списка всех бронирований за диапазон дат
+     * Получение списка всех бронирований за диапазон дат с пагинацией
      */
     @GetMapping(version = ApiVersions.V1)
-    public ResponseEntity<List<ClientBookingShortDto>> getBookings(
+    public ResponseEntity<PagedClientBookingShortListDto> getBookings(
             @RequestParam(name = "startDate")
             @NotNull
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -91,14 +93,16 @@ public class ClientBookingController {
             @NotNull
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
             LocalDate endDate,
+            @RequestParam @NotNull @Min(value = 0) Integer pageNumber,
+            @RequestParam @NotNull @Min(value = 1) @Max(value = 100) Integer pageSize,
             Authentication authentication
     ) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        List<ClientBookingShortDto> bookings = bookingSearchService
-                .getAllClientBookings(principal.id(), startDate, endDate);
+        PagedClientBookingShortListDto bookings = bookingSearchService
+                .getAllClientBookingsPaged(principal.id(), startDate, endDate, pageNumber, pageSize);
         return ResponseEntity.ok(bookings);
     }
 

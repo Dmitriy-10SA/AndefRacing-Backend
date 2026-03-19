@@ -2,6 +2,7 @@ package ru.andef.andefracing.backend.network.controllers.booking;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotsRequest
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingFullInfoDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookingShortDto;
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBookingDto;
+import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeBookingShortListDto;
 import ru.andef.andefracing.backend.network.security.jwt.JwtFilter;
 
 import java.time.LocalDate;
@@ -109,10 +111,10 @@ public class EmployeeBookingController {
     }
 
     /**
-     * Получение списка всех бронирований за диапазон дат и по номеру телефона клиента (номер телефона опционален)
+     * Получение списка всех бронирований за диапазон дат и по номеру телефона клиента (номер телефона опционален) с пагинацией
      */
     @GetMapping(version = ApiVersions.V1)
-    public ResponseEntity<List<EmployeeBookingShortDto>> getBookings(
+    public ResponseEntity<PagedEmployeeBookingShortListDto> getBookings(
             @RequestParam("startDate")
             @NotNull
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -123,6 +125,8 @@ public class EmployeeBookingController {
             LocalDate endDate,
             @RequestParam(name = "clientPhone", required = false)
             String clientPhone,
+            @RequestParam @NotNull @Min(value = 0) Integer pageNumber,
+            @RequestParam @NotNull @Min(value = 1) @Max(value = 100) Integer pageSize,
             Authentication authentication
     ) {
         boolean isValidPhone = clientPhone == null || clientPhone.matches("^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$");
@@ -133,12 +137,14 @@ public class EmployeeBookingController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        List<EmployeeBookingShortDto> bookings = bookingSearchService.getBookingsForEmployee(
+        PagedEmployeeBookingShortListDto bookings = bookingSearchService.getBookingsForEmployeePaged(
                 principal.id(),
                 principal.clubId(),
                 startDate,
                 endDate,
-                clientPhone == null ? Optional.empty() : Optional.of(clientPhone)
+                clientPhone == null ? Optional.empty() : Optional.of(clientPhone),
+                pageNumber,
+                pageSize
         );
         return ResponseEntity.ok(bookings);
     }
