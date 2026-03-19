@@ -78,6 +78,7 @@ public class ProfileService {
     /**
      * Добавление клуба в список избранных клубов клиента
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional
     public void addClubToClientFavoriteClubs(long clientId, int clubId) {
         Client client = clientSearchService.findClientById(clientId);
@@ -109,6 +110,7 @@ public class ProfileService {
     /**
      * Удаление клуба из списка избранных клубов клиента
      */
+    @CacheEvict(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional
     public void deleteClubFromClientFavoriteClubs(long clientId, int clubId) {
         Client client = clientSearchService.findClientById(clientId);
@@ -133,5 +135,16 @@ public class ProfileService {
                 .map(EmployeeClub::getEmployeeRole)
                 .toList();
         return employeeMapper.toPersonalInfo(employee, roles);
+    }
+
+    /**
+     * Проверка, является ли клуб избранным у клиента
+     */
+    @Cacheable(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
+    @Transactional(readOnly = true)
+    public boolean isClubFavoriteForClient(long clientId, int clubId) {
+        Client client = clientSearchService.findClientById(clientId);
+        Club club = clubSearchService.findClubById(clubId);
+        return client.getFavoriteClubs().contains(club);
     }
 }

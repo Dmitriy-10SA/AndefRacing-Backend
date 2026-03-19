@@ -76,7 +76,7 @@ public class ClientProfileController {
     @GetMapping(path = "/favorite-clubs", version = ApiVersions.V1)
     public ResponseEntity<PagedFavoriteClubShortListDto> getFavoriteClubs(
             @RequestParam @NotNull @Min(value = 0) Integer pageNumber,
-            @RequestParam @NotNull@Min(value = 1) @Max(value = 100) Integer pageSize,
+            @RequestParam @NotNull @Min(value = 1) @Max(value = 100) Integer pageSize,
             Authentication authentication
     ) {
         JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
@@ -102,5 +102,18 @@ public class ClientProfileController {
         }
         profileService.deleteClubFromClientFavoriteClubs(principal.id(), clubId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Проверка, является ли клуб избранным у клиента
+     */
+    @GetMapping(path = "/favorite-clubs/{clubId}/check", version = ApiVersions.V1)
+    public ResponseEntity<Boolean> isClubFavoriteForClient(@PathVariable int clubId, Authentication authentication) {
+        JwtFilter.ClientPrincipal principal = (JwtFilter.ClientPrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        boolean isFavorite = profileService.isClubFavoriteForClient(principal.id(), clubId);
+        return ResponseEntity.ok(isFavorite);
     }
 }
