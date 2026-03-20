@@ -18,7 +18,6 @@ import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
-import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.exceptions.management.EmployeeWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddExistingEmployeeDto;
 import ru.andef.andefracing.backend.network.dtos.management.hr.AddNewEmployeeDto;
@@ -478,7 +477,7 @@ class ClubHrManagementServiceTest {
     void getEmployeesAndRolesInClubThrowsExceptionWhenClubNotFound() {
         // Arrange
         int nonExistentClubId = 999;
-        Employee employee = createEmployee("+7-111-111-11-11");
+        createEmployee("+7-111-111-11-11");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
