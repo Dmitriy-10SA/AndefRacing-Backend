@@ -9,7 +9,6 @@ import ru.andef.andefracing.backend.data.entities.location.City;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;

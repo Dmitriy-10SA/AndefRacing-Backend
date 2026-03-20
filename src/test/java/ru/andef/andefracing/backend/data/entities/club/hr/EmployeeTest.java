@@ -8,7 +8,6 @@ import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
