@@ -21,6 +21,7 @@ import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientChangePersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.ClientPersonalInfoDto;
 import ru.andef.andefracing.backend.network.dtos.profile.client.PagedFavoriteClubShortListDto;
@@ -122,7 +123,7 @@ class ProfileServiceTest {
         long nonExistentClientId = 999L;
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(UserNotFoundFromTokenException.class, () ->
                 profileService.getClientPersonalInfo(nonExistentClientId)
         );
     }
@@ -322,7 +323,7 @@ class ProfileServiceTest {
         long nonExistentEmployeeId = 999L;
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(UserNotFoundFromTokenException.class, () ->
                 profileService.getEmployeePersonalInfo(nonExistentEmployeeId, club.getId())
         );
     }
