@@ -18,8 +18,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -54,7 +53,7 @@ class ClubWorkScheduleManagementControllerTest {
 
     @Test
     void getAllWorkSchedulesExceptionsInClubReturnsOkWhenAuthenticated() throws Exception {
-        when(clubManagementService.getAllWorkSchedulesExceptionsInClub(anyInt(), any(LocalDate.class), any(LocalDate.class)))
+        when(clubManagementService.getAllWorkSchedulesExceptionsInClub(anyLong(), anyInt(), any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/v1/management/club/work-schedule/exceptions")

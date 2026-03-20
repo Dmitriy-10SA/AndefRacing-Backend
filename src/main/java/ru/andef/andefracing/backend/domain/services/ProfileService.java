@@ -18,6 +18,7 @@ import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
@@ -59,7 +60,8 @@ public class ProfileService {
     @Cacheable(value = CacheConfig.CacheNames.CLIENT_PROFILE, key = "#clientId")
     @Transactional(readOnly = true)
     public ClientPersonalInfoDto getClientPersonalInfo(long clientId) {
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         return clientMapper.toPersonalInfoDto(client);
     }
 
@@ -69,7 +71,8 @@ public class ProfileService {
     @CacheEvict(value = CacheConfig.CacheNames.CLIENT_PROFILE, key = "#clientId")
     @Transactional
     public void changeClientPersonalInfo(long clientId, ClientChangePersonalInfoDto changePersonalInfoDto) {
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         client.setName(changePersonalInfoDto.name());
         client.setPhone(changePersonalInfoDto.phone());
         clientRepository.save(client);
@@ -81,7 +84,8 @@ public class ProfileService {
     @CacheEvict(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional
     public void addClubToClientFavoriteClubs(long clientId, int clubId) {
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         if (client.getFavoriteClubs().contains(club)) {
             throw new DuplicateException("Клуб уже добавлен в избранное");
@@ -95,7 +99,8 @@ public class ProfileService {
      */
     @Transactional(readOnly = true)
     public PagedFavoriteClubShortListDto getClientFavoriteClubs(long clientId, int pageNumber, int pageSize) {
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(NAME));
         Page<Club> clubsPage = clubRepository.getClientFavoriteClubs(client.getId(), pageRequest);
         List<FavoriteClubShortDto> content = clubMapper
@@ -113,7 +118,8 @@ public class ProfileService {
     @CacheEvict(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional
     public void deleteClubFromClientFavoriteClubs(long clientId, int clubId) {
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         if (!client.getFavoriteClubs().contains(club)) {
             throw new EntityNotFoundException("У клиента нет такого избранного клуба");
@@ -128,7 +134,8 @@ public class ProfileService {
     @Cacheable(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, key = "#employeeId + '_' + #clubId")
     @Transactional(readOnly = true)
     public EmployeePersonalInfoDto getEmployeePersonalInfo(long employeeId, int clubId) {
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService
+                .findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         List<EmployeeRole> roles = club.getEmployeesAndRoles().stream()
                 .filter(employeeClub -> employeeClub.getEmployee().equals(employee))
@@ -143,7 +150,8 @@ public class ProfileService {
     @Cacheable(value = CacheConfig.CacheNames.CLIENT_FAVORITE_CLUBS, key = "#clientId + '_' + #clubId")
     @Transactional(readOnly = true)
     public boolean isClubFavoriteForClient(long clientId, int clubId) {
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         return client.getFavoriteClubs().contains(club);
     }

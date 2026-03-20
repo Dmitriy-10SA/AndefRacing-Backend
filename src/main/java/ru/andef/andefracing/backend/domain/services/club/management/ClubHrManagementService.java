@@ -13,6 +13,7 @@ import ru.andef.andefracing.backend.data.repositories.club.ClubRepository;
 import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.exceptions.management.EmployeeWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.mappers.club.EmployeeMapper;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
@@ -63,9 +64,13 @@ public class ClubHrManagementService {
 
     /**
      * Проверка, что сотрудник есть в системе
+     *
+     * @param employeeId id сотрудника, который делает проверку
+     * @param phone      телефон сотрудника, которому делают проверку
      */
     @Transactional(readOnly = true)
-    public boolean isEmployeeInSystem(String phone) {
+    public boolean isEmployeeInSystem(long employeeId, String phone) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         return employeeRepository.findByPhone(phone).isPresent();
     }
 
@@ -74,7 +79,8 @@ public class ClubHrManagementService {
      * по номеру телефона сотрудника с заданием ролей
      */
     @Transactional
-    public void addNewEmployeeToClub(int clubId, AddNewEmployeeDto addNewEmployeeDto) {
+    public void addNewEmployeeToClub(long employeeId, int clubId, AddNewEmployeeDto addNewEmployeeDto) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         if (employeeRepository.existsByPhone(addNewEmployeeDto.getPhone())) {
             throw new EmployeeWithThisPhoneAlreadyExistsException(addNewEmployeeDto.getPhone());
         }
@@ -95,7 +101,8 @@ public class ClubHrManagementService {
      * по номеру телефона сотрудника с заданием ролей
      */
     @Transactional
-    public void addExistingEmployeeToClub(int clubId, AddExistingEmployeeDto addExistingEmployeeDto) {
+    public void addExistingEmployeeToClub(long employeeId, int clubId, AddExistingEmployeeDto addExistingEmployeeDto) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Employee employee = clubSearchService
                 .findEmployeeByPhoneWithoutPasswordNotSetException(addExistingEmployeeDto.getPhone());
@@ -112,7 +119,8 @@ public class ClubHrManagementService {
      * Получение списка сотрудников и их ролей в клубе
      */
     @Transactional(readOnly = true)
-    public List<EmployeeAndRolesDto> getEmployeesAndRolesInClub(int clubId) {
+    public List<EmployeeAndRolesDto> getEmployeesAndRolesInClub(long employeeId, int clubId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Map<Employee, List<EmployeeRole>> employeeAndRolesMap = new HashMap<>();
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
@@ -132,9 +140,10 @@ public class ClubHrManagementService {
      * Удаление сотрудника из выбранного текущим клуба
      */
     @Transactional
-    public void deleteEmployeeFromClub(int clubId, long employeeId) {
+    public void deleteEmployeeFromClub(long employeeId, int clubId, long employeeForDeleteId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeForDeleteId);
         boolean isExistingInClub = false;
         for (EmployeeClub employeeClub : club.getEmployeesAndRoles()) {
             if (employeeClub.getEmployee().equals(employee)) {
@@ -154,9 +163,10 @@ public class ClubHrManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, allEntries = true)
     @Transactional
-    public void addRoleToEmployeeInClub(int clubId, long employeeId, EmployeeRole role) {
+    public void addRoleToEmployeeInClub(long employeeId, int clubId, long employeeForAddRoleId, EmployeeRole role) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeForAddRoleId);
         List<EmployeeRole> rolesInClub = findEmployeeRolesInClub(club, employee);
         if (rolesInClub.isEmpty()) {
             throw new EntityNotFoundException("Сотрудник не найден в клубе");
@@ -172,12 +182,19 @@ public class ClubHrManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, allEntries = true)
     @Transactional
-    public void updateEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole oldRole, EmployeeRole newRole) {
+    public void updateEmployeeRoleInClub(
+            long employeeId,
+            int clubId,
+            long employeeForUpdateRoleId,
+            EmployeeRole oldRole,
+            EmployeeRole newRole
+    ) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         if (oldRole.equals(EmployeeRole.EMPLOYEE)) {
             throw new IllegalArgumentException("Нельзя изменить роль EMPLOYEE на другую роль");
         }
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeForUpdateRoleId);
         deleteEmployeeRoleInClub(club, employee, oldRole);
         club.addRoleForEmployee(employee, newRole);
         clubRepository.save(club);
@@ -188,9 +205,15 @@ public class ClubHrManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.EMPLOYEE_PROFILE, allEntries = true)
     @Transactional
-    public void deleteEmployeeRoleInClub(int clubId, long employeeId, EmployeeRole role) {
+    public void deleteEmployeeRoleInClub(
+            long employeeId,
+            int clubId,
+            long employeeForDeleteRoleId,
+            EmployeeRole role
+    ) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
-        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeId);
+        Employee employee = clubSearchService.findEmployeeByIdWithoutPasswordNotSetException(employeeForDeleteRoleId);
         if (role.equals(EmployeeRole.EMPLOYEE) && findEmployeeRolesInClub(club, employee).size() > 1) {
             throw new IllegalArgumentException(
                     "Нельзя удалить роль EMPLOYEE у сотрудника, у которого есть другие роли"

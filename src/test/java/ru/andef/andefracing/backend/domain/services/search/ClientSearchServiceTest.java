@@ -11,6 +11,7 @@ import ru.andef.andefracing.backend.data.entities.Client;
 import ru.andef.andefracing.backend.data.repositories.ClientRepository;
 import ru.andef.andefracing.backend.domain.exceptions.BlockedException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -133,6 +134,17 @@ class ClientSearchServiceTest {
         assertEquals(client.getId(), result.getId());
         assertEquals(client.getName(), result.getName());
         assertEquals(client.getPhone(), result.getPhone());
+    }
+
+    @Test
+    void findClientByIdThrowsCustomExceptionWhenClientNotFound() {
+        // Arrange
+        RuntimeException customException = new UserNotFoundFromTokenException();
+
+        // Act & Assert
+        assertThrows(UserNotFoundFromTokenException.class, () ->
+                clientSearchService.findClientByIdOrThrowCustomException(999L, customException)
+        );
     }
 
     @Test

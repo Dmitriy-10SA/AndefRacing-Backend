@@ -98,7 +98,7 @@ class ClubHrManagementServiceTest {
         createEmployee(phone);
 
         // Act
-        boolean result = clubHrManagementService.isEmployeeInSystem(phone);
+        boolean result = clubHrManagementService.isEmployeeInSystem(1, phone);
 
         // Assert
         assertTrue(result);
@@ -108,9 +108,10 @@ class ClubHrManagementServiceTest {
     void isEmployeeInSystemReturnsFalseWhenEmployeeDoesNotExist() {
         // Arrange
         String phone = "+7-999-999-99-99";
+        createEmployee("+7-111-111-21-11");
 
         // Act
-        boolean result = clubHrManagementService.isEmployeeInSystem(phone);
+        boolean result = clubHrManagementService.isEmployeeInSystem(1, phone);
 
         // Assert
         assertFalse(result);
@@ -122,6 +123,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
                 "+7-111-111-11-11",
                 List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN),
@@ -131,7 +133,7 @@ class ClubHrManagementServiceTest {
         );
 
         // Act
-        clubHrManagementService.addNewEmployeeToClub(club.getId(), dto);
+        clubHrManagementService.addNewEmployeeToClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -148,6 +150,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         String phone = "+7-111-111-11-11";
         createEmployee(phone);
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
@@ -160,7 +163,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(EmployeeWithThisPhoneAlreadyExistsException.class, () ->
-                clubHrManagementService.addNewEmployeeToClub(club.getId(), dto)
+                clubHrManagementService.addNewEmployeeToClub(1, club.getId(), dto)
         );
     }
 
@@ -170,6 +173,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         String phone = "+7-111-111-11-11";
         Employee employee = createEmployee(phone);
         AddExistingEmployeeDto dto = new AddExistingEmployeeDto(
@@ -178,7 +182,7 @@ class ClubHrManagementServiceTest {
         );
 
         // Act
-        clubHrManagementService.addExistingEmployeeToClub(club.getId(), dto);
+        clubHrManagementService.addExistingEmployeeToClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -192,6 +196,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         String phone = "+7-111-111-11-11";
         Employee employee = createEmployee(phone);
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
@@ -203,7 +208,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(DuplicateException.class, () ->
-                clubHrManagementService.addExistingEmployeeToClub(club.getId(), dto)
+                clubHrManagementService.addExistingEmployeeToClub(1, club.getId(), dto)
         );
     }
 
@@ -213,6 +218,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee1 = createEmployee("+7-111-111-11-11");
         Employee employee2 = createEmployee("+7-222-222-22-22");
         club.addEmployee(employee1, List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN));
@@ -220,7 +226,7 @@ class ClubHrManagementServiceTest {
         clubRepository.save(club);
 
         // Act
-        List<EmployeeAndRolesDto> result = clubHrManagementService.getEmployeesAndRolesInClub(club.getId());
+        List<EmployeeAndRolesDto> result = clubHrManagementService.getEmployeesAndRolesInClub(1, club.getId());
 
         // Assert
         assertNotNull(result);
@@ -233,9 +239,10 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
 
         // Act
-        List<EmployeeAndRolesDto> result = clubHrManagementService.getEmployeesAndRolesInClub(club.getId());
+        List<EmployeeAndRolesDto> result = clubHrManagementService.getEmployeesAndRolesInClub(1, club.getId());
 
         // Assert
         assertNotNull(result);
@@ -248,12 +255,13 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
 
         // Act
-        clubHrManagementService.deleteEmployeeFromClub(club.getId(), employee.getId());
+        clubHrManagementService.deleteEmployeeFromClub(1, club.getId(), employee.getId());
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -266,11 +274,12 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.deleteEmployeeFromClub(club.getId(), employee.getId())
+                clubHrManagementService.deleteEmployeeFromClub(1, club.getId(), employee.getId())
         );
     }
 
@@ -280,12 +289,13 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
 
         // Act
-        clubHrManagementService.addRoleToEmployeeInClub(club.getId(), employee.getId(), EmployeeRole.ADMIN);
+        clubHrManagementService.addRoleToEmployeeInClub(1, club.getId(), employee.getId(), EmployeeRole.ADMIN);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -298,11 +308,12 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.addRoleToEmployeeInClub(club.getId(), employee.getId(), EmployeeRole.ADMIN)
+                clubHrManagementService.addRoleToEmployeeInClub(1, club.getId(), employee.getId(), EmployeeRole.ADMIN)
         );
     }
 
@@ -312,13 +323,14 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
 
         // Act & Assert
         assertThrows(DuplicateException.class, () ->
-                clubHrManagementService.addRoleToEmployeeInClub(club.getId(), employee.getId(), EmployeeRole.EMPLOYEE)
+                clubHrManagementService.addRoleToEmployeeInClub(1, club.getId(), employee.getId(), EmployeeRole.EMPLOYEE)
         );
     }
 
@@ -328,12 +340,14 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.ADMIN));
         clubRepository.save(club);
 
         // Act
         clubHrManagementService.updateEmployeeRoleInClub(
+                1,
                 club.getId(),
                 employee.getId(),
                 EmployeeRole.ADMIN,
@@ -353,6 +367,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
@@ -360,6 +375,7 @@ class ClubHrManagementServiceTest {
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
                 clubHrManagementService.updateEmployeeRoleInClub(
+                        1,
                         club.getId(),
                         employee.getId(),
                         EmployeeRole.ADMIN,
@@ -374,12 +390,13 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN));
         clubRepository.save(club);
 
         // Act
-        clubHrManagementService.deleteEmployeeRoleInClub(club.getId(), employee.getId(), EmployeeRole.ADMIN);
+        clubHrManagementService.deleteEmployeeRoleInClub(1, club.getId(), employee.getId(), EmployeeRole.ADMIN);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -393,13 +410,14 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
         club.addEmployee(employee, List.of(EmployeeRole.EMPLOYEE));
         clubRepository.save(club);
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.deleteEmployeeRoleInClub(club.getId(), employee.getId(), EmployeeRole.ADMIN)
+                clubHrManagementService.deleteEmployeeRoleInClub(1, club.getId(), employee.getId(), EmployeeRole.ADMIN)
         );
     }
 
@@ -409,11 +427,12 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.deleteEmployeeRoleInClub(club.getId(), employee.getId(), EmployeeRole.EMPLOYEE)
+                clubHrManagementService.deleteEmployeeRoleInClub(1, club.getId(), employee.getId(), EmployeeRole.EMPLOYEE)
         );
     }
 
@@ -421,6 +440,7 @@ class ClubHrManagementServiceTest {
     void addNewEmployeeToClubThrowsExceptionWhenClubNotFound() {
         // Arrange
         int nonExistentClubId = 999;
+        createEmployee("+7-999-999-99-99");
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
                 "+7-111-111-11-11",
                 List.of(EmployeeRole.EMPLOYEE),
@@ -431,7 +451,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.addNewEmployeeToClub(nonExistentClubId, dto)
+                clubHrManagementService.addNewEmployeeToClub(1, nonExistentClubId, dto)
         );
     }
 
@@ -441,6 +461,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         AddExistingEmployeeDto dto = new AddExistingEmployeeDto(
                 "+7-999-999-99-99",
                 List.of(EmployeeRole.MANAGER)
@@ -448,7 +469,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.addExistingEmployeeToClub(club.getId(), dto)
+                clubHrManagementService.addExistingEmployeeToClub(1, club.getId(), dto)
         );
     }
 
@@ -456,10 +477,11 @@ class ClubHrManagementServiceTest {
     void getEmployeesAndRolesInClubThrowsExceptionWhenClubNotFound() {
         // Arrange
         int nonExistentClubId = 999;
+        createEmployee("+7-111-111-11-11");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.getEmployeesAndRolesInClub(nonExistentClubId)
+                clubHrManagementService.getEmployeesAndRolesInClub(1, nonExistentClubId)
         );
     }
 
@@ -471,7 +493,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.deleteEmployeeFromClub(nonExistentClubId, employee.getId())
+                clubHrManagementService.deleteEmployeeFromClub(1, nonExistentClubId, employee.getId())
         );
     }
 
@@ -483,7 +505,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.addRoleToEmployeeInClub(nonExistentClubId, employee.getId(), EmployeeRole.ADMIN)
+                clubHrManagementService.addRoleToEmployeeInClub(1, nonExistentClubId, employee.getId(), EmployeeRole.ADMIN)
         );
     }
 
@@ -493,11 +515,13 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         Employee employee = createEmployee("+7-111-111-11-11");
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
                 clubHrManagementService.updateEmployeeRoleInClub(
+                        1,
                         club.getId(),
                         employee.getId(),
                         EmployeeRole.ADMIN,
@@ -514,7 +538,7 @@ class ClubHrManagementServiceTest {
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubHrManagementService.deleteEmployeeRoleInClub(nonExistentClubId, employee.getId(), EmployeeRole.EMPLOYEE)
+                clubHrManagementService.deleteEmployeeRoleInClub(1, nonExistentClubId, employee.getId(), EmployeeRole.EMPLOYEE)
         );
     }
 
@@ -524,6 +548,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         AddNewEmployeeDto dto = new AddNewEmployeeDto(
                 "+7-111-111-11-11",
                 List.of(EmployeeRole.EMPLOYEE, EmployeeRole.ADMIN, EmployeeRole.MANAGER),
@@ -533,7 +558,7 @@ class ClubHrManagementServiceTest {
         );
 
         // Act
-        clubHrManagementService.addNewEmployeeToClub(club.getId(), dto);
+        clubHrManagementService.addNewEmployeeToClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -546,6 +571,7 @@ class ClubHrManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee("+7-111-111-21-11");
         String phone = "+7-111-111-11-11";
         createEmployee(phone);
         clubRepository.save(club);
@@ -555,7 +581,7 @@ class ClubHrManagementServiceTest {
         );
 
         // Act
-        clubHrManagementService.addExistingEmployeeToClub(club.getId(), dto);
+        clubHrManagementService.addExistingEmployeeToClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();

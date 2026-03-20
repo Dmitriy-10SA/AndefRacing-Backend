@@ -15,6 +15,7 @@ import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.data.repositories.club.WorkScheduleExceptionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.mappers.ClientMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.BookingMapper;
 import ru.andef.andefracing.backend.domain.mappers.club.ClubMapper;
@@ -177,7 +178,7 @@ public class BookingSearchService {
         if (startDate.isAfter(endDate)) {
             throw new InvalidDateRangeException();
         }
-        clientSearchService.findClientById(clientId);
+        clientSearchService.findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(START_DATE_TIME));
@@ -205,7 +206,7 @@ public class BookingSearchService {
      */
     @Transactional(readOnly = true)
     public ClientBookingFullInfoDto getBookingFullInfoForClient(long clientId, int clubId, long bookingId) {
-        clientSearchService.findClientById(clientId);
+        clientSearchService.findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
@@ -257,7 +258,7 @@ public class BookingSearchService {
         if (startDate.isAfter(endDate)) {
             throw new InvalidDateRangeException();
         }
-        clubSearchService.findEmployeeById(employeeId);
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
@@ -292,7 +293,7 @@ public class BookingSearchService {
      */
     @Transactional(readOnly = true)
     public EmployeeBookingFullInfoDto getBookingFullInfoForEmployee(long employeeId, int clubId, long bookingId) {
-        clubSearchService.findEmployeeById(employeeId);
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
