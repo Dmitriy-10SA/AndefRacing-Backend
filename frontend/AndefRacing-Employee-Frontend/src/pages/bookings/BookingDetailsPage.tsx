@@ -120,11 +120,13 @@ const BookingDetailsPage = () => {
         </div>
 
         <div className="space-y-4">
-          <div>
-            <label className="label">Клиент</label>
-            <p className="text-lg">{booking.client.name}</p>
-            <p className="text-gray-600">{formatPhone(booking.client.phone)}</p>
-          </div>
+          {booking.client && (
+            <div>
+              <label className="label">Клиент</label>
+              <p className="text-lg">{booking.client.name}</p>
+              <p className="text-gray-600">{formatPhone(booking.client.phone)}</p>
+            </div>
+          )}
 
           <div>
             <label className="label">Начало</label>
