@@ -22,6 +22,7 @@ import ru.andef.andefracing.backend.data.repositories.club.EmployeeRepository;
 import ru.andef.andefracing.backend.data.repositories.location.CityRepository;
 import ru.andef.andefracing.backend.data.repositories.location.RegionRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.NotEnoughSimulatorsException;
 import ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto;
@@ -375,7 +376,7 @@ class BookingManagementServiceTest {
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(UserNotFoundFromTokenException.class, () ->
                 bookingManagementService.makeClientBooking(999L, club.getId(), makeBookingDto)
         );
     }
@@ -409,7 +410,7 @@ class BookingManagementServiceTest {
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 
         // Act & Assert
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(UserNotFoundFromTokenException.class, () ->
                 bookingManagementService.makeEmployeeBooking(999L, club.getId(), makeBookingDto)
         );
     }

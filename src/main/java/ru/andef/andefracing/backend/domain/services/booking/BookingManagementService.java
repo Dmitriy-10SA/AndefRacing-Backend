@@ -10,6 +10,7 @@ import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.NotEnoughSimulatorsException;
 import ru.andef.andefracing.backend.domain.services.search.ClientSearchService;
@@ -80,7 +81,8 @@ public class BookingManagementService {
         OffsetDateTime start = clientMakeBookingDto.getSlot().startDateTime();
         OffsetDateTime end = clientMakeBookingDto.getSlot().endDateTime();
         checkStartAndEndDateTime(start, end);
-        Client client = clientSearchService.findClientById(clientId);
+        Client client = clientSearchService
+                .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         short cntEquipment = clientMakeBookingDto.getCntEquipment();
         BigDecimal expectedPrice = getPriceValue(club, start, end, cntEquipment);
@@ -99,7 +101,8 @@ public class BookingManagementService {
         OffsetDateTime start = employeeMakeBookingDto.getSlot().startDateTime();
         OffsetDateTime end = employeeMakeBookingDto.getSlot().endDateTime();
         checkStartAndEndDateTime(start, end);
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService
+                .findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         short cntEquipment = employeeMakeBookingDto.getCntEquipment();
         BigDecimal expectedPrice = getPriceValue(club, start, end, cntEquipment);
@@ -115,7 +118,8 @@ public class BookingManagementService {
      */
     @Transactional
     public void confirmBookingPaymentByEmployee(long employeeId, int clubId, long bookingId) {
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService
+                .findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
@@ -130,7 +134,8 @@ public class BookingManagementService {
      */
     @Transactional
     public void cancelBookingByEmployee(long employeeId, int clubId, long bookingId) {
-        Employee employee = clubSearchService.findEmployeeById(employeeId);
+        Employee employee = clubSearchService
+                .findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Booking booking = bookingRepository.findByIdAndClub(bookingId, club)
                 .orElseThrow(() ->
