@@ -1,12 +1,12 @@
 services:
-  app:
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: AndefRacing-app
+    container_name: AndefRacing-Backend
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - ${BACKEND_PORTS}
     environment:
       POSTGRES_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -21,6 +21,32 @@ services:
       - redis
     volumes:
       - ./uploads:/uploads
+    networks:
+      - andef-racing-network
+
+  client-frontend:
+    build:
+      context: ./frontend/AndefRacing-Client-Frontend
+      dockerfile: Dockerfile
+    container_name: AndefRacing-Client-Frontend
+    restart: unless-stopped
+    ports:
+      - ${CLIENT_FRONTEND_PORTS}
+    depends_on:
+      - backend
+    networks:
+      - andef-racing-network
+
+  employee-frontend:
+    build:
+      context: ./frontend/AndefRacing-Employee-Frontend
+      dockerfile: Dockerfile
+    container_name: AndefRacing-Employee-Frontend
+    restart: unless-stopped
+    ports:
+      - ${EMPLOYEE_FRONTEND_PORTS}
+    depends_on:
+      - backend
     networks:
       - andef-racing-network
 
