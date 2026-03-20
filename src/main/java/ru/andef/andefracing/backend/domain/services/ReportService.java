@@ -10,6 +10,7 @@ import ru.andef.andefracing.backend.data.projections.FinancialStatsAggregateProj
 import ru.andef.andefracing.backend.data.projections.RevenuePerDayProjection;
 import ru.andef.andefracing.backend.data.repositories.club.BookingRepository;
 import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.services.search.ClubSearchService;
 import ru.andef.andefracing.backend.network.dtos.report.BookingStatisticsDto;
 import ru.andef.andefracing.backend.network.dtos.report.FinancialStatisticsDto;
@@ -41,7 +42,13 @@ public class ReportService {
      * общее число бронирований, процент отмен, число бронирований по дням
      */
     @Transactional(readOnly = true)
-    public BookingStatisticsDto getBookingStatistics(int clubId, LocalDate startDate, LocalDate endDate) {
+    public BookingStatisticsDto getBookingStatistics(
+            long employeeId,
+            int clubId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         checkDateRange(startDate, endDate);
         Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
@@ -70,7 +77,13 @@ public class ReportService {
      * общую выручку, выручку по дням, средний чек
      */
     @Transactional(readOnly = true)
-    public FinancialStatisticsDto getFinancialStatistics(int clubId, LocalDate startDate, LocalDate endDate) {
+    public FinancialStatisticsDto getFinancialStatistics(
+            long employeeId,
+            int clubId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         checkDateRange(startDate, endDate);
         Club club = clubSearchService.findClubById(clubId);
         OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);

@@ -103,6 +103,7 @@ class ReportServiceTest {
 
     private Employee createEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employee.setPassword("password");
         return employeeRepository.save(employee);
     }
 
@@ -171,8 +172,10 @@ class ReportServiceTest {
         LocalDate startDate = LocalDate.of(2026, 1, 1);
         LocalDate endDate = LocalDate.of(2026, 1, 3);
 
+        createEmployee();
+
         // Act
-        BookingStatisticsDto result = reportService.getBookingStatistics(club.getId(), startDate, endDate);
+        BookingStatisticsDto result = reportService.getBookingStatistics(1, club.getId(), startDate, endDate);
 
         // Assert
         assertNotNull(result);
@@ -206,8 +209,10 @@ class ReportServiceTest {
         LocalDate startDate = LocalDate.of(2026, 1, 1);
         LocalDate endDate = LocalDate.of(2026, 1, 31);
 
+        createEmployee();
+
         // Act
-        BookingStatisticsDto result = reportService.getBookingStatistics(club.getId(), startDate, endDate);
+        BookingStatisticsDto result = reportService.getBookingStatistics(1, club.getId(), startDate, endDate);
 
         // Assert
         assertNotNull(result);
@@ -282,7 +287,7 @@ class ReportServiceTest {
         LocalDate endDate = LocalDate.of(2026, 1, 3);
 
         // Act
-        FinancialStatisticsDto result = reportService.getFinancialStatistics(club.getId(), startDate, endDate);
+        FinancialStatisticsDto result = reportService.getFinancialStatistics(1, club.getId(), startDate, endDate);
 
         // Assert
         assertNotNull(result);
@@ -316,8 +321,10 @@ class ReportServiceTest {
         LocalDate startDate = LocalDate.of(2026, 1, 1);
         LocalDate endDate = LocalDate.of(2026, 1, 31);
 
+        createEmployee();
+
         // Act
-        FinancialStatisticsDto result = reportService.getFinancialStatistics(club.getId(), startDate, endDate);
+        FinancialStatisticsDto result = reportService.getFinancialStatistics(1, club.getId(), startDate, endDate);
 
         // Assert
         assertNotNull(result);
@@ -360,7 +367,7 @@ class ReportServiceTest {
         LocalDate endDate = LocalDate.of(2026, 1, 1);
 
         // Act
-        FinancialStatisticsDto result = reportService.getFinancialStatistics(club.getId(), startDate, endDate);
+        FinancialStatisticsDto result = reportService.getFinancialStatistics(1, club.getId(), startDate, endDate);
 
         // Assert
         assertEquals(new BigDecimal("1000.00"), result.totalRevenue());
