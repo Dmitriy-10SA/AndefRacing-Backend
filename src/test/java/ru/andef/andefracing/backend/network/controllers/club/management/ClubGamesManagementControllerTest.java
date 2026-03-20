@@ -43,7 +43,7 @@ class ClubGamesManagementControllerTest {
 
     @Test
     void getAllActiveGamesReturnsOk() throws Exception {
-        when(clubManagementService.getAllActiveGames()).thenReturn(Collections.emptyList());
+        when(clubManagementService.getAllActiveGames(1)).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/api/v1/management/club/games"))
                 .andExpect(status().isOk());
