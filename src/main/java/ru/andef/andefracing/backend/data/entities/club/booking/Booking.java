@@ -13,7 +13,7 @@ import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.hr.Employee;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -45,10 +45,10 @@ public class Booking {
     private Client client;
 
     @Column(name = "start_datetime", nullable = false)
-    private OffsetDateTime startDateTime;
+    private LocalDateTime startDateTime;
 
     @Column(name = "end_datetime", nullable = false)
-    private OffsetDateTime endDateTime;
+    private LocalDateTime endDateTime;
 
     @Column(name = "cnt_equipment", nullable = false)
     private short cntEquipment;
@@ -83,8 +83,8 @@ public class Booking {
     public Booking(
             Club club,
             Client client,
-            OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
             short cntEquipment,
             BigDecimal priceValue
     ) {
@@ -105,8 +105,8 @@ public class Booking {
      */
     public Booking(
             Club club,
-            OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
             short cntEquipment,
             BigDecimal priceValue,
             Employee employee

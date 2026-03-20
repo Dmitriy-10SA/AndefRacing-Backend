@@ -7,7 +7,7 @@ import ru.andef.andefracing.backend.data.entities.club.Club;
 import ru.andef.andefracing.backend.data.entities.club.booking.Booking;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -71,8 +71,8 @@ public class Client {
      */
     public Booking makeBooking(
             Club club,
-            OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
             short cntEquipment,
             BigDecimal priceValue
     ) {

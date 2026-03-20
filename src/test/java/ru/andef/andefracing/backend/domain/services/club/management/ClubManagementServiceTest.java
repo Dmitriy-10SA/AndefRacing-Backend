@@ -129,8 +129,8 @@ class ClubManagementServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime atUtc(int hour) {
-        return OffsetDateTime.of(LocalDateTime.of(2026, 12, 31, hour, 0), ZoneOffset.UTC);
+    private LocalDateTime at(int hour) {
+        return LocalDateTime.of(2026, 12, 31, hour, 0);
     }
 
     @Test
@@ -319,8 +319,8 @@ class ClubManagementServiceTest {
         Booking booking = new Booking(
                 club,
                 client,
-                atUtc(10),
-                atUtc(12),
+                at(10),
+                at(12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -527,8 +527,8 @@ class ClubManagementServiceTest {
         Booking booking = new Booking(
                 club,
                 client,
-                atUtc(10),
-                atUtc(12),
+                at(10),
+                at(12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );

@@ -9,8 +9,7 @@ import ru.andef.andefracing.backend.data.entities.location.City;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,9 +24,9 @@ class ClientTest {
     private static final String TEST_CLIENT_PHONE = "+7-999-999-99-99";
     private static final String TEST_CLIENT_PASSWORD = "super-secret";
 
-    private static final OffsetDateTime TEST_START_DATE_TIME = OffsetDateTime
-            .of(LocalDateTime.of(2026, 1, 1, 10, 0), ZoneOffset.UTC);
-    private static final OffsetDateTime TEST_END_DATE_TIME = TEST_START_DATE_TIME.plusDays(1);
+    private static final LocalDateTime TEST_START_DATE_TIME = LocalDateTime
+            .of(2026, 1, 1, 10, 0);
+    private static final LocalDateTime TEST_END_DATE_TIME = TEST_START_DATE_TIME.plusDays(1);
 
     private static final Club CLUB = new Club();
 

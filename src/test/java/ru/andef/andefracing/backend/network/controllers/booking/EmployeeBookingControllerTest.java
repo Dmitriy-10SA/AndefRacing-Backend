@@ -19,8 +19,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -79,14 +78,8 @@ class EmployeeBookingControllerTest {
         EmployeeMakeBookingDto dto = new EmployeeMakeBookingDto(
                 (short) 1,
                 new ru.andef.andefracing.backend.network.dtos.booking.FreeBookingSlotDto(
-                        OffsetDateTime.of(
-                                LocalDateTime.of(2026, 1, 1, 10, 0),
-                                ZoneOffset.UTC
-                        ),
-                        OffsetDateTime.of(
-                                LocalDateTime.of(2026, 1, 1, 11, 0),
-                                ZoneOffset.UTC
-                        )
+                        LocalDateTime.of(2026, 1, 1, 10, 0),
+                        LocalDateTime.of(2026, 1, 1, 11, 0)
                 ),
                 "note"
         );
