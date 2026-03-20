@@ -121,6 +121,9 @@ public class ClubManagementService {
         if (!gamesInClub.contains(game)) {
             throw new EntityNotFoundException("Игра не найдена в клубе");
         }
+        if (club.isOpen() && gamesInClub.size() == 1) {
+            throw new IllegalArgumentException("В открытом клубе должна быть хотя бы одна игра");
+        }
         club.deleteGame(game);
         clubRepository.save(club);
     }
@@ -278,6 +281,9 @@ public class ClubManagementService {
         clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Price price = clubSearchService.findPriceById(priceId);
+        if (club.isOpen() && club.getPrices().size() == 1) {
+            throw new IllegalArgumentException("В открытом клубе должна быть хотя бы одна цена");
+        }
         boolean isDeleted = club.deletePrice(price);
         if (isDeleted) {
             clubRepository.save(club);
