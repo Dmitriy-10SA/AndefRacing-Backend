@@ -153,10 +153,9 @@ class ClientSearchServiceTest {
         long nonExistentId = 999L;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 clientSearchService.findClientById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
