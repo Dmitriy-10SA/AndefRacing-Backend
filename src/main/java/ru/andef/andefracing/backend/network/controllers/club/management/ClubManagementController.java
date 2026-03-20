@@ -39,7 +39,7 @@ public class ClubManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.updateCntEquipmentInClub(principal.clubId(), cntEquipment);
+        clubManagementService.updateCntEquipmentInClub(principal.id(), principal.clubId(), cntEquipment);
         return ResponseEntity.ok().build();
     }
 
@@ -52,7 +52,7 @@ public class ClubManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.openClub(principal.clubId());
+        clubManagementService.openClub(principal.id(), principal.clubId());
         return ResponseEntity.ok().build();
     }
 
@@ -65,7 +65,7 @@ public class ClubManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.closeClub(principal.clubId());
+        clubManagementService.closeClub(principal.id(), principal.clubId());
         return ResponseEntity.ok().build();
     }
 }
