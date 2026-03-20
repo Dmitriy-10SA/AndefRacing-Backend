@@ -147,6 +147,17 @@ public class ClubSearchService {
     }
 
     /**
+     * Получение сотрудника по id или выброс кастомного исключения
+     */
+    @Transactional(readOnly = true)
+    public Employee findEmployeeByIdOrThrowCustomException(long id, RuntimeException e) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> e);
+        checkEmployeeIsBlocked(employee);
+        checkEmployeeHasPassword(employee);
+        return employee;
+    }
+
+    /**
      * Получение сотрудника по id без выброса исключения
      */
     @Transactional(readOnly = true)
