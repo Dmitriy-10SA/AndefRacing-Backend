@@ -43,7 +43,7 @@ public class ClubPhotosManagementController {
         }
         if (files.size() == 1 && files.get(0).isEmpty()) {
             try {
-                clubManagementService.managePhotosInClub(principal.clubId(), Collections.emptyList());
+                clubManagementService.managePhotosInClub(principal.id(), principal.clubId(), Collections.emptyList());
             } catch (IOException e) {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -61,7 +61,7 @@ public class ClubPhotosManagementController {
             }
         }
         try {
-            clubManagementService.managePhotosInClub(principal.clubId(), files);
+            clubManagementService.managePhotosInClub(principal.id(), principal.clubId(), files);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
