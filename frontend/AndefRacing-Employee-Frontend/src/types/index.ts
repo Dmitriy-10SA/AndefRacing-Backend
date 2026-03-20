@@ -152,7 +152,7 @@ export interface EmployeeBookingFullInfoDto extends EmployeeBookingShortDto {
     cntEquipment: number
     price: number
     note: string | null
-    client: ClientDto
+    client: ClientDto | null
 }
 
 export interface PagedEmployeeBookingShortListDto {
