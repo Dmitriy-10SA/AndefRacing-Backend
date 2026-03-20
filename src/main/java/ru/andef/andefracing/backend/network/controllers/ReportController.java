@@ -45,7 +45,7 @@ public class ReportController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         BookingStatisticsDto bookingStatisticsDto = reportService
-                .getBookingStatistics(principal.clubId(), startDate, endDate);
+                .getBookingStatistics(principal.id(), principal.clubId(), startDate, endDate);
         return ResponseEntity.ok(bookingStatisticsDto);
     }
 
@@ -64,7 +64,7 @@ public class ReportController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         FinancialStatisticsDto financialStatistics = reportService
-                .getFinancialStatistics(principal.clubId(), startDate, endDate);
+                .getFinancialStatistics(principal.id(), principal.clubId(), startDate, endDate);
         return ResponseEntity.ok(financialStatistics);
     }
 }
