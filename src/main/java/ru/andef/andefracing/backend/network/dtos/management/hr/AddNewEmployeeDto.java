@@ -21,9 +21,6 @@ public class AddNewEmployeeDto extends AddExistingEmployeeDto {
     @NotBlank
     @Size(max = 100)
     private final String name;
-    @NotNull
-    @NotBlank
-    @Size(max = 100)
     private final String patronymic;
 
     public AddNewEmployeeDto(

@@ -28,8 +28,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,8 +103,8 @@ class BookingRepositoryTest {
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime atUtc(int year, int month, int day, int hour) {
-        return OffsetDateTime.of(LocalDateTime.of(year, month, day, hour, 0), ZoneOffset.UTC);
+    private LocalDateTime at(int year, int month, int day, int hour) {
+        return LocalDateTime.of(year, month, day, hour, 0);
     }
 
     @Test
@@ -121,16 +119,16 @@ class BookingRepositoryTest {
         Booking booking1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
@@ -139,8 +137,8 @@ class BookingRepositoryTest {
         Booking bookingOutOfRange = new Booking(
                 club,
                 client,
-                atUtc(2025, 12, 31, 10),
-                atUtc(2025, 12, 31, 12),
+                at(2025, 12, 31, 10),
+                at(2025, 12, 31, 12),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -148,16 +146,16 @@ class BookingRepositoryTest {
         Booking bookingOtherClub = new Booking(
                 otherClub,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
 
         bookingRepository.saveAll(List.of(booking1, booking2, bookingOutOfRange, bookingOtherClub));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 3, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 3, 0);
 
         BookingStatsAggregateProjection stats =
                 bookingRepository.getBookingStatsAggregate(club.getId(), start, end);
@@ -177,32 +175,32 @@ class BookingRepositoryTest {
         Booking bookingDay1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking bookingDay1Second = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 14),
-                atUtc(2026, 1, 1, 16),
+                at(2026, 1, 1, 14),
+                at(2026, 1, 1, 16),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
         Booking bookingDay2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
 
         bookingRepository.saveAll(List.of(bookingDay1, bookingDay1Second, bookingDay2));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 3, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 3, 0);
 
         List<BookingsPerDayProjection> perDay =
                 bookingRepository.getBookingsPerDay(club.getId(), start, end);
@@ -226,8 +224,8 @@ class BookingRepositoryTest {
         Booking paid1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -236,8 +234,8 @@ class BookingRepositoryTest {
         Booking paid2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("3000.00")
         );
@@ -246,16 +244,16 @@ class BookingRepositoryTest {
         Booking pending = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("5000.00")
         );
 
         bookingRepository.saveAll(List.of(paid1, paid2, pending));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 3, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 3, 0);
 
         FinancialStatsAggregateProjection stats =
                 bookingRepository.getFinancialStatAggregate(club.getId(), start, end);
@@ -276,8 +274,8 @@ class BookingRepositoryTest {
         Booking paidDay1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -286,8 +284,8 @@ class BookingRepositoryTest {
         Booking paidDay1Second = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 14),
-                atUtc(2026, 1, 1, 16),
+                at(2026, 1, 1, 14),
+                at(2026, 1, 1, 16),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -296,8 +294,8 @@ class BookingRepositoryTest {
         Booking paidDay2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
@@ -305,8 +303,8 @@ class BookingRepositoryTest {
 
         bookingRepository.saveAll(List.of(paidDay1, paidDay1Second, paidDay2));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 3, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 3, 0);
 
         List<RevenuePerDayProjection> perDay =
                 bookingRepository.getRevenuePerDay(club.getId(), start, end);
@@ -327,7 +325,7 @@ class BookingRepositoryTest {
         Client client = createClient("Client", "+7-111-111-11-11");
         Employee employee = createEmployee();
 
-        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+        LocalDateTime now = LocalDateTime.now();
 
         Booking futurePaid = new Booking(
                 club,
@@ -387,40 +385,40 @@ class BookingRepositoryTest {
         Booking overlapping1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking overlapping2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 11),
-                atUtc(2026, 1, 1, 13),
+                at(2026, 1, 1, 11),
+                at(2026, 1, 1, 13),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
         Booking notOverlapping = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 14),
-                atUtc(2026, 1, 1, 16),
+                at(2026, 1, 1, 14),
+                at(2026, 1, 1, 16),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
         Booking otherClubBooking = new Booking(
                 otherClub,
                 client,
-                atUtc(2026, 1, 1, 11),
-                atUtc(2026, 1, 1, 13),
+                at(2026, 1, 1, 11),
+                at(2026, 1, 1, 13),
                 (short) 1,
                 new BigDecimal("2500.00")
         );
 
         bookingRepository.saveAll(List.of(overlapping1, overlapping2, notOverlapping, otherClubBooking));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 11);
-        OffsetDateTime end = atUtc(2026, 1, 1, 13);
+        LocalDateTime start = at(2026, 1, 1, 11);
+        LocalDateTime end = at(2026, 1, 1, 13);
 
         List<Booking> result = bookingRepository.findAllByDateRangeAndClubId(club.getId(), start, end);
 
@@ -443,8 +441,8 @@ class BookingRepositoryTest {
         Booking booking = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -453,15 +451,15 @@ class BookingRepositoryTest {
         boolean exists =
                 bookingRepository.existsByDateRangeAndClubId(
                         club.getId(),
-                        atUtc(2026, 1, 1, 11),
-                        atUtc(2026, 1, 1, 13)
+                        at(2026, 1, 1, 11),
+                        at(2026, 1, 1, 13)
                 );
 
         boolean notExists =
                 bookingRepository.existsByDateRangeAndClubId(
                         club.getId(),
-                        atUtc(2026, 1, 1, 12),
-                        atUtc(2026, 1, 1, 13)
+                        at(2026, 1, 1, 12),
+                        at(2026, 1, 1, 13)
                 );
 
         assertTrue(exists);
@@ -480,24 +478,24 @@ class BookingRepositoryTest {
         Booking bookingClient1 = new Booking(
                 club,
                 client1,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking bookingClient2 = new Booking(
                 club,
                 client2,
-                atUtc(2026, 1, 1, 11),
-                atUtc(2026, 1, 1, 13),
+                at(2026, 1, 1, 11),
+                at(2026, 1, 1, 13),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
 
         bookingRepository.saveAll(List.of(bookingClient1, bookingClient2));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 2, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 2, 0);
 
         List<Booking> result =
                 bookingRepository.findAllByDateRangeAndClientId(client1.getId(), start, end);
@@ -518,24 +516,24 @@ class BookingRepositoryTest {
         Booking bookingClient1 = new Booking(
                 club,
                 client1,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking bookingClient2 = new Booking(
                 club,
                 client2,
-                atUtc(2026, 1, 1, 11),
-                atUtc(2026, 1, 1, 13),
+                at(2026, 1, 1, 11),
+                at(2026, 1, 1, 13),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
 
         bookingRepository.saveAll(List.of(bookingClient1, bookingClient2));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 2, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 2, 0);
 
         List<Booking> result =
                 bookingRepository.findAllByDateRangeAndClubIdAndClientPhone(
@@ -560,32 +558,32 @@ class BookingRepositoryTest {
         Booking booking1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 3, 10),
-                atUtc(2026, 1, 3, 12),
+                at(2026, 1, 3, 10),
+                at(2026, 1, 3, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
         Booking booking3 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
 
         bookingRepository.saveAll(List.of(booking1, booking2, booking3));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 4, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 4, 0);
 
         PageRequest pageRequest = PageRequest.of(0, 2, Sort.by("startDateTime"));
         Page<Booking> result = bookingRepository.findAllByDateRangeAndClientIdPaged(
@@ -614,32 +612,32 @@ class BookingRepositoryTest {
         Booking booking1 = new Booking(
                 club,
                 client1,
-                atUtc(2026, 1, 3, 10),
-                atUtc(2026, 1, 3, 12),
+                at(2026, 1, 3, 10),
+                at(2026, 1, 3, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club,
                 client2,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
         Booking booking3 = new Booking(
                 club,
                 client1,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
 
         bookingRepository.saveAll(List.of(booking1, booking2, booking3));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 4, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 4, 0);
 
         PageRequest pageRequest = PageRequest.of(0, 2, Sort.by("startDateTime"));
         Page<Booking> result = bookingRepository.findAllByDateRangeAndClubIdPaged(
@@ -668,32 +666,32 @@ class BookingRepositoryTest {
         Booking booking1 = new Booking(
                 club,
                 client1,
-                atUtc(2026, 1, 3, 10),
-                atUtc(2026, 1, 3, 12),
+                at(2026, 1, 3, 10),
+                at(2026, 1, 3, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club,
                 client2,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
         Booking booking3 = new Booking(
                 club,
                 client1,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
 
         bookingRepository.saveAll(List.of(booking1, booking2, booking3));
 
-        OffsetDateTime start = atUtc(2026, 1, 1, 0);
-        OffsetDateTime end = atUtc(2026, 1, 4, 0);
+        LocalDateTime start = at(2026, 1, 1, 0);
+        LocalDateTime end = at(2026, 1, 4, 0);
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.by("startDateTime"));
         Page<Booking> result = bookingRepository.findAllByDateRangeAndClubIdAndClientPhonePaged(

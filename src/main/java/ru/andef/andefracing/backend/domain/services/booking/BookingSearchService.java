@@ -34,9 +34,8 @@ import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeB
 import ru.andef.andefracing.backend.network.dtos.common.PageInfoDto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -63,8 +62,8 @@ public class BookingSearchService {
      */
     private int calculateUsedCntEquipments(
             List<Booking> bookings,
-            OffsetDateTime slotStart,
-            OffsetDateTime slotEnd
+            LocalDateTime slotStart,
+            LocalDateTime slotEnd
     ) {
         int usedCntEquipment = 0;
         for (Booking booking : bookings) {
@@ -95,8 +94,8 @@ public class BookingSearchService {
         LocalDate date = freeBookingSlotsRequestDto.date();
         short durationMinutes = freeBookingSlotsRequestDto.durationMinutes();
         short cntEquipment = freeBookingSlotsRequestDto.cntEquipment();
-        OffsetDateTime dayStart = date.atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime dayEnd = date.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        LocalDateTime dayStart = date.atStartOfDay();
+        LocalDateTime dayEnd = date.plusDays(1).atStartOfDay();
         List<Booking> bookings = bookingRepository.findAllByDateRangeAndClubId(clubId, dayStart, dayEnd);
         // учет графика работы
         for (WorkSchedule workSchedule : club.getWorkSchedules()) {
@@ -104,8 +103,8 @@ public class BookingSearchService {
                 if (!workSchedule.isWorkDay()) {
                     return List.of();
                 }
-                dayStart = OffsetDateTime.of(date, workSchedule.getOpenTime(), ZoneOffset.UTC);
-                dayEnd = OffsetDateTime.of(date, workSchedule.getCloseTime(), ZoneOffset.UTC);
+                dayStart = LocalDateTime.of(date, workSchedule.getOpenTime());
+                dayEnd = LocalDateTime.of(date, workSchedule.getCloseTime());
             }
         }
         // учет дней-исключений
@@ -118,12 +117,12 @@ public class BookingSearchService {
             }
             LocalTime exceptionOpenTime = workScheduleException.get().getOpenTime();
             LocalTime exceptionCloseTime = workScheduleException.get().getCloseTime();
-            dayStart = OffsetDateTime.of(date, exceptionOpenTime, ZoneOffset.UTC);
-            dayEnd = OffsetDateTime.of(date, exceptionCloseTime, ZoneOffset.UTC);
+            dayStart = LocalDateTime.of(date, exceptionOpenTime);
+            dayEnd = LocalDateTime.of(date, exceptionCloseTime);
         }
         // учет текущего времени пользователя
         if (userCurrentDate.equals(date)) {
-            OffsetDateTime userCurrentDateTime = OffsetDateTime.of(date, userCurrentTime, ZoneOffset.UTC);
+            LocalDateTime userCurrentDateTime = LocalDateTime.of(date, userCurrentTime);
             dayStart = userCurrentDateTime.isBefore(dayStart) ? dayStart : userCurrentDateTime;
         }
         // округление до кратного 15 минут вверх
@@ -133,13 +132,13 @@ public class BookingSearchService {
             dayStart = dayStart.plusMinutes(15 - mod);
         }
         dayStart = dayStart.withSecond(0).withNano(0);
-        OffsetDateTime slotStart = dayStart;
+        LocalDateTime slotStart = dayStart;
         if (dayStart.isAfter(dayEnd)) {
             return List.of();
         }
         List<FreeBookingSlotDto> freeBookingSlots = new ArrayList<>();
         while (!slotStart.plusMinutes(durationMinutes).isAfter(dayEnd)) {
-            OffsetDateTime slotEnd = slotStart.plusMinutes(durationMinutes);
+            LocalDateTime slotEnd = slotStart.plusMinutes(durationMinutes);
             int usedCntEquipments = calculateUsedCntEquipments(bookings, slotStart, slotEnd);
             if (club.getCntEquipment() - usedCntEquipments >= cntEquipment) {
                 freeBookingSlots.add(new FreeBookingSlotDto(slotStart, slotEnd));
@@ -158,8 +157,8 @@ public class BookingSearchService {
             throw new InvalidDateRangeException();
         }
         clientSearchService.findClientById(clientId);
-        OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.plusDays(1).atStartOfDay();
         List<Booking> bookings = bookingRepository.findAllByDateRangeAndClientId(clientId, start, end);
         return bookingMapper.toClientBookingShortDto(bookings, clubMapper, cityMapper, regionMapper);
     }
@@ -179,8 +178,8 @@ public class BookingSearchService {
             throw new InvalidDateRangeException();
         }
         clientSearchService.findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
-        OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.plusDays(1).atStartOfDay();
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(START_DATE_TIME));
         Page<Booking> bookingsPage = bookingRepository.findAllByDateRangeAndClientIdPaged(
                 clientId,
@@ -229,8 +228,8 @@ public class BookingSearchService {
     ) {
         clubSearchService.findEmployeeById(employeeId);
         Club club = clubSearchService.findClubById(clubId);
-        OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.plusDays(1).atStartOfDay();
         List<Booking> bookings;
         if (clientPhone.isPresent()) {
             bookings = bookingRepository
@@ -260,8 +259,8 @@ public class BookingSearchService {
         }
         clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
-        OffsetDateTime start = startDate.atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime end = endDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.plusDays(1).atStartOfDay();
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, Sort.by(START_DATE_TIME));
         Page<Booking> bookingsPage;
         if (clientPhone.isPresent()) {

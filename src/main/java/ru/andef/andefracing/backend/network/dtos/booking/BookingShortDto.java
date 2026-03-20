@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import ru.andef.andefracing.backend.data.entities.club.booking.BookingStatus;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 /**
  * Dto для краткой информации о бронировании
@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @RequiredArgsConstructor
 public abstract class BookingShortDto {
     private final Long id;
-    private final OffsetDateTime startDateTime;
-    private final OffsetDateTime endDateTime;
+    private final LocalDateTime startDateTime;
+    private final LocalDateTime endDateTime;
     private final BookingStatus status;
 }

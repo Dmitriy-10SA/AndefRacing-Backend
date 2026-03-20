@@ -13,7 +13,7 @@ import ru.andef.andefracing.backend.data.projections.BookingsPerDayProjection;
 import ru.andef.andefracing.backend.data.projections.FinancialStatsAggregateProjection;
 import ru.andef.andefracing.backend.data.projections.RevenuePerDayProjection;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,8 +40,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     BookingStatsAggregateProjection getBookingStatsAggregate(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -64,8 +64,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     List<BookingsPerDayProjection> getBookingsPerDay(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -87,8 +87,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     FinancialStatsAggregateProjection getFinancialStatAggregate(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -112,8 +112,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     List<RevenuePerDayProjection> getRevenuePerDay(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -144,8 +144,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     List<Booking> findAllByDateRangeAndClubId(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -162,8 +162,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     boolean existsByDateRangeAndClubId(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -182,8 +182,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     List<Booking> findAllByDateRangeAndClientId(
             @Param(value = "clientId") long clientId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end
     );
 
     /**
@@ -200,8 +200,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     Page<Booking> findAllByDateRangeAndClientIdPaged(
             @Param(value = "clientId") long clientId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end,
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end,
             Pageable pageable
     );
 
@@ -222,8 +222,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     List<Booking> findAllByDateRangeAndClubIdAndClientPhone(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end,
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end,
             @Param(value = "clientPhone") String clientPhone
     );
 
@@ -241,8 +241,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     Page<Booking> findAllByDateRangeAndClubIdPaged(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end,
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end,
             Pageable pageable
     );
 
@@ -261,8 +261,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     )
     Page<Booking> findAllByDateRangeAndClubIdAndClientPhonePaged(
             @Param(value = "clubId") int clubId,
-            @Param(value = "start") OffsetDateTime start,
-            @Param(value = "end") OffsetDateTime end,
+            @Param(value = "start") LocalDateTime start,
+            @Param(value = "end") LocalDateTime end,
             @Param(value = "clientPhone") String clientPhone,
             Pageable pageable
     );

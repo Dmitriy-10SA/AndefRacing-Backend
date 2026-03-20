@@ -35,8 +35,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.employee.PagedEmployeeB
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -120,8 +119,8 @@ class BookingSearchServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime atUtc(int day, int hour) {
-        return OffsetDateTime.of(2026, 6, day, hour, 0, 0, 0, ZoneOffset.UTC);
+    private LocalDateTime at(int day, int hour) {
+        return LocalDateTime.of(2026, 6, day, hour, 0, 0, 0);
     }
 
     @Test
@@ -153,8 +152,8 @@ class BookingSearchServiceTest {
         Client client = createClient("Test Client", "+7-111-111-11-11");
 
         LocalDate date = LocalDate.of(2026, 6, 15);
-        OffsetDateTime bookingStart = atUtc(15, 10);
-        OffsetDateTime bookingEnd = atUtc(15, 11);
+        LocalDateTime bookingStart = at(15, 10);
+        LocalDateTime bookingEnd = at(15, 11);
 
         // Create existing booking
         Booking booking = new Booking(club, client, bookingStart, bookingEnd, (short) 10, new BigDecimal("10000.00"));
@@ -285,8 +284,8 @@ class BookingSearchServiceTest {
         assertFalse(result.isEmpty());
         // All slots should be between 10:00 and 11:00 (only one 60-minute slot fits)
         assertTrue(result.stream().allMatch(slot ->
-                !slot.startDateTime().isBefore(atUtc(15, 10)) &&
-                        !slot.endDateTime().isAfter(atUtc(15, 12))
+                !slot.startDateTime().isBefore(at(15, 10)) &&
+                        !slot.endDateTime().isAfter(at(15, 12))
         ));
     }
 
@@ -300,22 +299,22 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client,
-                atUtc(16, 14),
-                atUtc(16, 15),
+                at(16, 14),
+                at(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
         Booking booking3 = new Booking(
                 club, client,
-                atUtc(20, 10),
-                atUtc(20, 11),
+                at(20, 10),
+                at(20, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -374,8 +373,8 @@ class BookingSearchServiceTest {
 
         Booking booking = new Booking(
                 club, client,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -419,15 +418,15 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client1,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client2,
-                atUtc(16, 14),
-                atUtc(16, 15),
+                at(16, 14),
+                at(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
@@ -458,15 +457,15 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client1,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client2,
-                atUtc(16, 14),
-                atUtc(16, 15),
+                at(16, 14),
+                at(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
@@ -517,8 +516,8 @@ class BookingSearchServiceTest {
 
         Booking booking = new Booking(
                 club, client,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -572,22 +571,22 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client,
-                atUtc(17, 10),
-                atUtc(17, 11),
+                at(17, 10),
+                at(17, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client,
-                atUtc(15, 14),
-                atUtc(15, 15),
+                at(15, 14),
+                at(15, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
         Booking booking3 = new Booking(
                 club, client,
-                atUtc(16, 10),
-                atUtc(16, 11),
+                at(16, 10),
+                at(16, 11),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -626,22 +625,22 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client,
-                atUtc(16, 14),
-                atUtc(16, 15),
+                at(16, 14),
+                at(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
         Booking booking3 = new Booking(
                 club, client,
-                atUtc(17, 10),
-                atUtc(17, 11),
+                at(17, 10),
+                at(17, 11),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -711,22 +710,22 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client1,
-                atUtc(17, 10),
-                atUtc(17, 11),
+                at(17, 10),
+                at(17, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client2,
-                atUtc(15, 14),
-                atUtc(15, 15),
+                at(15, 14),
+                at(15, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
         Booking booking3 = new Booking(
                 club, client1,
-                atUtc(16, 10),
-                atUtc(16, 11),
+                at(16, 10),
+                at(16, 11),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -767,22 +766,22 @@ class BookingSearchServiceTest {
 
         Booking booking1 = new Booking(
                 club, client1,
-                atUtc(15, 10),
-                atUtc(15, 11),
+                at(15, 10),
+                at(15, 11),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
         Booking booking2 = new Booking(
                 club, client2,
-                atUtc(16, 14),
-                atUtc(16, 15),
+                at(16, 14),
+                at(16, 15),
                 (short) 2,
                 new BigDecimal("2000.00")
         );
         Booking booking3 = new Booking(
                 club, client1,
-                atUtc(17, 10),
-                atUtc(17, 11),
+                at(17, 10),
+                at(17, 11),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
