@@ -23,8 +23,6 @@ import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeBookin
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +66,8 @@ class BookingMapperTest {
                 1L,
                 club,
                 client,
-                OffsetDateTime.of(LocalDateTime.of(2024, 6, 15, 14, 0), ZoneOffset.UTC),
-                OffsetDateTime.of(LocalDateTime.of(2024, 6, 15, 15, 0), ZoneOffset.UTC),
+                LocalDateTime.of(2024, 6, 15, 14, 0),
+                LocalDateTime.of(2024, 6, 15, 15, 0),
                 (short) 2,
                 new BigDecimal("1500.00"),
                 BookingStatus.PENDING_PAYMENT,

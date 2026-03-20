@@ -307,8 +307,8 @@ public class ClubManagementService {
         if (workScheduleExceptionRepository.findByClubIdAndDate(club.getId(), date).isPresent()) {
             throw new DuplicateException("День-исключение с датой " + date + " уже есть в клубе");
         }
-        OffsetDateTime start = date.atStartOfDay().atOffset(ZoneOffset.UTC);
-        OffsetDateTime end = date.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        LocalDateTime start = date.atStartOfDay();
+        LocalDateTime end = date.plusDays(1).atStartOfDay();
         if (bookingRepository.existsByDateRangeAndClubId(clubId, start, end)) {
             throw new CannotAddExceptionDayDueToExistingBookingsException();
         }

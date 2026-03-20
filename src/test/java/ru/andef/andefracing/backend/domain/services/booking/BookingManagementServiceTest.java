@@ -30,8 +30,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.client.ClientMakeBookin
 import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBookingDto;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -112,8 +111,8 @@ class BookingManagementServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime futureDateTime() {
-        return OffsetDateTime.now(ZoneOffset.UTC).plusDays(1).withHour(10).withMinute(0).withSecond(0).withNano(0);
+    private LocalDateTime futureDateTime() {
+        return LocalDateTime.now().plusDays(1).withHour(10).withMinute(0).withSecond(0).withNano(0);
     }
 
     @Test
@@ -124,8 +123,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         Client client = createClient();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 2, slot, null);
 
@@ -152,8 +151,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         Client client = createClient();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.minusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.minusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
@@ -171,8 +170,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Closed Club", false);
         Client client = createClient();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
@@ -190,8 +189,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         Client client = createClient();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(90); // 90 minutes not in price list
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(90); // 90 minutes not in price list
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
@@ -209,8 +208,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         Client client = createClient();
 
-        OffsetDateTime start = OffsetDateTime.now(ZoneOffset.UTC).minusDays(1);
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = LocalDateTime.now().minusDays(1);
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
@@ -233,8 +232,8 @@ class BookingManagementServiceTest {
         Client client = createClient();
         clientRepository.save(client);
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 15, slot, null); // More than available
 
@@ -252,8 +251,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(120);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(120);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 
@@ -279,8 +278,8 @@ class BookingManagementServiceTest {
         Club club = createClub(city, "Test Club", true);
         Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.minusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.minusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 
@@ -299,8 +298,8 @@ class BookingManagementServiceTest {
         Client client = createClient();
         Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         Booking booking = new Booking(club, client, start, end, (short) 1, new BigDecimal("1000.00"));
         booking = bookingRepository.save(booking);
 
@@ -336,8 +335,8 @@ class BookingManagementServiceTest {
         Client client = createClient();
         Employee employee = createEmployee();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         Booking booking = new Booking(club, client, start, end, (short) 1, new BigDecimal("1000.00"));
         booking = bookingRepository.save(booking);
 
@@ -370,8 +369,8 @@ class BookingManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
@@ -386,8 +385,8 @@ class BookingManagementServiceTest {
         // Arrange
         Client client = createClient();
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         ClientMakeBookingDto makeBookingDto = new ClientMakeBookingDto((short) 1, slot, null);
 
@@ -404,8 +403,8 @@ class BookingManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city, "Test Club", true);
 
-        OffsetDateTime start = futureDateTime();
-        OffsetDateTime end = start.plusMinutes(60);
+        LocalDateTime start = futureDateTime();
+        LocalDateTime end = start.plusMinutes(60);
         FreeBookingSlotDto slot = new FreeBookingSlotDto(start, end);
         EmployeeMakeBookingDto makeBookingDto = new EmployeeMakeBookingDto((short) 1, slot, null);
 

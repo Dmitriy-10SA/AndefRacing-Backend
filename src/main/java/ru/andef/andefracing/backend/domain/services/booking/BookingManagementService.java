@@ -21,7 +21,7 @@ import ru.andef.andefracing.backend.network.dtos.booking.employee.EmployeeMakeBo
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Duration;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.function.Supplier;
 
 @Service
@@ -35,7 +35,7 @@ public class BookingManagementService {
     /**
      * Проверка, что дата окончания позже даты начала
      */
-    private void checkStartAndEndDateTime(OffsetDateTime start, OffsetDateTime end) {
+    private void checkStartAndEndDateTime(LocalDateTime start, LocalDateTime end) {
         if (!start.isBefore(end)) {
             throw new InvalidBookingSlotException("Время начала должно быть раньше времени окончания");
         }
@@ -44,7 +44,7 @@ public class BookingManagementService {
     /**
      * Получение цены бронирования
      */
-    private BigDecimal getPriceValue(Club club, OffsetDateTime start, OffsetDateTime end, short cntEquipment) {
+    private BigDecimal getPriceValue(Club club, LocalDateTime start, LocalDateTime end, short cntEquipment) {
         short durationMinutes = (short) Duration.between(start, end).toMinutes();
         for (Price priceInClub : club.getPrices()) {
             if (priceInClub.getDurationMinutes() == durationMinutes) {
@@ -58,11 +58,11 @@ public class BookingManagementService {
     /**
      * Сделать бронирование (общий метод для сотрудников и клиентов)
      */
-    private void makeBooking(Club club, OffsetDateTime start, Supplier<Booking> makeBookingCallback) {
+    private void makeBooking(Club club, LocalDateTime start, Supplier<Booking> makeBookingCallback) {
         if (!club.isOpen()) {
             throw new EntityNotFoundException("Клуб закрыт");
         }
-        if (start.isBefore(OffsetDateTime.now())) {
+        if (start.isBefore(LocalDateTime.now())) {
             throw new InvalidBookingSlotException("Нельзя создать бронирование в прошлом");
         }
         Booking booking = makeBookingCallback.get();
@@ -78,8 +78,8 @@ public class BookingManagementService {
      */
     @Transactional
     public void makeClientBooking(long clientId, int clubId, ClientMakeBookingDto clientMakeBookingDto) {
-        OffsetDateTime start = clientMakeBookingDto.getSlot().startDateTime();
-        OffsetDateTime end = clientMakeBookingDto.getSlot().endDateTime();
+        LocalDateTime start = clientMakeBookingDto.getSlot().startDateTime();
+        LocalDateTime end = clientMakeBookingDto.getSlot().endDateTime();
         checkStartAndEndDateTime(start, end);
         Client client = clientSearchService
                 .findClientByIdOrThrowCustomException(clientId, new UserNotFoundFromTokenException());
@@ -98,8 +98,8 @@ public class BookingManagementService {
      */
     @Transactional
     public void makeEmployeeBooking(long employeeId, int clubId, EmployeeMakeBookingDto employeeMakeBookingDto) {
-        OffsetDateTime start = employeeMakeBookingDto.getSlot().startDateTime();
-        OffsetDateTime end = employeeMakeBookingDto.getSlot().endDateTime();
+        LocalDateTime start = employeeMakeBookingDto.getSlot().startDateTime();
+        LocalDateTime end = employeeMakeBookingDto.getSlot().endDateTime();
         checkStartAndEndDateTime(start, end);
         Employee employee = clubSearchService
                 .findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());

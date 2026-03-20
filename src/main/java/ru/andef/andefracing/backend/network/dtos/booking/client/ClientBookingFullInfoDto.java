@@ -6,7 +6,7 @@ import ru.andef.andefracing.backend.network.dtos.common.club.ClubShortDto;
 import ru.andef.andefracing.backend.network.dtos.common.location.CityDto;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 /**
  * DTO для полной информации о бронировании для клиента
@@ -19,8 +19,8 @@ public class ClientBookingFullInfoDto extends ClientBookingShortDto {
 
     public ClientBookingFullInfoDto(
             long id,
-            OffsetDateTime startDateTime,
-            OffsetDateTime endDateTime,
+            LocalDateTime startDateTime,
+            LocalDateTime endDateTime,
             BookingStatus status,
             ClubShortDto club,
             CityDto city,

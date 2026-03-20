@@ -26,8 +26,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -107,8 +105,8 @@ class ReportServiceTest {
         return employeeRepository.save(employee);
     }
 
-    private OffsetDateTime atUtc(int year, int month, int day, int hour) {
-        return OffsetDateTime.of(LocalDateTime.of(year, month, day, hour, 0), ZoneOffset.UTC);
+    private LocalDateTime at(int year, int month, int day, int hour) {
+        return LocalDateTime.of(year, month, day, hour, 0);
     }
 
     @Test
@@ -123,8 +121,8 @@ class ReportServiceTest {
         Booking booking1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -132,8 +130,8 @@ class ReportServiceTest {
         Booking booking2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 14),
-                atUtc(2026, 1, 1, 16),
+                at(2026, 1, 1, 14),
+                at(2026, 1, 1, 16),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -141,8 +139,8 @@ class ReportServiceTest {
         Booking booking3 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
@@ -151,8 +149,8 @@ class ReportServiceTest {
         Booking booking4 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 3, 10),
-                atUtc(2026, 1, 3, 12),
+                at(2026, 1, 3, 10),
+                at(2026, 1, 3, 12),
                 (short) 1,
                 new BigDecimal("2500.00")
         );
@@ -161,8 +159,8 @@ class ReportServiceTest {
         Booking bookingOutOfRange = new Booking(
                 club,
                 client,
-                atUtc(2025, 12, 31, 10),
-                atUtc(2025, 12, 31, 12),
+                at(2025, 12, 31, 10),
+                at(2025, 12, 31, 12),
                 (short) 1,
                 new BigDecimal("3000.00")
         );
@@ -234,8 +232,8 @@ class ReportServiceTest {
         Booking paid1 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -244,8 +242,8 @@ class ReportServiceTest {
         Booking paid2 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 14),
-                atUtc(2026, 1, 1, 16),
+                at(2026, 1, 1, 14),
+                at(2026, 1, 1, 16),
                 (short) 1,
                 new BigDecimal("1500.00")
         );
@@ -254,8 +252,8 @@ class ReportServiceTest {
         Booking paid3 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 10),
-                atUtc(2026, 1, 2, 12),
+                at(2026, 1, 2, 10),
+                at(2026, 1, 2, 12),
                 (short) 1,
                 new BigDecimal("2000.00")
         );
@@ -264,8 +262,8 @@ class ReportServiceTest {
         Booking paid4 = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 3, 10),
-                atUtc(2026, 1, 3, 12),
+                at(2026, 1, 3, 10),
+                at(2026, 1, 3, 12),
                 (short) 1,
                 new BigDecimal("2500.00")
         );
@@ -275,8 +273,8 @@ class ReportServiceTest {
         Booking pending = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 2, 14),
-                atUtc(2026, 1, 2, 16),
+                at(2026, 1, 2, 14),
+                at(2026, 1, 2, 16),
                 (short) 1,
                 new BigDecimal("5000.00")
         );
@@ -344,8 +342,8 @@ class ReportServiceTest {
         Booking paid = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 10),
-                atUtc(2026, 1, 1, 12),
+                at(2026, 1, 1, 10),
+                at(2026, 1, 1, 12),
                 (short) 1,
                 new BigDecimal("1000.00")
         );
@@ -354,8 +352,8 @@ class ReportServiceTest {
         Booking cancelled = new Booking(
                 club,
                 client,
-                atUtc(2026, 1, 1, 14),
-                atUtc(2026, 1, 1, 16),
+                at(2026, 1, 1, 14),
+                at(2026, 1, 1, 16),
                 (short) 1,
                 new BigDecimal("5000.00")
         );
