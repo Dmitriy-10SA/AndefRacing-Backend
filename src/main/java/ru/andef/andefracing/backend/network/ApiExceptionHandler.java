@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.andef.andefracing.backend.domain.exceptions.*;
 import ru.andef.andefracing.backend.domain.exceptions.auth.ClientWithThisPhoneAlreadyExistsException;
 import ru.andef.andefracing.backend.domain.exceptions.auth.InvalidPhoneOrPasswordException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.InvalidBookingSlotException;
 import ru.andef.andefracing.backend.domain.exceptions.booking.NotEnoughSimulatorsException;
 import ru.andef.andefracing.backend.domain.exceptions.management.*;
@@ -99,7 +100,8 @@ public class ApiExceptionHandler {
                     InvalidPhoneOrPasswordException.class,
                     ClientWithThisPhoneAlreadyExistsException.class,
                     EmployeeWithThisPhoneAlreadyExistsException.class,
-                    PasswordIsNotSetException.class
+                    PasswordIsNotSetException.class,
+                    UserNotFoundFromTokenException.class
             }
     )
     public ResponseEntity<ErrorDto> handleAuthExceptions(RuntimeException ex, HttpServletRequest request) {
