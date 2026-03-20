@@ -49,7 +49,17 @@ public class ClientSearchService {
     @Transactional(readOnly = true)
     public Client findClientById(long id) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Клиент с id " + id + " не найден"));
+                .orElseThrow(() -> new EntityNotFoundException("Клиент не найден"));
+        checkClientIsBlocked(client);
+        return client;
+    }
+
+    /**
+     * Получение клиента по id или выброс кастомного исключения
+     */
+    @Transactional(readOnly = true)
+    public Client findClientByIdOrThrowCustomException(long id, RuntimeException e) {
+        Client client = clientRepository.findById(id).orElseThrow(() -> e);
         checkClientIsBlocked(client);
         return client;
     }

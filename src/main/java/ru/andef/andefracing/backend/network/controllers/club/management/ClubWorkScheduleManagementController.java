@@ -42,7 +42,8 @@ public class ClubWorkScheduleManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.addWorkScheduleExceptionInClub(principal.clubId(), addWorkScheduleExceptionDto);
+        clubManagementService
+                .addWorkScheduleExceptionInClub(principal.id(), principal.clubId(), addWorkScheduleExceptionDto);
         return ResponseEntity.ok().build();
     }
 
@@ -60,7 +61,7 @@ public class ClubWorkScheduleManagementController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<WorkScheduleExceptionDto> workScheduleExceptions = clubManagementService
-                .getAllWorkSchedulesExceptionsInClub(principal.clubId(), startDate, endDate);
+                .getAllWorkSchedulesExceptionsInClub(principal.id(), principal.clubId(), startDate, endDate);
         return ResponseEntity.ok(workScheduleExceptions);
     }
 
@@ -76,7 +77,8 @@ public class ClubWorkScheduleManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.deleteWorkScheduleExceptionInClub(principal.clubId(), workScheduleExceptionId);
+        clubManagementService
+                .deleteWorkScheduleExceptionInClub(principal.id(), principal.clubId(), workScheduleExceptionId);
         return ResponseEntity.ok().build();
     }
 
@@ -92,7 +94,7 @@ public class ClubWorkScheduleManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.updateWorkScheduleInClub(principal.clubId(), updateWorkScheduleDto);
+        clubManagementService.updateWorkScheduleInClub(principal.id(), principal.clubId(), updateWorkScheduleDto);
         return ResponseEntity.ok().build();
     }
 }

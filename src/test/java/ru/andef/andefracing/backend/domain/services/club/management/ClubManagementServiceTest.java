@@ -125,6 +125,7 @@ class ClubManagementServiceTest {
 
     private Employee createEmployee() {
         Employee employee = new Employee("Surname", "Name", "Patronymic", "+7-222-222-22-22");
+        employee.setPassword("password");
         return employeeRepository.save(employee);
     }
 
@@ -139,9 +140,10 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         Game game = createGame("Test Game", true);
+        createEmployee();
 
         // Act
-        clubManagementService.addGameToClub(club.getId(), game.getId());
+        clubManagementService.addGameToClub(1, club.getId(), game.getId());
 
         // Assert
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
@@ -158,10 +160,11 @@ class ClubManagementServiceTest {
         Game game = createGame("Test Game", true);
         club.addGame(game);
         clubRepository.save(club);
+        createEmployee();
 
         // Act & Assert
         assertThrows(DuplicateException.class, () ->
-                clubManagementService.addGameToClub(club.getId(), game.getId())
+                clubManagementService.addGameToClub(1, club.getId(), game.getId())
         );
     }
 
@@ -171,9 +174,10 @@ class ClubManagementServiceTest {
         createGame("Active Game 1", true);
         createGame("Active Game 2", true);
         createGame("Inactive Game", false);
+        createEmployee();
 
         // Act
-        List<GameDto> result = clubManagementService.getAllActiveGames();
+        List<GameDto> result = clubManagementService.getAllActiveGames(1);
 
         // Assert
         assertNotNull(result);
@@ -189,9 +193,10 @@ class ClubManagementServiceTest {
         Game game = createGame("Test Game", true);
         club.addGame(game);
         clubRepository.save(club);
+        createEmployee();
 
         // Act
-        clubManagementService.deleteGameInClub(club.getId(), game.getId());
+        clubManagementService.deleteGameInClub(1, club.getId(), game.getId());
 
         // Assert
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
@@ -205,10 +210,11 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         Game game = createGame("Test Game", true);
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.deleteGameInClub(club.getId(), game.getId())
+                clubManagementService.deleteGameInClub(1, club.getId(), game.getId())
         );
     }
 
@@ -219,9 +225,11 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         short newCount = 20;
+        createEmployee();
+
 
         // Act
-        clubManagementService.updateCntEquipmentInClub(club.getId(), newCount);
+        clubManagementService.updateCntEquipmentInClub(1, club.getId(), newCount);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -253,9 +261,10 @@ class ClubManagementServiceTest {
         club.addGame(game);
 
         clubRepository.save(club);
+        createEmployee();
 
         // Act
-        clubManagementService.openClub(club.getId());
+        clubManagementService.openClub(1, club.getId());
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -268,10 +277,11 @@ class ClubManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee();
 
         // Act & Assert
         assertThrows(ClubOpenConditionsNotMetException.class, () ->
-                clubManagementService.openClub(club.getId())
+                clubManagementService.openClub( 1, club.getId())
         );
     }
 
@@ -283,9 +293,10 @@ class ClubManagementServiceTest {
         Club club = createClub(city);
         club.setOpen(true);
         clubRepository.save(club);
+        createEmployee();
 
         // Act
-        clubManagementService.closeClub(club.getId());
+        clubManagementService.closeClub(1, club.getId());
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -318,7 +329,7 @@ class ClubManagementServiceTest {
 
         // Act & Assert
         assertThrows(ClubCloseConditionsNotMetException.class, () ->
-                clubManagementService.closeClub(club.getId())
+                clubManagementService.closeClub(1, club.getId())
         );
     }
 
@@ -329,9 +340,10 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1000.00"));
+        createEmployee();
 
         // Act
-        clubManagementService.addPriceForMinutesInClub(club.getId(), dto);
+        clubManagementService.addPriceForMinutesInClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -348,11 +360,12 @@ class ClubManagementServiceTest {
         Club club = createClub(city);
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         clubRepository.save(club);
+        createEmployee();
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1500.00"));
 
         // Act & Assert
         assertThrows(DuplicateException.class, () ->
-                clubManagementService.addPriceForMinutesInClub(club.getId(), dto)
+                clubManagementService.addPriceForMinutesInClub(1, club.getId(), dto)
         );
     }
 
@@ -366,9 +379,10 @@ class ClubManagementServiceTest {
         club = clubRepository.save(club);
         long priceId = club.getPrices().get(0).getId();
         BigDecimal newValue = new BigDecimal("1500.00");
+        createEmployee();
 
         // Act
-        clubManagementService.updatePriceForMinutesInClub(club.getId(), priceId, newValue);
+        clubManagementService.updatePriceForMinutesInClub(1, club.getId(), priceId, newValue);
 
         // Assert
         Price updatedPrice = priceRepository.findById(priceId).orElseThrow();
@@ -382,10 +396,11 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         long nonExistentPriceId = 999L;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.updatePriceForMinutesInClub(club.getId(), nonExistentPriceId, new BigDecimal("1000.00"))
+                clubManagementService.updatePriceForMinutesInClub(1, club.getId(), nonExistentPriceId, new BigDecimal("1000.00"))
         );
     }
 
@@ -398,9 +413,10 @@ class ClubManagementServiceTest {
         club.addPrice(new Price((short) 60, new BigDecimal("1000.00")));
         club = clubRepository.save(club);
         long priceId = club.getPrices().get(0).getId();
+        createEmployee();
 
         // Act
-        clubManagementService.deletePriceForMinutesInClub(club.getId(), priceId);
+        clubManagementService.deletePriceForMinutesInClub(1, club.getId(), priceId);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -414,10 +430,11 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         long nonExistentPriceId = 999L;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.deletePriceForMinutesInClub(club.getId(), nonExistentPriceId)
+                clubManagementService.deletePriceForMinutesInClub(1, club.getId(), nonExistentPriceId)
         );
     }
 
@@ -435,9 +452,10 @@ class ClubManagementServiceTest {
                 true,
                 "Special hours"
         );
+        createEmployee();
 
         // Act
-        clubManagementService.addWorkScheduleExceptionInClub(club.getId(), dto);
+        clubManagementService.addWorkScheduleExceptionInClub(1, club.getId(), dto);
 
         // Assert
         List<WorkScheduleException> exceptions = workScheduleExceptionRepository.findAllByRangeOfDatesBetweenStartAndEnd(
@@ -463,10 +481,11 @@ class ClubManagementServiceTest {
                 false,
                 "Another holiday"
         );
+        createEmployee();
 
         // Act & Assert
         assertThrows(DuplicateException.class, () ->
-                clubManagementService.addWorkScheduleExceptionInClub(club.getId(), dto)
+                clubManagementService.addWorkScheduleExceptionInClub(1, club.getId(), dto)
         );
     }
 
@@ -486,10 +505,11 @@ class ClubManagementServiceTest {
                 true,
                 "Invalid"
         );
+        createEmployee();
 
         // Act & Assert
         assertThrows(InvalidWorkScheduleException.class, () ->
-                clubManagementService.addWorkScheduleExceptionInClub(club.getId(), dto)
+                clubManagementService.addWorkScheduleExceptionInClub(1, club.getId(), dto)
         );
     }
 
@@ -521,10 +541,11 @@ class ClubManagementServiceTest {
                 false,
                 "Holiday"
         );
+        createEmployee();
 
         // Act & Assert
         assertThrows(CannotAddExceptionDayDueToExistingBookingsException.class, () ->
-                clubManagementService.addWorkScheduleExceptionInClub(club.getId(), dto)
+                clubManagementService.addWorkScheduleExceptionInClub(1, club.getId(), dto)
         );
     }
 
@@ -538,9 +559,11 @@ class ClubManagementServiceTest {
         club.addWorkScheduleException(new WorkScheduleException(LocalDate.of(2026, 1, 7), "Christmas"));
         club.addWorkScheduleException(new WorkScheduleException(LocalDate.of(2026, 2, 23), "Defender's Day"));
         clubRepository.save(club);
+        createEmployee();
 
         // Act
         List<WorkScheduleExceptionDto> result = clubManagementService.getAllWorkSchedulesExceptionsInClub(
+                1,
                 club.getId(),
                 LocalDate.of(2026, 1, 1),
                 LocalDate.of(2026, 1, 31)
@@ -563,9 +586,10 @@ class ClubManagementServiceTest {
                 club.getId(), LocalDate.of(2027, 12, 31), LocalDate.of(2027, 12, 31)
         );
         long exceptionId = savedExceptions.get(0).getId();
+        createEmployee();
 
         // Act
-        clubManagementService.deleteWorkScheduleExceptionInClub(club.getId(), exceptionId);
+        clubManagementService.deleteWorkScheduleExceptionInClub(1, club.getId(), exceptionId);
 
         // Assert
         List<WorkScheduleException> exceptions = workScheduleExceptionRepository.findAllByRangeOfDatesBetweenStartAndEnd(
@@ -581,10 +605,11 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         long nonExistentExceptionId = 999L;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.deleteWorkScheduleExceptionInClub(club.getId(), nonExistentExceptionId)
+                clubManagementService.deleteWorkScheduleExceptionInClub(1, club.getId(), nonExistentExceptionId)
         );
     }
 
@@ -598,6 +623,7 @@ class ClubManagementServiceTest {
         club.getWorkSchedules().add(workSchedule);
         workSchedule.setClub(club);
         clubRepository.save(club);
+        createEmployee();
 
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
                 DayOfWeek.MONDAY,
@@ -607,7 +633,7 @@ class ClubManagementServiceTest {
         );
 
         // Act
-        clubManagementService.updateWorkScheduleInClub(club.getId(), dto);
+        clubManagementService.updateWorkScheduleInClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -629,6 +655,7 @@ class ClubManagementServiceTest {
         club.getWorkSchedules().add(workSchedule);
         workSchedule.setClub(club);
         clubRepository.save(club);
+        createEmployee();
 
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
                 DayOfWeek.SUNDAY,
@@ -638,7 +665,7 @@ class ClubManagementServiceTest {
         );
 
         // Act
-        clubManagementService.updateWorkScheduleInClub(club.getId(), dto);
+        clubManagementService.updateWorkScheduleInClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -656,6 +683,7 @@ class ClubManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee();
 
         // isWorkDay = true, но время не указано
         UpdateWorkScheduleDto dto = new UpdateWorkScheduleDto(
@@ -667,7 +695,7 @@ class ClubManagementServiceTest {
 
         // Act & Assert
         assertThrows(InvalidWorkScheduleException.class, () ->
-                clubManagementService.updateWorkScheduleInClub(club.getId(), dto)
+                clubManagementService.updateWorkScheduleInClub(1, club.getId(), dto)
         );
     }
 
@@ -676,10 +704,11 @@ class ClubManagementServiceTest {
         // Arrange
         int nonExistentClubId = 999;
         Game game = createGame("Test Game", true);
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.addGameToClub(nonExistentClubId, game.getId())
+                clubManagementService.addGameToClub(1, nonExistentClubId, game.getId())
         );
     }
 
@@ -690,10 +719,11 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         short nonExistentGameId = 999;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.addGameToClub(club.getId(), nonExistentGameId)
+                clubManagementService.addGameToClub(1, club.getId(), nonExistentGameId)
         );
     }
 
@@ -702,10 +732,11 @@ class ClubManagementServiceTest {
         // Arrange
         int nonExistentClubId = 999;
         Game game = createGame("Test Game", true);
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.deleteGameInClub(nonExistentClubId, game.getId())
+                clubManagementService.deleteGameInClub(1, nonExistentClubId, game.getId())
         );
     }
 
@@ -714,21 +745,23 @@ class ClubManagementServiceTest {
         // Arrange
         int nonExistentClubId = 999;
         short newCount = 20;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.updateCntEquipmentInClub(nonExistentClubId, newCount)
+                clubManagementService.updateCntEquipmentInClub(1, nonExistentClubId, newCount)
         );
     }
 
     @Test
     void openClubThrowsExceptionWhenClubNotFound() {
         // Arrange
+        createEmployee();
         int nonExistentClubId = 999;
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.openClub(nonExistentClubId)
+                clubManagementService.openClub(1, nonExistentClubId)
         );
     }
 
@@ -736,10 +769,11 @@ class ClubManagementServiceTest {
     void closeClubThrowsExceptionWhenClubNotFound() {
         // Arrange
         int nonExistentClubId = 999;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.closeClub(nonExistentClubId)
+                clubManagementService.closeClub(1, nonExistentClubId)
         );
     }
 
@@ -748,10 +782,11 @@ class ClubManagementServiceTest {
         // Arrange
         int nonExistentClubId = 999;
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1000.00"));
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.addPriceForMinutesInClub(nonExistentClubId, dto)
+                clubManagementService.addPriceForMinutesInClub(1, nonExistentClubId, dto)
         );
     }
 
@@ -761,10 +796,11 @@ class ClubManagementServiceTest {
         int nonExistentClubId = 999;
         long priceId = 1L;
         BigDecimal newValue = new BigDecimal("1500.00");
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.updatePriceForMinutesInClub(nonExistentClubId, priceId, newValue)
+                clubManagementService.updatePriceForMinutesInClub(1, nonExistentClubId, priceId, newValue)
         );
     }
 
@@ -773,10 +809,11 @@ class ClubManagementServiceTest {
         // Arrange
         int nonExistentClubId = 999;
         long priceId = 1L;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.deletePriceForMinutesInClub(nonExistentClubId, priceId)
+                clubManagementService.deletePriceForMinutesInClub(1, nonExistentClubId, priceId)
         );
     }
 
@@ -792,10 +829,11 @@ class ClubManagementServiceTest {
                 false,
                 "Holiday"
         );
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.addWorkScheduleExceptionInClub(nonExistentClubId, dto)
+                clubManagementService.addWorkScheduleExceptionInClub(1, nonExistentClubId, dto)
         );
     }
 
@@ -805,10 +843,11 @@ class ClubManagementServiceTest {
         int nonExistentClubId = 999;
         LocalDate startDate = LocalDate.of(2026, 1, 1);
         LocalDate endDate = LocalDate.of(2026, 1, 31);
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.getAllWorkSchedulesExceptionsInClub(nonExistentClubId, startDate, endDate)
+                clubManagementService.getAllWorkSchedulesExceptionsInClub(1, nonExistentClubId, startDate, endDate)
         );
     }
 
@@ -817,10 +856,11 @@ class ClubManagementServiceTest {
         // Arrange
         int nonExistentClubId = 999;
         long exceptionId = 1L;
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.deleteWorkScheduleExceptionInClub(nonExistentClubId, exceptionId)
+                clubManagementService.deleteWorkScheduleExceptionInClub(1, nonExistentClubId, exceptionId)
         );
     }
 
@@ -834,10 +874,11 @@ class ClubManagementServiceTest {
                 LocalTime.of(22, 0),
                 true
         );
+        createEmployee();
 
         // Act & Assert
         assertThrows(EntityNotFoundException.class, () ->
-                clubManagementService.updateWorkScheduleInClub(nonExistentClubId, dto)
+                clubManagementService.updateWorkScheduleInClub(1, nonExistentClubId, dto)
         );
     }
 
@@ -854,10 +895,11 @@ class ClubManagementServiceTest {
                 LocalTime.of(9, 0),
                 true
         );
+        createEmployee();
 
         // Act & Assert
         assertThrows(InvalidWorkScheduleException.class, () ->
-                clubManagementService.updateWorkScheduleInClub(club.getId(), dto)
+                clubManagementService.updateWorkScheduleInClub(1, club.getId(), dto)
         );
     }
 
@@ -868,6 +910,7 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         LocalDate date = LocalDate.of(2026, 12, 31);
+        createEmployee();
 
         AddWorkScheduleExceptionDto dto = new AddWorkScheduleExceptionDto(
                 date,
@@ -879,7 +922,7 @@ class ClubManagementServiceTest {
 
         // Act & Assert
         assertThrows(InvalidWorkScheduleException.class, () ->
-                clubManagementService.addWorkScheduleExceptionInClub(club.getId(), dto)
+                clubManagementService.addWorkScheduleExceptionInClub(1, club.getId(), dto)
         );
     }
 
@@ -888,9 +931,10 @@ class ClubManagementServiceTest {
         // Arrange
         createGame("Inactive Game 1", false);
         createGame("Inactive Game 2", false);
+        createEmployee();
 
         // Act
-        List<GameDto> result = clubManagementService.getAllActiveGames();
+        List<GameDto> result = clubManagementService.getAllActiveGames(1);
 
         // Assert
         assertNotNull(result);
@@ -913,6 +957,7 @@ class ClubManagementServiceTest {
             club.getWorkSchedules().add(workSchedule);
             workSchedule.setClub(club);
         }
+        createEmployee();
 
         // Добавляем игру
         Game game = createGame("Test Game", true);
@@ -922,7 +967,7 @@ class ClubManagementServiceTest {
 
         // Act & Assert
         assertThrows(ClubOpenConditionsNotMetException.class, () ->
-                clubManagementService.openClub(club.getId())
+                clubManagementService.openClub(1, club.getId())
         );
     }
 
@@ -948,10 +993,11 @@ class ClubManagementServiceTest {
         club.addGame(game);
 
         clubRepository.save(club);
+        createEmployee();
 
         // Act & Assert
         assertThrows(ClubOpenConditionsNotMetException.class, () ->
-                clubManagementService.openClub(club.getId())
+                clubManagementService.openClub(1, club.getId())
         );
     }
 
@@ -974,12 +1020,13 @@ class ClubManagementServiceTest {
             workSchedule.setClub(club);
             club.getWorkSchedules().add(workSchedule);
         }
+        createEmployee();
 
         clubRepository.save(club);
 
         // Act & Assert
         assertThrows(ClubOpenConditionsNotMetException.class, () ->
-                clubManagementService.openClub(club.getId())
+                clubManagementService.openClub(1, club.getId())
         );
     }
 
@@ -1011,10 +1058,11 @@ class ClubManagementServiceTest {
         club.addGame(game);
 
         clubRepository.save(club);
+        createEmployee();
 
         // Act & Assert
         assertThrows(ClubOpenConditionsNotMetException.class, () ->
-                clubManagementService.openClub(club.getId())
+                clubManagementService.openClub(1, club.getId())
         );
     }
 
@@ -1024,9 +1072,11 @@ class ClubManagementServiceTest {
         Region region = createRegion();
         City city = createCity(region);
         Club club = createClub(city);
+        createEmployee();
 
         // Act
         List<WorkScheduleExceptionDto> result = clubManagementService.getAllWorkSchedulesExceptionsInClub(
+                1,
                 club.getId(),
                 LocalDate.of(2026, 1, 1),
                 LocalDate.of(2026, 1, 31)
@@ -1044,9 +1094,10 @@ class ClubManagementServiceTest {
         City city = createCity(region);
         Club club = createClub(city);
         AddPriceDto dto = new AddPriceDto((short) 60, new BigDecimal("1000.555"));
+        createEmployee();
 
         // Act
-        clubManagementService.addPriceForMinutesInClub(club.getId(), dto);
+        clubManagementService.addPriceForMinutesInClub(1, club.getId(), dto);
 
         // Assert
         Club updatedClub = clubRepository.findById(club.getId()).orElseThrow();
@@ -1063,9 +1114,10 @@ class ClubManagementServiceTest {
         club = clubRepository.save(club);
         long priceId = club.getPrices().get(0).getId();
         BigDecimal newValue = new BigDecimal("1500.999");
+        createEmployee();
 
         // Act
-        clubManagementService.updatePriceForMinutesInClub(club.getId(), priceId, newValue);
+        clubManagementService.updatePriceForMinutesInClub(1, club.getId(), priceId, newValue);
 
         // Assert
         Price updatedPrice = priceRepository.findById(priceId).orElseThrow();

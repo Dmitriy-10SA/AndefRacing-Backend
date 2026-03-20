@@ -39,7 +39,7 @@ public class ClubPricesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.addPriceForMinutesInClub(principal.clubId(), addPriceDto);
+        clubManagementService.addPriceForMinutesInClub(principal.id(), principal.clubId(), addPriceDto);
         return ResponseEntity.ok().build();
     }
 
@@ -56,7 +56,7 @@ public class ClubPricesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.updatePriceForMinutesInClub(principal.clubId(), priceId, value);
+        clubManagementService.updatePriceForMinutesInClub(principal.id(), principal.clubId(), priceId, value);
         return ResponseEntity.ok().build();
     }
 
@@ -72,7 +72,7 @@ public class ClubPricesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.deletePriceForMinutesInClub(principal.clubId(), priceId);
+        clubManagementService.deletePriceForMinutesInClub(principal.id(), principal.clubId(), priceId);
         return ResponseEntity.ok().build();
     }
 }

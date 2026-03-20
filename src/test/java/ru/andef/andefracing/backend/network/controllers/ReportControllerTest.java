@@ -16,8 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -50,7 +49,7 @@ class ReportControllerTest {
                 BigDecimal.ZERO,
                 Collections.emptyList()
         );
-        when(reportService.getBookingStatistics(anyInt(), any(LocalDate.class), any(LocalDate.class)))
+        when(reportService.getBookingStatistics(anyLong(), anyInt(), any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(dto);
 
         mockMvc.perform(get("/api/v1/reports/booking-statistics")
@@ -70,7 +69,7 @@ class ReportControllerTest {
                 Collections.emptyList(),
                 BigDecimal.ZERO
         );
-        when(reportService.getFinancialStatistics(anyInt(), any(LocalDate.class), any(LocalDate.class)))
+        when(reportService.getFinancialStatistics(anyLong(), anyInt(), any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(dto);
 
         mockMvc.perform(get("/api/v1/reports/financial-statistics")

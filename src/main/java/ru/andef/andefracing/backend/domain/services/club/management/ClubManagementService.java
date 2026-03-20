@@ -17,6 +17,7 @@ import ru.andef.andefracing.backend.data.repositories.club.*;
 import ru.andef.andefracing.backend.domain.exceptions.DuplicateException;
 import ru.andef.andefracing.backend.domain.exceptions.EntityNotFoundException;
 import ru.andef.andefracing.backend.domain.exceptions.InvalidDateRangeException;
+import ru.andef.andefracing.backend.domain.exceptions.auth.UserNotFoundFromTokenException;
 import ru.andef.andefracing.backend.domain.exceptions.management.CannotAddExceptionDayDueToExistingBookingsException;
 import ru.andef.andefracing.backend.domain.exceptions.management.ClubCloseConditionsNotMetException;
 import ru.andef.andefracing.backend.domain.exceptions.management.ClubOpenConditionsNotMetException;
@@ -84,7 +85,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void addGameToClub(int clubId, short gameId) {
+    public void addGameToClub(long employeeId, int clubId, short gameId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Game game = clubSearchService.findGameById(gameId);
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
@@ -100,7 +102,8 @@ public class ClubManagementService {
      */
     @Cacheable(value = CacheConfig.CacheNames.GAMES, key = "'all'")
     @Transactional(readOnly = true)
-    public List<GameDto> getAllActiveGames() {
+    public List<GameDto> getAllActiveGames(long employeeId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         List<Game> games = gameRepository.findAllByIsActiveTrue();
         return gameMapper.toDto(games);
     }
@@ -110,7 +113,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void deleteGameInClub(int clubId, short gameId) {
+    public void deleteGameInClub(long employeeId, int clubId, short gameId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Game game = clubSearchService.findGameById(gameId);
         List<Game> gamesInClub = gameRepository.findAllActiveGamesInClub(club.getId());
@@ -126,7 +130,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void updateCntEquipmentInClub(int clubId, short cntEquipment) {
+    public void updateCntEquipmentInClub(long employeeId, int clubId, short cntEquipment) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         club.setCntEquipment(cntEquipment);
         clubRepository.save(club);
@@ -145,7 +150,8 @@ public class ClubManagementService {
             allEntries = true
     )
     @Transactional
-    public void openClub(int clubId) {
+    public void openClub(long employeeId, int clubId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         int photosCnt = club.getPhotos().size();
         int pricesCnt = club.getPrices().size();
@@ -172,7 +178,8 @@ public class ClubManagementService {
             allEntries = true
     )
     @Transactional
-    public void closeClub(int clubId) {
+    public void closeClub(long employeeId, int clubId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         long countUpcomingPaidOrPendingBookings = bookingRepository.countUpcomingPaidOrPendingBookings(club.getId());
         if (countUpcomingPaidOrPendingBookings <= 0) {
@@ -194,7 +201,8 @@ public class ClubManagementService {
             allEntries = true
     )
     @Transactional
-    public void managePhotosInClub(int clubId, List<MultipartFile> files) throws IOException {
+    public void managePhotosInClub(long employeeId, int clubId, List<MultipartFile> files) throws IOException {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Set<String> fileNames = files.stream().map(MultipartFile::getOriginalFilename).collect(Collectors.toSet());
         if (files.size() != fileNames.size()) {
             throw new DuplicateException("В списке фотографий есть дубликаты url");
@@ -227,7 +235,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void addPriceForMinutesInClub(int clubId, AddPriceDto addPriceDto) {
+    public void addPriceForMinutesInClub(long employeeId, int clubId, AddPriceDto addPriceDto) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         List<Price> pricesInClub = club.getPrices();
         List<Short> durationMinutes = pricesInClub.stream().map(Price::getDurationMinutes).toList();
@@ -247,7 +256,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void updatePriceForMinutesInClub(int clubId, long priceId, BigDecimal value) {
+    public void updatePriceForMinutesInClub(long employeeId, int clubId, long priceId, BigDecimal value) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         for (Price price : club.getPrices()) {
             if (price.getId() == priceId) {
@@ -264,7 +274,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void deletePriceForMinutesInClub(int clubId, long priceId) {
+    public void deletePriceForMinutesInClub(long employeeId, int clubId, long priceId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         Price price = clubSearchService.findPriceById(priceId);
         boolean isDeleted = club.deletePrice(price);
@@ -280,7 +291,12 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void addWorkScheduleExceptionInClub(int clubId, AddWorkScheduleExceptionDto addWorkScheduleExceptionDto) {
+    public void addWorkScheduleExceptionInClub(
+            long employeeId,
+            int clubId,
+            AddWorkScheduleExceptionDto addWorkScheduleExceptionDto
+    ) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         boolean isWorkDay = addWorkScheduleExceptionDto.isWorkDay();
         LocalDate date = addWorkScheduleExceptionDto.date();
         LocalTime openTime = addWorkScheduleExceptionDto.openTime();
@@ -308,10 +324,12 @@ public class ClubManagementService {
      */
     @Transactional(readOnly = true)
     public List<WorkScheduleExceptionDto> getAllWorkSchedulesExceptionsInClub(
+            long employeeId,
             int clubId,
             LocalDate startDate,
             LocalDate endDate
     ) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         if (startDate.isAfter(endDate)) {
             throw new InvalidDateRangeException();
         }
@@ -326,7 +344,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void deleteWorkScheduleExceptionInClub(int clubId, long workScheduleExceptionId) {
+    public void deleteWorkScheduleExceptionInClub(long employeeId, int clubId, long workScheduleExceptionId) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         Club club = clubSearchService.findClubById(clubId);
         WorkScheduleException workScheduleException = workScheduleExceptionRepository
                 .findByIdAndClubId(workScheduleExceptionId, club.getId())
@@ -340,7 +359,8 @@ public class ClubManagementService {
      */
     @CacheEvict(value = CacheConfig.CacheNames.CLUB_FULL_INFO, key = "#clubId")
     @Transactional
-    public void updateWorkScheduleInClub(int clubId, UpdateWorkScheduleDto updateWorkScheduleDto) {
+    public void updateWorkScheduleInClub(long employeeId, int clubId, UpdateWorkScheduleDto updateWorkScheduleDto) {
+        clubSearchService.findEmployeeByIdOrThrowCustomException(employeeId, new UserNotFoundFromTokenException());
         boolean isWorkDay = updateWorkScheduleDto.isWorkDay();
         DayOfWeek dayOfWeek = updateWorkScheduleDto.dayOfWeek();
         LocalTime openTime = updateWorkScheduleDto.openTime();

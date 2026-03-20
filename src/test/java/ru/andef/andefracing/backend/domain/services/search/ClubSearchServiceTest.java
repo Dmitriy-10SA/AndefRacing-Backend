@@ -145,10 +145,9 @@ class ClubSearchServiceTest {
         long nonExistentId = 999L;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 clubSearchService.findPhotoById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
@@ -177,10 +176,9 @@ class ClubSearchServiceTest {
         long nonExistentId = 999L;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 clubSearchService.findPriceById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
@@ -203,10 +201,9 @@ class ClubSearchServiceTest {
         short nonExistentId = 999;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 clubSearchService.findGameById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
@@ -306,10 +303,9 @@ class ClubSearchServiceTest {
         long nonExistentId = 999L;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 clubSearchService.findEmployeeById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
@@ -357,10 +353,9 @@ class ClubSearchServiceTest {
         int nonExistentId = 999;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 clubSearchService.findClubById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test

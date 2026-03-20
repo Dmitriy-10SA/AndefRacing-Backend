@@ -31,7 +31,7 @@ public class ClubGamesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.addGameToClub(principal.clubId(), gameId);
+        clubManagementService.addGameToClub(principal.id(), principal.clubId(), gameId);
         return ResponseEntity.ok().build();
     }
 
@@ -39,8 +39,12 @@ public class ClubGamesManagementController {
      * Получение справочника игр (только активных)
      */
     @GetMapping(version = ApiVersions.V1)
-    public ResponseEntity<List<GameDto>> getAllActiveGames() {
-        List<GameDto> games = clubManagementService.getAllActiveGames();
+    public ResponseEntity<List<GameDto>> getAllActiveGames(Authentication authentication) {
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        List<GameDto> games = clubManagementService.getAllActiveGames(principal.id());
         return ResponseEntity.ok(games);
     }
 
@@ -53,7 +57,7 @@ public class ClubGamesManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubManagementService.deleteGameInClub(principal.clubId(), gameId);
+        clubManagementService.deleteGameInClub(principal.id(), principal.clubId(), gameId);
         return ResponseEntity.ok().build();
     }
 }

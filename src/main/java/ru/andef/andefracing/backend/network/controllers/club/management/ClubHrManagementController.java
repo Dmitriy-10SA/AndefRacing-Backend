@@ -33,6 +33,9 @@ public class ClubHrManagementController {
 
     /**
      * Проверка, что сотрудник есть в системе
+     *
+     * @param authentication сотрудник, который делает проверку
+     * @param employeePhone телефон сотрудника, которому делают проверку
      */
     @GetMapping(path = "is-employee-in-system", version = ApiVersions.V1)
     public ResponseEntity<Boolean> isEmployeeInSystem(
@@ -42,9 +45,14 @@ public class ClubHrManagementController {
                     regexp = "^\\+7-\\d{3}-\\d{3}-\\d{2}-\\d{2}$",
                     message = "Телефон должен быть в формате: +7-XXX-XXX-XX-XX"
             )
-            String employeePhone
+            String employeePhone,
+            Authentication authentication
     ) {
-        boolean isInSystem = clubHrManagementService.isEmployeeInSystem(employeePhone);
+        JwtFilter.EmployeePrincipal principal = (JwtFilter.EmployeePrincipal) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        boolean isInSystem = clubHrManagementService.isEmployeeInSystem(principal.id(), employeePhone);
         return ResponseEntity.ok(isInSystem);
     }
 
@@ -61,7 +69,7 @@ public class ClubHrManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubHrManagementService.addNewEmployeeToClub(principal.clubId(), addNewEmployeeDto);
+        clubHrManagementService.addNewEmployeeToClub(principal.id(), principal.clubId(), addNewEmployeeDto);
         return ResponseEntity.ok().build();
     }
 
@@ -78,7 +86,7 @@ public class ClubHrManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubHrManagementService.addExistingEmployeeToClub(principal.clubId(), addExistingEmployeeDto);
+        clubHrManagementService.addExistingEmployeeToClub(principal.id(), principal.clubId(), addExistingEmployeeDto);
         return ResponseEntity.ok().build();
     }
 
@@ -92,7 +100,7 @@ public class ClubHrManagementController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         List<EmployeeAndRolesDto> employeeAndRoles = clubHrManagementService
-                .getEmployeesAndRolesInClub(principal.clubId());
+                .getEmployeesAndRolesInClub(principal.id(), principal.clubId());
         return ResponseEntity.ok(employeeAndRoles);
     }
 
@@ -105,7 +113,7 @@ public class ClubHrManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubHrManagementService.deleteEmployeeFromClub(principal.clubId(), employeeId);
+        clubHrManagementService.deleteEmployeeFromClub(principal.id(), principal.clubId(), employeeId);
         return ResponseEntity.noContent().build();
     }
 
@@ -122,7 +130,7 @@ public class ClubHrManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubHrManagementService.addRoleToEmployeeInClub(principal.clubId(), employeeId, role);
+        clubHrManagementService.addRoleToEmployeeInClub(principal.id(), principal.clubId(), employeeId, role);
         return ResponseEntity.ok().build();
     }
 
@@ -140,7 +148,8 @@ public class ClubHrManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubHrManagementService.updateEmployeeRoleInClub(principal.clubId(), employeeId, oldRole, newRole);
+        clubHrManagementService
+                .updateEmployeeRoleInClub(principal.id(), principal.clubId(), employeeId, oldRole, newRole);
         return ResponseEntity.ok().build();
     }
 
@@ -157,7 +166,7 @@ public class ClubHrManagementController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        clubHrManagementService.deleteEmployeeRoleInClub(principal.clubId(), employeeId, role);
+        clubHrManagementService.deleteEmployeeRoleInClub(principal.id(), principal.clubId(), employeeId, role);
         return ResponseEntity.ok().build();
     }
 }
