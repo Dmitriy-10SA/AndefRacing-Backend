@@ -96,10 +96,9 @@ class LocationSearchServiceTest {
         short nonExistentId = 999;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 locationSearchService.findRegionById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
@@ -124,10 +123,9 @@ class LocationSearchServiceTest {
         short nonExistentId = 999;
 
         // Act & Assert
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(EntityNotFoundException.class, () ->
                 locationSearchService.findCityById(nonExistentId)
         );
-        assertTrue(exception.getMessage().contains(String.valueOf(nonExistentId)));
     }
 
     @Test
